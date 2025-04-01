@@ -4,12 +4,7 @@ const config = {
   parserOptions: {
     project: true,
   },
-  plugins: [
-    // @ts-ignore
-    "@typescript-eslint",
-    // @ts-ignore
-    "drizzle",
-  ],
+  plugins: ["@typescript-eslint", "drizzle"],
   extends: [
     "next/core-web-vitals",
     "plugin:@typescript-eslint/recommended-type-checked",
