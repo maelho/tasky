@@ -30,9 +30,11 @@
     }
   },
   "include": [
+    "postcss.config.mjs",
     ".eslintrc.cjs",
     "next-env.d.ts",
     "**/*.ts",
+    "**/*.msj",
     "**/*.tsx",
     "**/*.cjs",
     "**/*.js",

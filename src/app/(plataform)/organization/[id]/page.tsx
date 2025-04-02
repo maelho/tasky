@@ -7,8 +7,8 @@ import { Button } from "~/components/ui/button";
 
 import { CreateBoardPopover } from "../../_components/create-board";
 
-export default function OrganizationIdPage() {
-  const { orgId } = auth();
+export default async function OrganizationIdPage() {
+  const { orgId } = await auth();
 
   if (!orgId) {
     return redirect("/select-org");

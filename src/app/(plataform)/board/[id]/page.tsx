@@ -9,40 +9,38 @@ import { BoardNavbar } from "./_components/board-navbar";
 import { ListContainer } from "./_components/list-container";
 import { CardModal } from "./_components/modal";
 
-type BoardIdPageProps = {
-  params: {
-    id: string;
-  };
-};
+type BoardIdPageProps = Promise<{ id: string }>;
 
-export async function generateMetadata({ params }: BoardIdPageProps) {
-  const { orgId } = auth();
+// export async function generateMetadata(props: { params: BoardIdPageProps }) {
+//   const { orgId } = await auth();
+//
+//   if (!orgId) {
+//     return {
+//       title: "Board",
+//     };
+//   }
+//
+//   const { id } = await props.params;
+//   const board = await api.board.getBoardById({
+//     boardId: Number(id),
+//     orgId,
+//   });
+//
+//   return {
+//     title: board?.title ?? "Board",
+//   };
+// }
 
-  if (!orgId) {
-    return {
-      title: "Board",
-    };
-  }
-
-  const board = await api.board.getBoardById({
-    boardId: Number(params.id),
-    orgId,
-  });
-
-  return {
-    title: board?.title ?? "Board",
-  };
-}
-
-export default async function BoardIdPage({ params }: BoardIdPageProps) {
-  const { orgId } = auth();
+export default async function BoardIdPage(props: { params: BoardIdPageProps }) {
+  const { orgId } = await auth();
 
   if (!orgId) {
     redirect("/select-org");
   }
 
+  const { id } = await props.params;
   const board = await api.board.getBoardById({
-    boardId: Number(params.id),
+    boardId: Number(id),
     orgId,
   });
 

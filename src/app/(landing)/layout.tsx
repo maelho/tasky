@@ -5,8 +5,8 @@ import { Paths } from "~/config/site";
 
 import { Navbar } from "./_components/navbar";
 
-export default function LandingLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const { userId, orgId } = auth();
+export default async function LandingLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const { userId, orgId } = await auth();
 
   if (userId && !orgId) {
     redirect(Paths.SelectOrg);
@@ -19,7 +19,7 @@ export default function LandingLayout({ children }: Readonly<{ children: React.R
   return (
     <div>
       <Navbar />
-      <main className="container pt-28">{children}</main>
+      <main className="container mx-auto  pt-28">{children}</main>
     </div>
   );
 }

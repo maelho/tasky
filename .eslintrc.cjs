@@ -4,12 +4,9 @@ const config = {
   parserOptions: {
     project: true,
   },
-  plugins: [
-    // @ts-ignore
-    "@typescript-eslint",
-    // @ts-ignore
-    "drizzle",
-  ],
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
+  plugins: ["@typescript-eslint", "drizzle"],
   extends: [
     "next/core-web-vitals",
     "plugin:@typescript-eslint/recommended-type-checked",
@@ -54,4 +51,5 @@ const config = {
     ],
   },
 };
+
 module.exports = config;
