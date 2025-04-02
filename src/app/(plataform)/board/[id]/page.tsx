@@ -9,13 +9,9 @@ import { BoardNavbar } from "./_components/board-navbar";
 import { ListContainer } from "./_components/list-container";
 import { CardModal } from "./_components/modal";
 
-type BoardIdPageProps = {
-  params: {
-    id: string;
-  };
-};
+type BoardIdPageProps = Promise<{ id: string }>;
 
-export async function generateMetadata({ params }: BoardIdPageProps) {
+export async function generateMetadata(props: { params: BoardIdPageProps }) {
   const { orgId } = await auth();
 
   if (!orgId) {
@@ -24,8 +20,9 @@ export async function generateMetadata({ params }: BoardIdPageProps) {
     };
   }
 
+  const { id } = await props.params;
   const board = await api.board.getBoardById({
-    boardId: Number(params.id),
+    boardId: Number(id),
     orgId,
   });
 
@@ -34,15 +31,16 @@ export async function generateMetadata({ params }: BoardIdPageProps) {
   };
 }
 
-export default async function BoardIdPage({ params }: BoardIdPageProps) {
+export default async function BoardIdPage(props: { params: BoardIdPageProps }) {
   const { orgId } = await auth();
 
   if (!orgId) {
     redirect("/select-org");
   }
 
+  const { id } = await props.params;
   const board = await api.board.getBoardById({
-    boardId: Number(params.id),
+    boardId: Number(id),
     orgId,
   });
 
