@@ -16,7 +16,7 @@ type BoardIdPageProps = {
 };
 
 export async function generateMetadata({ params }: BoardIdPageProps) {
-  const { orgId } = auth();
+  const { orgId } = await auth();
 
   if (!orgId) {
     return {
@@ -35,7 +35,7 @@ export async function generateMetadata({ params }: BoardIdPageProps) {
 }
 
 export default async function BoardIdPage({ params }: BoardIdPageProps) {
-  const { orgId } = auth();
+  const { orgId } = await auth();
 
   if (!orgId) {
     redirect("/select-org");

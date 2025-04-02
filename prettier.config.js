@@ -1,7 +1,7 @@
 /** @type {import('prettier').Config & import('prettier-plugin-tailwindcss').PluginOptions} */
 const config = {
   tabWidth: 2,
-  printWidth: 100,
+  printWidth: 120,
   importOrder: [
     "use client",
     "use server",
@@ -23,10 +23,7 @@ const config = {
     "",
     "^[./]",
   ],
-  plugins: [
-    "prettier-plugin-tailwindcss",
-    "@ianvs/prettier-plugin-sort-imports",
-  ],
+  plugins: ["prettier-plugin-tailwindcss", "@ianvs/prettier-plugin-sort-imports"],
 };
 
 export default config;
