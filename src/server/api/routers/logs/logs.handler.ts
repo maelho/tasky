@@ -1,22 +1,22 @@
-import { TRPCError } from "@trpc/server";
-import type { ProtectedTRPCContext } from "~/server/api/trpc";
-import { auditLogs, entityTypeEnum } from "~/server/db/schema";
-import { and, desc, eq } from "drizzle-orm";
+import { TRPCError } from '@trpc/server'
+import { and, desc, eq } from 'drizzle-orm'
+import type { ProtectedTRPCContext } from '~/server/api/trpc'
+import { auditLogs, entityTypeEnum } from '~/server/db/schema'
 
-import { validateOrgId } from "../../utils";
-import type * as Schema from "./logs.schema";
+import { validateOrgId } from '../../utils'
+import type * as Schema from './logs.schema'
 
 type Logs<T> = {
-  ctx: ProtectedTRPCContext;
-  input: T;
-};
+  ctx: ProtectedTRPCContext
+  input: T
+}
 
 export async function getAuditLogs({ ctx, input }: Logs<Schema.TGetAuditLogs>) {
-  const { id } = input;
-  const orgId = await validateOrgId(ctx);
+  const { id } = input
+  const orgId = await validateOrgId(ctx)
 
   if (!id || !orgId) {
-    throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid card ID" });
+    throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid card ID' })
   }
 
   const auditLogsQuery = await ctx.db
@@ -30,21 +30,21 @@ export async function getAuditLogs({ ctx, input }: Logs<Schema.TGetAuditLogs>) {
       ),
     )
     .orderBy(desc(auditLogs.createdAt)) // Use desc directly
-    .limit(3);
+    .limit(3)
 
-  return auditLogsQuery ?? null;
+  return auditLogsQuery ?? null
 }
 
 export async function getAllAuditLogs({ ctx }: { ctx: ProtectedTRPCContext }) {
-  const orgId = await validateOrgId(ctx);
+  const orgId = await validateOrgId(ctx)
 
   if (!orgId) {
-    throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid card ID" });
+    throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid card ID' })
   }
 
   const auditLogs = await ctx.db.query.auditLogs.findMany({
     where: (auditLogs, { eq }) => eq(auditLogs.orgId, orgId),
-  });
+  })
 
-  return auditLogs ?? null;
+  return auditLogs ?? null
 }

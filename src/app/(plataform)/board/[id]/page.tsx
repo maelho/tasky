@@ -1,15 +1,15 @@
-import { redirect } from "next/navigation";
-import { auth } from "@clerk/nextjs/server";
-import { api } from "~/trpc/server";
-import { Provider } from "jotai";
+import { auth } from '@clerk/nextjs/server'
+import { Provider } from 'jotai'
+import { redirect } from 'next/navigation'
+import { api } from '~/trpc/server'
 
-import { ScrollArea, ScrollBar } from "~/components/ui/scroll-area";
+import { ScrollArea, ScrollBar } from '~/components/ui/scroll-area'
 
-import { BoardNavbar } from "./_components/board-navbar";
-import { ListContainer } from "./_components/list-container";
-import { CardModal } from "./_components/modal";
+import { BoardNavbar } from './_components/board-navbar'
+import { ListContainer } from './_components/list-container'
+import { CardModal } from './_components/modal'
 
-type BoardIdPageProps = Promise<{ id: string }>;
+type BoardIdPageProps = Promise<{ id: string }>
 
 // export async function generateMetadata(props: { params: BoardIdPageProps }) {
 //   const { orgId } = await auth();
@@ -32,27 +32,27 @@ type BoardIdPageProps = Promise<{ id: string }>;
 // }
 
 export default async function BoardIdPage(props: { params: BoardIdPageProps }) {
-  const { orgId } = await auth();
+  const { orgId } = await auth()
 
   if (!orgId) {
-    redirect("/select-org");
+    redirect('/select-org')
   }
 
-  const { id } = await props.params;
+  const { id } = await props.params
   const board = await api.board.getBoardById({
     boardId: Number(id),
     orgId,
-  });
+  })
 
   if (!board) {
-    return;
+    return
   }
 
-  void api.list.getlistsWithCards.prefetch({ boardId: board.id });
+  void api.list.getlistsWithCards.prefetch({ boardId: board.id })
   return (
     <Provider>
       <CardModal />
-      <div className="space-y-5 mb-5">
+      <div className="mb-5 space-y-5">
         <BoardNavbar data={board} orgId={orgId} />
         <ScrollArea>
           <div className="mb-10">
@@ -62,5 +62,5 @@ export default async function BoardIdPage(props: { params: BoardIdPageProps }) {
         </ScrollArea>
       </div>
     </Provider>
-  );
+  )
 }

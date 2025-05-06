@@ -1,5 +1,5 @@
-import { createEnv } from "@t3-oss/env-nextjs";
-import { z } from "zod";
+import { createEnv } from '@t3-oss/env-nextjs'
+import { z } from 'zod'
 
 export const env = createEnv({
   /**
@@ -8,9 +8,10 @@ export const env = createEnv({
    */
   server: {
     CLERK_SECRET_KEY: z.string(),
-    NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
+    NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
     TURSO_DATABASE_URL: z.string().url(),
     TURSO_AUTH_TOKEN: z.string(),
+    BETTER_AUTH_SECRET: z.string().optional(),
   },
 
   /**
@@ -38,6 +39,7 @@ export const env = createEnv({
     NEXT_PUBLIC_CLERK_SIGN_UP_URL: process.env.NEXT_PUBLIC_CLERK_SIGN_UP_URL,
     TURSO_DATABASE_URL: process.env.TURSO_DATABASE_URL,
     TURSO_AUTH_TOKEN: process.env.TURSO_AUTH_TOKEN,
+    BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
@@ -49,4 +51,4 @@ export const env = createEnv({
    * `SOME_VAR=''` will throw an error.
    */
   emptyStringAsUndefined: true,
-});
+})

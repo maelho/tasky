@@ -1,31 +1,31 @@
-"use client";
+'use client'
 
-import { useState } from "react";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import type { CardSelect, lists } from "~/server/db/schema";
-import { api } from "~/trpc/react";
-import type { InferSelectModel } from "drizzle-orm";
-import { useAtom } from "jotai";
-import { toast } from "sonner";
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
+import type { InferSelectModel } from 'drizzle-orm'
+import { useAtom } from 'jotai'
+import { useState } from 'react'
+import { toast } from 'sonner'
+import type { CardSelect, lists } from '~/server/db/schema'
+import { api } from '~/trpc/react'
 
-import { cardModalAtom } from "~/hooks/use-card-modal";
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from "~/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from '~/components/ui/dialog'
+import { cardModalAtom } from '~/hooks/use-card-modal'
 
-import { Actions } from "./actions";
-import { Activity } from "./activity";
-import { Description } from "./description";
-import { Header } from "./header";
+import { Actions } from './actions'
+import { Activity } from './activity'
+import { Description } from './description'
+import { Header } from './header'
 
-export type ListSelect = Omit<InferSelectModel<typeof lists>, "order">;
-export type CardWithList = CardSelect & { list: ListSelect };
+export type ListSelect = Omit<InferSelectModel<typeof lists>, 'order'>
+export type CardWithList = CardSelect & { list: ListSelect }
 
 export function CardModal() {
-  const [modalState, dispatch] = useAtom(cardModalAtom);
-  const { id: modalId, isOpen } = modalState;
+  const [modalState, dispatch] = useAtom(cardModalAtom)
+  const { id: modalId, isOpen } = modalState
 
-  const [cardRetryCount, setCardRetryCount] = useState(0);
-  const [logsRetryCount, setLogsRetryCount] = useState(0);
-  const maxRetries = 3;
+  const [cardRetryCount, setCardRetryCount] = useState(0)
+  const [logsRetryCount, setLogsRetryCount] = useState(0)
+  const maxRetries = 3
 
   const {
     data: cardData,
@@ -38,12 +38,12 @@ export function CardModal() {
       retry:
         cardRetryCount < maxRetries
           ? () => {
-              setCardRetryCount(cardRetryCount + 1);
-              return true;
+              setCardRetryCount(cardRetryCount + 1)
+              return true
             }
           : false,
     },
-  );
+  )
 
   const {
     data: auditLogsData,
@@ -56,19 +56,19 @@ export function CardModal() {
       retry:
         logsRetryCount < maxRetries
           ? () => {
-              setLogsRetryCount(logsRetryCount + 1);
-              return true;
+              setLogsRetryCount(logsRetryCount + 1)
+              return true
             }
           : false,
     },
-  );
+  )
 
   const handleClose = () => {
-    dispatch({ type: "close" });
-  };
+    dispatch({ type: 'close' })
+  }
 
   if (cardError) {
-    toast.error(`Error loading card data: ${cardError.message}`);
+    toast.error(`Error loading card data: ${cardError.message}`)
     return (
       <Dialog open={isOpen} onOpenChange={handleClose}>
         <DialogContent>
@@ -87,11 +87,11 @@ export function CardModal() {
           </div>
         </DialogContent>
       </Dialog>
-    );
+    )
   }
 
   if (logsError) {
-    toast.error(`Error loading audit logs: ${logsError.message}`);
+    toast.error(`Error loading audit logs: ${logsError.message}`)
   }
 
   return (
@@ -116,5 +116,5 @@ export function CardModal() {
         </div>
       </DialogContent>
     </Dialog>
-  );
+  )
 }

@@ -1,21 +1,14 @@
-"use client";
-import * as Clerk from "@clerk/elements/common";
-import * as SignIn from "@clerk/elements/sign-in";
-import Link from "next/link";
-import { Button } from "~/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
-import { Icons } from "~/components/ui/icons";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
+'use client'
+import * as Clerk from '@clerk/elements/common'
+import * as SignIn from '@clerk/elements/sign-in'
+import Link from 'next/link'
+import { Button } from '~/components/ui/button'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '~/components/ui/card'
+import { Icons } from '~/components/ui/icons'
+import { Input } from '~/components/ui/input'
+import { Label } from '~/components/ui/label'
 
-import { SiteConfig } from "~/config/site";
+import { SiteConfig } from '~/config/site'
 
 export default function SignInPage() {
   return (
@@ -27,23 +20,15 @@ export default function SignInPage() {
               <SignIn.Step name="start">
                 <Card className="w-full border-none sm:max-w-md">
                   <CardHeader className="space-y-4 text-center">
-                    <CardTitle className="text-2xl font-semibold">
-                      Welcome to {SiteConfig.title}
-                    </CardTitle>
+                    <CardTitle className="text-2xl font-semibold">Welcome to {SiteConfig.title}</CardTitle>
                     <CardDescription className="text-muted-foreground">
-                      Welcome to {SiteConfig.title}! We&apos;re excited
-                      you&apos;re joining us!
+                      Welcome to {SiteConfig.title}! We&apos;re excited you&apos;re joining us!
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="grid gap-y-4">
                     <div className="grid grid-cols-2 gap-x-4">
                       <Clerk.Connection name="github" asChild>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          type="button"
-                          disabled={isGlobalLoading}
-                        >
+                        <Button size="sm" variant="outline" type="button" disabled={isGlobalLoading}>
                           <Clerk.Loading scope="provider:github">
                             {(isLoading) =>
                               isLoading ? (
@@ -59,12 +44,7 @@ export default function SignInPage() {
                         </Button>
                       </Clerk.Connection>
                       <Clerk.Connection name="google" asChild>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          type="button"
-                          disabled={isGlobalLoading}
-                        >
+                        <Button size="sm" variant="outline" type="button" disabled={isGlobalLoading}>
                           <Clerk.Loading scope="provider:google">
                             {(isLoading) =>
                               isLoading ? (
@@ -99,20 +79,14 @@ export default function SignInPage() {
                         <Button disabled={isGlobalLoading}>
                           <Clerk.Loading>
                             {(isLoading) => {
-                              return isLoading ? (
-                                <Icons.spinner className="size-4 animate-spin" />
-                              ) : (
-                                "Continue"
-                              );
+                              return isLoading ? <Icons.spinner className="size-4 animate-spin" /> : 'Continue'
                             }}
                           </Clerk.Loading>
                         </Button>
                       </SignIn.Action>
 
                       <Button variant="link" size="sm" asChild>
-                        <Link href="/sign-up">
-                          Don&apos;t have an account? Sign up
-                        </Link>
+                        <Link href="/sign-up">Don&apos;t have an account? Sign up</Link>
                       </Button>
                     </div>
                   </CardFooter>
@@ -123,27 +97,16 @@ export default function SignInPage() {
                 <Card className="w-full sm:w-96">
                   <CardHeader>
                     <CardTitle>Use another method</CardTitle>
-                    <CardDescription>
-                      Facing issues? You can use any of these methods to sign
-                      in.
-                    </CardDescription>
+                    <CardDescription>Facing issues? You can use any of these methods to sign in.</CardDescription>
                   </CardHeader>
                   <CardContent className="grid gap-y-4">
                     <SignIn.SupportedStrategy name="email_code" asChild>
-                      <Button
-                        type="button"
-                        variant="link"
-                        disabled={isGlobalLoading}
-                      >
+                      <Button type="button" variant="link" disabled={isGlobalLoading}>
                         Email code
                       </Button>
                     </SignIn.SupportedStrategy>
                     <SignIn.SupportedStrategy name="password" asChild>
-                      <Button
-                        type="button"
-                        variant="link"
-                        disabled={isGlobalLoading}
-                      >
+                      <Button type="button" variant="link" disabled={isGlobalLoading}>
                         Password
                       </Button>
                     </SignIn.SupportedStrategy>
@@ -154,11 +117,7 @@ export default function SignInPage() {
                         <Button disabled={isGlobalLoading}>
                           <Clerk.Loading>
                             {(isLoading) => {
-                              return isLoading ? (
-                                <Icons.spinner className="size-4 animate-spin" />
-                              ) : (
-                                "Go back"
-                              );
+                              return isLoading ? <Icons.spinner className="size-4 animate-spin" /> : 'Go back'
                             }}
                           </Clerk.Loading>
                         </Button>
@@ -173,9 +132,7 @@ export default function SignInPage() {
                   <Card className="w-full sm:w-96">
                     <CardHeader>
                       <CardTitle>Check your email</CardTitle>
-                      <CardDescription>
-                        Enter the verification code sent to your email
-                      </CardDescription>
+                      <CardDescription>Enter the verification code sent to your email</CardDescription>
                       <p className="text-muted-foreground text-sm">
                         Welcome back <SignIn.SafeIdentifier />
                       </p>
@@ -197,11 +154,7 @@ export default function SignInPage() {
                           <Button disabled={isGlobalLoading}>
                             <Clerk.Loading>
                               {(isLoading) => {
-                                return isLoading ? (
-                                  <Icons.spinner className="size-4 animate-spin" />
-                                ) : (
-                                  "Continue"
-                                );
+                                return isLoading ? <Icons.spinner className="size-4 animate-spin" /> : 'Continue'
                               }}
                             </Clerk.Loading>
                           </Button>
@@ -220,18 +173,14 @@ export default function SignInPage() {
                   <Card className="w-full sm:w-96">
                     <CardHeader>
                       <CardTitle>Check your email</CardTitle>
-                      <CardDescription>
-                        Enter the verification code sent to your email
-                      </CardDescription>
+                      <CardDescription>Enter the verification code sent to your email</CardDescription>
                       <p className="text-muted-foreground text-sm">
                         Welcome back <SignIn.SafeIdentifier />
                       </p>
                     </CardHeader>
                     <CardContent className="grid gap-y-4">
                       <Clerk.Field name="code">
-                        <Clerk.Label className="sr-only">
-                          Email verification code
-                        </Clerk.Label>
+                        <Clerk.Label className="sr-only">Email verification code</Clerk.Label>
                         <div className="grid items-center justify-center gap-y-2">
                           <div className="flex justify-center text-center">
                             <Clerk.Input
@@ -242,11 +191,11 @@ export default function SignInPage() {
                                 return (
                                   <div
                                     data-status={status}
-                                    className="border-input data-[status=selected]:ring-ring data-[status=cursor]:ring-ring relative flex h-9 w-9 items-center justify-center border-y border-r text-sm shadow-sm transition-all first:rounded-l-md first:border-l last:rounded-r-md data-[status=cursor]:ring-1 data-[status=selected]:ring-1"
+                                    className="border-input data-[status=cursor]:ring-ring data-[status=selected]:ring-ring relative flex h-9 w-9 items-center justify-center border-y border-r text-sm shadow-sm transition-all first:rounded-l-md first:border-l last:rounded-r-md data-[status=cursor]:ring-1 data-[status=selected]:ring-1"
                                   >
                                     {value}
                                   </div>
-                                );
+                                )
                               }}
                             />
                           </div>
@@ -258,10 +207,7 @@ export default function SignInPage() {
                             fallback={({ resendableAfter }) => (
                               <Button variant="link" size="sm" disabled>
                                 Didn&apos;t recieve a code? Resend (
-                                <span className="tabular-nums">
-                                  {resendableAfter}
-                                </span>
-                                )
+                                <span className="tabular-nums">{resendableAfter}</span>)
                               </Button>
                             )}
                           >
@@ -278,11 +224,7 @@ export default function SignInPage() {
                           <Button disabled={isGlobalLoading}>
                             <Clerk.Loading>
                               {(isLoading) => {
-                                return isLoading ? (
-                                  <Icons.spinner className="size-4 animate-spin" />
-                                ) : (
-                                  "Continue"
-                                );
+                                return isLoading ? <Icons.spinner className="size-4 animate-spin" /> : 'Continue'
                               }}
                             </Clerk.Loading>
                           </Button>
@@ -302,5 +244,5 @@ export default function SignInPage() {
         </Clerk.Loading>
       </SignIn.Root>
     </div>
-  );
+  )
 }

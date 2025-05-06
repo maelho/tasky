@@ -1,35 +1,35 @@
-import Link from "next/link";
-import { PlusIcon } from "lucide-react";
+import { PlusIcon } from 'lucide-react'
+import Link from 'next/link'
 
-import { SiteConfig } from "~/config/site";
-import { Button } from "~/components/ui/button";
-import { ThemeToggle } from "~/components/theme-toggle";
+import { ThemeToggle } from '~/components/theme-toggle'
+import { Button } from '~/components/ui/button'
+import { SiteConfig } from '~/config/site'
 
-import { CreateBoardPopover } from "./create-board";
+import { CreateBoardPopover } from './create-board'
 import {
   ActivityButton,
   OrganizationSwitcherButton,
   SelectBoardButton,
   SettingsButton,
   UserClerkButton,
-} from "./navbar-items";
+} from './navbar-items'
 
 type NavbarProps = {
-  orgId: string;
-};
+  orgId: string
+}
 
 export async function Navbar({ orgId }: NavbarProps) {
   return (
     <header className="py-10">
-      <div className="flex-col md:flex-row items-center justify-between">
+      <div className="flex-col items-center justify-between md:flex-row">
         <Link
           href={`/organization/${orgId}`}
-          className="scroll-m-20 inline-block mb-5 text-2xl font-semibold tracking-tight lg:text-2xl"
+          className="mb-5 inline-block scroll-m-20 text-2xl font-semibold tracking-tight lg:text-2xl"
         >
           {SiteConfig.title}
         </Link>
-        <nav className="flex flex-col md:flex-row lg:flex-row justify-center md:justify-end items-center space-x-4 md:space-x-10 lg:space-x-20">
-          <div className=" md:flex items-center justify-center space-x-2">
+        <nav className="flex flex-col items-center justify-center space-x-4 md:flex-row md:justify-end md:space-x-10 lg:flex-row lg:space-x-20">
+          <div className="items-center justify-center space-x-2 md:flex">
             <SelectBoardButton orgId={orgId} />
             <ActivityButton orgId={orgId} />
             <SettingsButton orgId={orgId} />
@@ -39,8 +39,8 @@ export async function Navbar({ orgId }: NavbarProps) {
             <CreateBoardPopover sideOffset={5} orgId={orgId}>
               <Button
                 aria-label="Add Board"
-                size={"icon"}
-                className="w-8 h-8 flex items-center justify-center rounded-full"
+                size={'icon'}
+                className="flex h-8 w-8 items-center justify-center rounded-full"
               >
                 <PlusIcon size={20} />
               </Button>
@@ -51,5 +51,5 @@ export async function Navbar({ orgId }: NavbarProps) {
         </nav>
       </div>
     </header>
-  );
+  )
 }

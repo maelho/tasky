@@ -1,52 +1,52 @@
-"use client";
+'use client'
 
-import { useRef, useState, type ElementRef } from "react";
-import { api } from "~/trpc/react";
-import { Layout } from "lucide-react";
-import { toast } from "sonner";
+import { Layout } from 'lucide-react'
+import { type ElementRef, useRef, useState } from 'react'
+import { toast } from 'sonner'
+import { api } from '~/trpc/react'
 
-import { Input } from "~/components/ui/input";
-import { Skeleton } from "~/components/ui/skeleton";
+import { Input } from '~/components/ui/input'
+import { Skeleton } from '~/components/ui/skeleton'
 
-import type { CardWithList } from ".";
+import type { CardWithList } from '.'
 
 type HeaderProps = {
-  data: CardWithList;
-};
+  data: CardWithList
+}
 
 export function Header({ data }: HeaderProps) {
-  const [title, setTitle] = useState(data?.title);
+  const [title, setTitle] = useState(data?.title)
 
-  const utils = api.useUtils();
+  const utils = api.useUtils()
   const updateCard = api.card.updateCard.useMutation({
     onSuccess: async (updatedCard) => {
-      await utils.list.invalidate();
+      await utils.list.invalidate()
 
-      toast.success(`Renamed to "${updatedCard?.title}"`);
-      setTitle(updatedCard?.title ?? "");
+      toast.success(`Renamed to "${updatedCard?.title}"`)
+      setTitle(updatedCard?.title ?? '')
     },
     onError: (error) => {
-      toast.error(error?.data?.zodError?.fieldErrors.title);
+      toast.error(error?.data?.zodError?.fieldErrors.title)
     },
-  });
+  })
 
-  const inputRef = useRef<ElementRef<"input">>(null);
+  const inputRef = useRef<ElementRef<'input'>>(null)
 
   function onBlur() {
-    inputRef.current?.form?.requestSubmit();
+    inputRef.current?.form?.requestSubmit()
   }
 
   function onSubmit(formData: FormData) {
-    const title = formData.get("title") as string;
+    const title = formData.get('title') as string
 
     if (title === data.title) {
-      return;
+      return
     }
 
     updateCard.mutate({
       title,
       id: data.id,
-    });
+    })
   }
 
   return (
@@ -64,12 +64,12 @@ export function Header({ data }: HeaderProps) {
             className="relative -left-1.5 mb-0.5 w-[95%] truncate border-transparent bg-transparent px-1 text-xl font-semibold"
           />
         </form>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           in list <span className="underline">{data.list.title}</span>
         </p>
       </div>
     </div>
-  );
+  )
 }
 
 Header.Skeleton = function HeaderSkeleton() {
@@ -81,5 +81,5 @@ Header.Skeleton = function HeaderSkeleton() {
         <Skeleton className="h-4 w-12 bg-neutral-200" />
       </div>
     </div>
-  );
-};
+  )
+}

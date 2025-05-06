@@ -1,4 +1,4 @@
-import { OrgControl } from "./_components/org-control";
+import { OrgControl } from './_components/org-control'
 
 export default function OrganizationLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -6,5 +6,5 @@ export default function OrganizationLayout({ children }: { children: React.React
       <OrgControl />
       {children}
     </>
-  );
+  )
 }

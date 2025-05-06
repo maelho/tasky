@@ -1,57 +1,50 @@
-"use client";
+'use client'
 
-import { useRef, useState, type ElementRef } from "react";
-import { Draggable, Droppable } from "@hello-pangea/dnd";
-import type { CardSelect, ListSelect } from "~/server/db/schema";
+import { Draggable, Droppable } from '@hello-pangea/dnd'
+import { type ElementRef, useRef, useState } from 'react'
+import type { CardSelect, ListSelect } from '~/server/db/schema'
 
-import { cn } from "~/lib/utils";
+import { cn } from '~/lib/utils'
 
-import { CardForm } from "./card-form";
-import CardItem from "./card-item";
-import { ListHeader } from "./list-header";
+import { CardForm } from './card-form'
+import CardItem from './card-item'
+import { ListHeader } from './list-header'
 
-export type ListWithCards = ListSelect & { cards: CardSelect[] };
+export type ListWithCards = ListSelect & { cards: CardSelect[] }
 
 type ListItemProps = {
-  index: number;
-  data: ListWithCards;
-};
+  index: number
+  data: ListWithCards
+}
 
 export function ListItem({ index, data }: ListItemProps) {
-  const textareaRef = useRef<ElementRef<"textarea">>(null);
+  const textareaRef = useRef<ElementRef<'textarea'>>(null)
 
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(false)
 
   function disableEditing() {
-    setIsEditing(false);
+    setIsEditing(false)
   }
 
   function enableEditing() {
-    setIsEditing(true);
+    setIsEditing(true)
     setTimeout(() => {
-      textareaRef.current?.focus();
-    });
+      textareaRef.current?.focus()
+    })
   }
 
   return (
     <Draggable draggableId={String(data.id)} index={index}>
       {(provided) => (
-        <li
-          {...provided.draggableProps}
-          ref={provided.innerRef}
-          className="h-full w-[272px] shrink-0 select-none"
-        >
-          <div {...provided.dragHandleProps} className="w-full rounded-md bg-muted pb-2 shadow-md">
+        <li {...provided.draggableProps} ref={provided.innerRef} className="h-full w-[272px] shrink-0 select-none">
+          <div {...provided.dragHandleProps} className="bg-muted w-full rounded-md pb-2 shadow-md">
             <ListHeader onAddCard={enableEditing} data={data} />
             <Droppable droppableId={String(data.id)} type="card">
               {(provided) => (
                 <ol
                   ref={provided.innerRef}
                   {...provided.droppableProps}
-                  className={cn(
-                    "mx-1 flex flex-col gap-y-2 px-1 py-0.5",
-                    data.cards.length > 0 ? "mt-2" : "mt-0",
-                  )}
+                  className={cn('mx-1 flex flex-col gap-y-2 px-1 py-0.5', data.cards.length > 0 ? 'mt-2' : 'mt-0')}
                 >
                   {data.cards.map((card, index) => (
                     <CardItem index={index} key={card.id} data={card} />
@@ -72,5 +65,5 @@ export function ListItem({ index, data }: ListItemProps) {
         </li>
       )}
     </Draggable>
-  );
+  )
 }

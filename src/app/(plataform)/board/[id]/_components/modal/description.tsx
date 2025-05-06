@@ -1,58 +1,58 @@
-"use client";
+'use client'
 
-import { useRef, useState, type ElementRef } from "react";
-import { api } from "~/trpc/react";
-import { AlignLeft } from "lucide-react";
-import { toast } from "sonner";
-import { useEventListener, useOnClickOutside } from "usehooks-ts";
+import { AlignLeft } from 'lucide-react'
+import { type ElementRef, useRef, useState } from 'react'
+import { toast } from 'sonner'
+import { useEventListener, useOnClickOutside } from 'usehooks-ts'
+import { api } from '~/trpc/react'
 
-import { cn } from "~/lib/utils";
-import { Button } from "~/components/ui/button";
-import { Skeleton } from "~/components/ui/skeleton";
-import { Textarea } from "~/components/ui/textarea";
+import { Button } from '~/components/ui/button'
+import { Skeleton } from '~/components/ui/skeleton'
+import { Textarea } from '~/components/ui/textarea'
+import { cn } from '~/lib/utils'
 
-import type { CardWithList } from ".";
+import type { CardWithList } from '.'
 
 type DescriptionProps = {
-  data: CardWithList;
-};
+  data: CardWithList
+}
 
 export function Description({ data }: DescriptionProps) {
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(false)
 
-  const formRef = useRef<ElementRef<"form">>(null);
-  const textareaRef = useRef<ElementRef<"textarea">>(null);
+  const formRef = useRef<ElementRef<'form'>>(null)
+  const textareaRef = useRef<ElementRef<'textarea'>>(null)
 
-  const utils = api.useUtils();
+  const utils = api.useUtils()
   const updateCard = api.card.updateCard.useMutation({
     onSuccess: async (updatedCard) => {
-      await utils.card.getCardById.invalidate({ id: updatedCard?.id });
-      toast.success(`Card "${data.title}" updated`);
-      disableEditing();
+      await utils.card.getCardById.invalidate({ id: updatedCard?.id })
+      toast.success(`Card "${data.title}" updated`)
+      disableEditing()
     },
     onError: (error) => {
-      toast.error(error?.data?.zodError?.fieldErrors.description);
+      toast.error(error?.data?.zodError?.fieldErrors.description)
     },
-  });
+  })
 
   const enableEditing = () => {
-    setIsEditing(true);
-    setTimeout(() => textareaRef.current?.focus(), 0);
-  };
+    setIsEditing(true)
+    setTimeout(() => textareaRef.current?.focus(), 0)
+  }
 
-  const disableEditing = () => setIsEditing(false);
+  const disableEditing = () => setIsEditing(false)
 
   const onKeyDown = (e: KeyboardEvent) => {
-    if (e.key === "Escape") disableEditing();
-  };
+    if (e.key === 'Escape') disableEditing()
+  }
 
-  useEventListener("keydown", onKeyDown);
-  useOnClickOutside(formRef, disableEditing);
+  useEventListener('keydown', onKeyDown)
+  useOnClickOutside(formRef, disableEditing)
 
   const onSubmit = (formData: FormData) => {
-    const description = formData.get("description") as string;
-    updateCard.mutate({ id: data.id, description });
-  };
+    const description = formData.get('description') as string
+    updateCard.mutate({ id: data.id, description })
+  }
 
   return (
     <div className="flex w-full items-start gap-x-3">
@@ -65,9 +65,9 @@ export function Description({ data }: DescriptionProps) {
               id="description"
               name="description"
               placeholder="Add a more detailed description"
-              defaultValue={data.description ?? ""}
+              defaultValue={data.description ?? ''}
               className={cn(
-                "resize-none shadow-sm outline-none ring-0 focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 mt-2 w-full",
+                'mt-2 w-full resize-none shadow-sm ring-0 outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0',
               )}
               ref={textareaRef}
             />
@@ -82,14 +82,14 @@ export function Description({ data }: DescriptionProps) {
           <div
             onClick={enableEditing}
             role="button"
-            className="min-h-[78px] rounded-md bg-muted px-3.5 py-3 text-sm font-medium"
+            className="bg-muted min-h-[78px] rounded-md px-3.5 py-3 text-sm font-medium"
           >
-            {data.description ?? "Add a more detailed description..."}
+            {data.description ?? 'Add a more detailed description...'}
           </div>
         )}
       </div>
     </div>
-  );
+  )
 }
 
 Description.Skeleton = function DescriptionSkeleton() {
@@ -101,5 +101,5 @@ Description.Skeleton = function DescriptionSkeleton() {
         <Skeleton className="h-[78px] w-full bg-neutral-200" />
       </div>
     </div>
-  );
-};
+  )
+}

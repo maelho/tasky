@@ -1,31 +1,31 @@
-import "~/styles/globals.css";
+import '~/styles/globals.css'
 
-import { type Metadata } from "next";
-import { ClerkProvider } from "@clerk/nextjs";
-import { env } from "~/env";
-import { recursive } from "~/fonts";
-import { TRPCReactProvider } from "~/trpc/react";
+import { ClerkProvider } from '@clerk/nextjs'
+import type { Metadata } from 'next'
+import { env } from '~/env'
+import { recursive } from '~/fonts'
+import { TRPCReactProvider } from '~/trpc/react'
 
-import { SiteConfig } from "~/config/site";
-import { Toaster } from "~/components/ui/sonner";
-import { ThemeProvider } from "~/components/theme-provider";
+import { ThemeProvider } from '~/components/theme-provider'
+import { Toaster } from '~/components/ui/sonner'
+import { SiteConfig } from '~/config/site'
 
 export const metadata: Metadata = {
   title: {
     default: SiteConfig.title,
-    template: "%s | " + SiteConfig.title,
+    template: `%s | ${SiteConfig.title}`,
   },
   description: SiteConfig.description,
   icons: [
     {
-      url: "/tasky.svg",
-      href: "/tasky.svg",
+      url: '/tasky.svg',
+      href: '/tasky.svg',
     },
   ],
   openGraph: {
-    images: ["/tasky.png"],
+    images: ['/tasky.png'],
   },
-};
+}
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
@@ -39,5 +39,5 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         </ThemeProvider>
       </body>
     </html>
-  );
+  )
 }

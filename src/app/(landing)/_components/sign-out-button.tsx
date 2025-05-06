@@ -1,20 +1,16 @@
-"use client";
+'use client'
 
-import { useClerk } from "@clerk/nextjs";
+import { useClerk } from '@clerk/nextjs'
 
-import { Paths } from "~/config/site";
-import { Button } from "~/components/ui/button";
+import { Button } from '~/components/ui/button'
+import { Paths } from '~/config/site'
 
 export function SignOutButton() {
-  const { signOut } = useClerk();
+  const { signOut } = useClerk()
 
   return (
-    <Button
-      variant={"ghost"}
-      size={"sm"}
-      onClick={() => signOut({ redirectUrl: Paths.LandingPage })}
-    >
+    <Button variant={'ghost'} size={'sm'} onClick={() => signOut({ redirectUrl: Paths.LandingPage })}>
       Sign out
     </Button>
-  );
+  )
 }

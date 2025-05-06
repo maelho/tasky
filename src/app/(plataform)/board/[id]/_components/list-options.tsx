@@ -1,50 +1,50 @@
-import { useRef, type ElementRef } from "react";
-import type { ListSelect } from "~/server/db/schema";
-import { api } from "~/trpc/react";
-import { MoreHorizontal, X } from "lucide-react";
-import { toast } from "sonner";
+import { MoreHorizontal, X } from 'lucide-react'
+import { type ElementRef, useRef } from 'react'
+import { toast } from 'sonner'
+import type { ListSelect } from '~/server/db/schema'
+import { api } from '~/trpc/react'
 
-import { Button } from "~/components/ui/button";
-import { Popover, PopoverClose, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
-import { Separator } from "~/components/ui/separator";
+import { Button } from '~/components/ui/button'
+import { Popover, PopoverClose, PopoverContent, PopoverTrigger } from '~/components/ui/popover'
+import { Separator } from '~/components/ui/separator'
 
 type ListOptionsProps = {
-  data: ListSelect;
-  onAddCard: () => void;
-};
+  data: ListSelect
+  onAddCard: () => void
+}
 
 export const ListOptions = ({ data, onAddCard }: ListOptionsProps) => {
-  const closeRef = useRef<ElementRef<"button">>(null);
+  const closeRef = useRef<ElementRef<'button'>>(null)
 
-  const utils = api.useUtils();
+  const utils = api.useUtils()
   const deleteList = api.list.deleteList.useMutation({
     onSuccess: async (data) => {
-      await utils.list.invalidate();
-      toast.success(`List "${data?.title}" deleted`);
-      closeRef.current?.click();
+      await utils.list.invalidate()
+      toast.success(`List "${data?.title}" deleted`)
+      closeRef.current?.click()
     },
-  });
+  })
 
   const copyList = api.list.copyList.useMutation({
     onSuccess: async (data) => {
-      await utils.list.invalidate();
-      toast.success(`List "${data?.title}" copied`);
-      closeRef.current?.click();
+      await utils.list.invalidate()
+      toast.success(`List "${data?.title}" copied`)
+      closeRef.current?.click()
     },
-  });
+  })
 
   function onDelete(formData: FormData) {
-    const id = formData.get("id") as string;
-    const boardId = formData.get("boardId") as string;
+    const id = formData.get('id') as string
+    const boardId = formData.get('boardId') as string
 
-    deleteList.mutate({ listId: Number(id), boardId: Number(boardId) });
+    deleteList.mutate({ listId: Number(id), boardId: Number(boardId) })
   }
 
   function onCopy(formData: FormData) {
-    const id = formData.get("id") as string;
-    const boardId = formData.get("boardId") as string;
+    const id = formData.get('id') as string
+    const boardId = formData.get('boardId') as string
 
-    copyList.mutate({ listId: Number(id), boardId: Number(boardId) });
+    copyList.mutate({ listId: Number(id), boardId: Number(boardId) })
   }
 
   return (
@@ -57,10 +57,7 @@ export const ListOptions = ({ data, onAddCard }: ListOptionsProps) => {
       <PopoverContent className="px-0 py-3" side="bottom" align="start">
         <div className="pb-4 text-center text-sm font-medium text-neutral-600">List actions</div>
         <PopoverClose ref={closeRef} asChild>
-          <Button
-            className="absolute right-2 top-2 h-auto w-auto p-2 text-neutral-600"
-            variant="ghost"
-          >
+          <Button className="absolute top-2 right-2 h-auto w-auto p-2 text-neutral-600" variant="ghost">
             <X className="h-4 w-4" />
           </Button>
         </PopoverClose>
@@ -100,5 +97,5 @@ export const ListOptions = ({ data, onAddCard }: ListOptionsProps) => {
         </form>
       </PopoverContent>
     </Popover>
-  );
-};
+  )
+}

@@ -1,67 +1,67 @@
-"use client";
+'use client'
 
-import { forwardRef, useRef, useState, type ElementRef, type FormEvent } from "react";
-import { api } from "~/trpc/react";
-import { Plus, X } from "lucide-react";
-import { toast } from "sonner";
-import { useEventListener, useOnClickOutside } from "usehooks-ts";
+import { Plus, X } from 'lucide-react'
+import { type ElementRef, type FormEvent, forwardRef, useRef, useState } from 'react'
+import { toast } from 'sonner'
+import { useEventListener, useOnClickOutside } from 'usehooks-ts'
+import { api } from '~/trpc/react'
 
-import { cn } from "~/lib/utils";
-import { Button } from "~/components/ui/button";
-import { Textarea } from "~/components/ui/textarea";
+import { Button } from '~/components/ui/button'
+import { Textarea } from '~/components/ui/textarea'
+import { cn } from '~/lib/utils'
 
 type CardFormProps = {
-  listId: number;
-  enableEditing: () => void;
-  disableEditing: () => void;
-  isEditing: boolean;
-};
+  listId: number
+  enableEditing: () => void
+  disableEditing: () => void
+  isEditing: boolean
+}
 
 export const CardForm = forwardRef<HTMLTextAreaElement, CardFormProps>(
   ({ listId, enableEditing, disableEditing, isEditing }, ref) => {
-    const formRef = useRef<ElementRef<"form">>(null);
-    const [title, setTitle] = useState("");
+    const formRef = useRef<ElementRef<'form'>>(null)
+    const [title, setTitle] = useState('')
 
-    const utils = api.useUtils();
+    const utils = api.useUtils()
     const { mutate, error, isPending } = api.card.createCard.useMutation({
       onSuccess: async (data) => {
-        await utils.card.getCardsByListId.invalidate({ listId });
-        await utils.list.invalidate();
+        await utils.card.getCardsByListId.invalidate({ listId })
+        await utils.list.invalidate()
 
-        toast.success(`Card "${data?.title}" created!`);
-        resetForm();
+        toast.success(`Card "${data?.title}" created!`)
+        resetForm()
       },
-    });
+    })
 
     function resetForm() {
-      disableEditing();
-      setTitle("");
+      disableEditing()
+      setTitle('')
     }
 
     function handleEscapeKey(e: KeyboardEvent) {
-      if (e.key === "Escape") {
-        resetForm();
+      if (e.key === 'Escape') {
+        resetForm()
       }
     }
 
     function handleOutsideClick() {
-      resetForm();
+      resetForm()
     }
 
     function handleTextareaKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
-      if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
-        formRef.current?.requestSubmit();
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault()
+        formRef.current?.requestSubmit()
       }
     }
 
     function handleFormSubmit(e: FormEvent) {
-      e.preventDefault();
-      mutate({ title, listId });
+      e.preventDefault()
+      mutate({ title, listId })
     }
 
-    useOnClickOutside(formRef, handleOutsideClick);
-    useEventListener("keydown", handleEscapeKey);
+    useOnClickOutside(formRef, handleOutsideClick)
+    useEventListener('keydown', handleEscapeKey)
 
     return (
       <div className="px-2 pt-2">
@@ -75,18 +75,16 @@ export const CardForm = forwardRef<HTMLTextAreaElement, CardFormProps>(
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               className={cn(
-                "resize-none shadow-sm outline-none ring-0 focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0",
+                'resize-none shadow-sm ring-0 outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0',
               )}
               placeholder="Enter a title for this card..."
             />
             {error?.data?.zodError?.fieldErrors.title && (
-              <span className="mb-8 text-xs text-red-500">
-                {error.data.zodError.fieldErrors.title}
-              </span>
+              <span className="mb-8 text-xs text-red-500">{error.data.zodError.fieldErrors.title}</span>
             )}
             <div className="flex items-center gap-x-1">
               <Button size="sm" type="submit" disabled={isPending}>
-                {isPending ? "Add card..." : "Add card"}
+                {isPending ? 'Add card...' : 'Add card'}
               </Button>
               <Button onClick={resetForm} size="sm" variant="ghost">
                 <X className="h-5 w-5" />
@@ -96,7 +94,7 @@ export const CardForm = forwardRef<HTMLTextAreaElement, CardFormProps>(
         ) : (
           <Button
             onClick={enableEditing}
-            className="h-auto w-full justify-start px-2 py-1.5 text-sm text-muted-foreground"
+            className="text-muted-foreground h-auto w-full justify-start px-2 py-1.5 text-sm"
             size="sm"
             variant="ghost"
           >
@@ -105,8 +103,8 @@ export const CardForm = forwardRef<HTMLTextAreaElement, CardFormProps>(
           </Button>
         )}
       </div>
-    );
+    )
   },
-);
+)
 
-CardForm.displayName = "CardForm";
+CardForm.displayName = 'CardForm'

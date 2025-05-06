@@ -1,22 +1,22 @@
-import { redirect } from "next/navigation";
-import { auth } from "@clerk/nextjs/server";
-import { HydrateClient } from "~/trpc/server";
+import { auth } from '@clerk/nextjs/server'
+import { redirect } from 'next/navigation'
+import { HydrateClient } from '~/trpc/server'
 
-import { Navbar } from "./_components/navbar";
+import { Navbar } from './_components/navbar'
 
 export default async function DashboardLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const { orgId } = await auth();
+  const { orgId } = await auth()
 
   if (!orgId) {
-    return redirect("/select-org");
+    return redirect('/select-org')
   }
 
   return (
     <HydrateClient>
-      <main className="min-h-svh mx-auto container">
+      <main className="container mx-auto min-h-svh">
         <Navbar orgId={orgId} />
         {children}
       </main>
     </HydrateClient>
-  );
+  )
 }

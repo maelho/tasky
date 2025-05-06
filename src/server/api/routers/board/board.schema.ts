@@ -1,41 +1,41 @@
-import { z } from "zod";
+import { z } from 'zod'
 
 // Common schema for ID fields
-const idSchema = z.number().int().positive();
-const orgIdSchema = z.string().min(1, { message: "orgId is required" });
+const idSchema = z.number().int().positive()
+const orgIdSchema = z.string().min(1, { message: 'orgId is required' })
 
 export const ZCreateBoard = z.object({
   title: z
     .string()
-    .min(3, { message: "Title must be at least 3 characters long." })
-    .max(255, { message: "Title must be at most 255 characters long." }),
+    .min(3, { message: 'Title must be at least 3 characters long.' })
+    .max(255, { message: 'Title must be at most 255 characters long.' }),
   orgId: orgIdSchema,
-});
+})
 
-export type TCreateBoard = z.infer<typeof ZCreateBoard>;
+export type TCreateBoard = z.infer<typeof ZCreateBoard>
 
 export const ZGetBoards = z.object({
   orgId: orgIdSchema,
-});
+})
 
-export type TGetBoards = z.infer<typeof ZGetBoards>;
+export type TGetBoards = z.infer<typeof ZGetBoards>
 
 export const ZGetBoardById = z.object({
   orgId: orgIdSchema,
   boardId: idSchema,
-});
+})
 
-export type TGetBoardById = z.infer<typeof ZGetBoardById>;
+export type TGetBoardById = z.infer<typeof ZGetBoardById>
 
 export const ZDeleteBoard = z.object({
   boardId: idSchema,
-});
+})
 
-export type TDeleteBoard = z.infer<typeof ZDeleteBoard>;
+export type TDeleteBoard = z.infer<typeof ZDeleteBoard>
 
 export const ZUpdateBoard = z.object({
-  title: z.string().min(3, { message: "Title must be at least 3 characters long." }),
+  title: z.string().min(3, { message: 'Title must be at least 3 characters long.' }),
   boardId: idSchema,
-});
+})
 
-export type TUpdateBoard = z.infer<typeof ZUpdateBoard>;
+export type TUpdateBoard = z.infer<typeof ZUpdateBoard>

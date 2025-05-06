@@ -1,6 +1,6 @@
-import { Suspense } from "react";
+import { Suspense } from 'react'
 
-import { ActivityList, ActivityListSkeleton } from "./_components/activity-list";
+import { ActivityList, ActivityListSkeleton } from './_components/activity-list'
 
 export default function ActivityPage() {
   return (
@@ -9,5 +9,5 @@ export default function ActivityPage() {
         <ActivityList />
       </Suspense>
     </div>
-  );
+  )
 }

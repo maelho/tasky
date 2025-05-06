@@ -1,15 +1,15 @@
-"use client";
+'use client'
 
-import type { AuditLogsSelect } from "~/server/db/schema";
-import { ActivityIcon } from "lucide-react";
+import { ActivityIcon } from 'lucide-react'
+import type { AuditLogsSelect } from '~/server/db/schema'
 
-import { Skeleton } from "~/components/ui/skeleton";
+import { Skeleton } from '~/components/ui/skeleton'
 
-import { ActivityItem } from "./activity-item";
+import { ActivityItem } from './activity-item'
 
 type ActivityProps = {
-  items: AuditLogsSelect[];
-};
+  items: AuditLogsSelect[]
+}
 
 export function Activity({ items }: ActivityProps) {
   return (
@@ -24,7 +24,7 @@ export function Activity({ items }: ActivityProps) {
         </ol>
       </div>
     </div>
-  );
+  )
 }
 
 Activity.Skeleton = function ActivitySkeleton() {
@@ -36,5 +36,5 @@ Activity.Skeleton = function ActivitySkeleton() {
         <Skeleton className="h-10 w-full bg-neutral-200" />
       </div>
     </div>
-  );
-};
+  )
+}

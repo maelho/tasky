@@ -1,26 +1,26 @@
-import { redirect } from "next/navigation";
-import { auth } from "@clerk/nextjs/server";
-import { api } from "~/trpc/server";
-import { LayoutDashboardIcon, PlusIcon } from "lucide-react";
+import { auth } from '@clerk/nextjs/server'
+import { LayoutDashboardIcon, PlusIcon } from 'lucide-react'
+import { redirect } from 'next/navigation'
+import { api } from '~/trpc/server'
 
-import { Button } from "~/components/ui/button";
+import { Button } from '~/components/ui/button'
 
-import { CreateBoardPopover } from "../../_components/create-board";
+import { CreateBoardPopover } from '../../_components/create-board'
 
 export default async function OrganizationIdPage() {
-  const { orgId } = await auth();
+  const { orgId } = await auth()
 
   if (!orgId) {
-    return redirect("/select-org");
+    return redirect('/select-org')
   }
 
-  void api.board.getBoards.prefetch({ orgId });
+  void api.board.getBoards.prefetch({ orgId })
   return (
-    <section className="flex flex-col items-center mt-10">
+    <section className="mt-10 flex flex-col items-center">
       <h3 className="text-center text-xl font-semibold">No Board Selected</h3>
-      <p className="flex items-center text-center text-muted-foreground mb-4">
+      <p className="text-muted-foreground mb-4 flex items-center text-center">
         Please choose a board by clicking the icon below to get started!
-        <LayoutDashboardIcon className="inline ml-2" size={18} />
+        <LayoutDashboardIcon className="ml-2 inline" size={18} />
       </p>
       <CreateBoardPopover sideOffset={5} orgId={orgId}>
         <Button>
@@ -28,5 +28,5 @@ export default async function OrganizationIdPage() {
         </Button>
       </CreateBoardPopover>
     </section>
-  );
+  )
 }
