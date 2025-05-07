@@ -1,5 +1,5 @@
 import { relations, sql } from 'drizzle-orm'
-import { index, int, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
+import { index, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 
 export const actionEnum = {
   CREATE: 'CREATE',
@@ -21,10 +21,10 @@ export const boards = sqliteTable('board', {
   id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   orgId: text('orgId').notNull(),
   title: text('title').notNull(),
-  createdAt: int('created_at', { mode: 'timestamp' })
+  createdAt: integer('created_at', { mode: 'timestamp' })
     .default(sql`(unixepoch())`)
     .notNull(),
-  updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(() => new Date()),
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).$onUpdate(() => new Date()),
 })
 
 export type BoardSelect = typeof boards.$inferSelect
@@ -37,10 +37,10 @@ export const lists = sqliteTable(
     title: text('title').notNull(),
     order: integer('order').notNull(),
     boardId: integer('board_id').notNull(),
-    createdAt: int('created_at', { mode: 'timestamp' })
+    createdAt: integer('created_at', { mode: 'timestamp' })
       .default(sql`(unixepoch())`)
       .notNull(),
-    updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(() => new Date()),
+    updatedAt: integer('updated_at', { mode: 'timestamp' }).$onUpdate(() => new Date()),
   },
   (t) => [index('board_idx').on(t.boardId)],
 )
@@ -56,10 +56,10 @@ export const cards = sqliteTable(
     order: integer('order').notNull(),
     description: text('description'),
     listId: integer('list_id').notNull(),
-    createdAt: int('created_at', { mode: 'timestamp' })
+    createdAt: integer('created_at', { mode: 'timestamp' })
       .default(sql`(unixepoch())`)
       .notNull(),
-    updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(() => new Date()),
+    updatedAt: integer('updated_at', { mode: 'timestamp' }).$onUpdate(() => new Date()),
   },
   (t) => [index('listIdx').on(t.listId)],
 )
@@ -77,10 +77,10 @@ export const auditLogs = sqliteTable('audit_log', {
   userId: text('user_id').notNull(),
   userImage: text('user_image').notNull(),
   userName: text('user_name').notNull(),
-  createdAt: int('created_at', { mode: 'timestamp' })
+  createdAt: integer('created_at', { mode: 'timestamp' })
     .default(sql`(unixepoch())`)
     .notNull(),
-  updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(() => new Date()),
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).$onUpdate(() => new Date()),
 })
 
 export type AuditLogsSelect = typeof auditLogs.$inferSelect

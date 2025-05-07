@@ -6,13 +6,11 @@
  * TL;DR - This is where all the tRPC server stuff is created and plugged in. The pieces you will
  * need to use are documented accordingly near the end.
  */
-import type { getAuth } from '@clerk/nextjs/server'
 import { TRPCError, initTRPC } from '@trpc/server'
 import superjson from 'superjson'
 import { ZodError } from 'zod'
 import { db } from '~/server/db'
-
-type AuthObject = ReturnType<typeof getAuth>
+import { auth } from '~/lib/auth'
 /**
  * 1. CONTEXT
  *
@@ -26,10 +24,14 @@ type AuthObject = ReturnType<typeof getAuth>
  * @see https://trpc.io/docs/server/context
  */
 
-export const createTRPCContext = async (opts: { headers: Headers; clerkAuth: AuthObject }) => {
+export const createTRPCContext = async (opts: { headers: Headers }) => {
+  const session = await auth.api.getSession({
+    headers: opts.headers,
+  })
+
   return {
-    auth: opts.clerkAuth,
     db,
+    session,
     ...opts,
   }
 }
@@ -107,15 +109,6 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
  */
 export const publicProcedure = t.procedure.use(timingMiddleware)
 
-/** Reusable middleware that enforces users are logged in before running the procedure. */
-const isAuthed = t.middleware(({ ctx, next }) => {
-  if (!ctx.auth.userId) {
-    throw new TRPCError({ code: 'UNAUTHORIZED' })
-  }
-  // Make ctx.userId non-nullable in protected procedures
-  return next({ ctx: { auth: ctx.clerkAuth } })
-})
-
 /**
  * Protected (authenticated) procedure
  *
@@ -124,9 +117,15 @@ const isAuthed = t.middleware(({ ctx, next }) => {
  *
  * @see https://trpc.io/docs/procedures
  */
-export const protectedProcedure = t.procedure.use(timingMiddleware).use(isAuthed)
+export const protectedProcedure = t.procedure.use(timingMiddleware).use(({ ctx, next }) => {
+  if (!ctx.session?.user) {
+    throw new TRPCError({ code: 'UNAUTHORIZED' })
+  }
 
-export type TRPCContext = Awaited<ReturnType<typeof createTRPCContext>>
-export type ProtectedTRPCContext = TRPCContext & {
-  auth: NonNullable<TRPCContext['auth']>
-}
+  return next({
+    ctx: {
+      // infers the `session` as non-nullable
+      session: { ...ctx.session, user: ctx.session.user },
+    },
+  })
+})

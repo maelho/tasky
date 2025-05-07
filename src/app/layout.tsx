@@ -1,8 +1,6 @@
 import '~/styles/globals.css'
 
-import { ClerkProvider } from '@clerk/nextjs'
 import type { Metadata } from 'next'
-import { env } from '~/env'
 import { recursive } from '~/fonts'
 import { TRPCReactProvider } from '~/trpc/react'
 
@@ -32,9 +30,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en" className={`${recursive.variable}`} suppressHydrationWarning>
       <body className="overflow-x-hidden">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
-          <ClerkProvider publishableKey={env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}>
-            <TRPCReactProvider>{children}</TRPCReactProvider>
-          </ClerkProvider>
+          <TRPCReactProvider>{children}</TRPCReactProvider>
           <Toaster />
         </ThemeProvider>
       </body>
