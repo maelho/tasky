@@ -1,13 +1,13 @@
 import { TRPCError } from '@trpc/server'
 import { and, desc, eq } from 'drizzle-orm'
-import type { ProtectedTRPCContext } from '~/server/api/trpc'
+import type { TRPCContext } from '~/server/api/trpc'
 import { auditLogs, entityTypeEnum } from '~/server/db/schema'
 
 import { validateOrgId } from '../../utils'
 import type * as Schema from './logs.schema'
 
 type Logs<T> = {
-  ctx: ProtectedTRPCContext
+  ctx: TRPCContext
   input: T
 }
 
@@ -35,7 +35,7 @@ export async function getAuditLogs({ ctx, input }: Logs<Schema.TGetAuditLogs>) {
   return auditLogsQuery ?? null
 }
 
-export async function getAllAuditLogs({ ctx }: { ctx: ProtectedTRPCContext }) {
+export async function getAllAuditLogs({ ctx }: { ctx: TRPCContext }) {
   const orgId = await validateOrgId(ctx)
 
   if (!orgId) {

@@ -1,6 +1,7 @@
-import { auth } from '@clerk/nextjs/server'
+import { auth } from '~/lib/auth'
 import { Provider } from 'jotai'
 import { redirect } from 'next/navigation'
+import { headers } from 'next/headers'
 import { api } from '~/trpc/server'
 
 import { ScrollArea, ScrollBar } from '~/components/ui/scroll-area'
@@ -32,28 +33,32 @@ type BoardIdPageProps = Promise<{ id: string }>
 // }
 
 export default async function BoardIdPage(props: { params: BoardIdPageProps }) {
-  const { orgId } = await auth()
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  })
 
-  if (!orgId) {
-    redirect('/select-org')
+  if (!session) {
+    return <div>Not authenticated</div>
   }
 
   const { id } = await props.params
   const board = await api.board.getBoardById({
     boardId: Number(id),
-    orgId,
+    userId: session.user.id,
   })
+
+  console.log(board)
 
   if (!board) {
     return
   }
 
+  // <BoardNavbar data={board} orgId={orgId} />
   void api.list.getlistsWithCards.prefetch({ boardId: board.id })
   return (
     <Provider>
       <CardModal />
       <div className="mb-5 space-y-5">
-        <BoardNavbar data={board} orgId={orgId} />
         <ScrollArea>
           <div className="mb-10">
             <ListContainer boardId={board.id} />

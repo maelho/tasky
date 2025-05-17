@@ -1,41 +1,48 @@
-import { z } from 'zod'
+import { z } from 'zod';
+import * as common from '../../schemas/common';
 
-// Common schema for ID fields
-const idSchema = z.number().int().positive()
-const orgIdSchema = z.string().min(1, { message: 'orgId is required' })
+/**
+ * Board schemas with optimized validation using common validators
+ */
 
+// Create a new board
 export const ZCreateBoard = z.object({
-  title: z
-    .string()
-    .min(3, { message: 'Title must be at least 3 characters long.' })
-    .max(255, { message: 'Title must be at most 255 characters long.' }),
-  orgId: orgIdSchema,
-})
+  title: common.title,
+});
 
-export type TCreateBoard = z.infer<typeof ZCreateBoard>
+export type TCreateBoard = z.infer<typeof ZCreateBoard>;
 
-export const ZGetBoards = z.object({
-  orgId: orgIdSchema,
-})
+// Get all boards (empty input as we use the user from session)
+export const ZGetBoards = z.object({});
 
-export type TGetBoards = z.infer<typeof ZGetBoards>
+export type TGetBoards = z.infer<typeof ZGetBoards>;
 
+// Get a specific board by ID with options
 export const ZGetBoardById = z.object({
-  orgId: orgIdSchema,
-  boardId: idSchema,
-})
+  boardId: common.id,
+  includeListsAndCards: z.boolean().optional().default(false),
+});
 
-export type TGetBoardById = z.infer<typeof ZGetBoardById>
+export type TGetBoardById = z.infer<typeof ZGetBoardById>;
 
+// Delete a board
 export const ZDeleteBoard = z.object({
-  boardId: idSchema,
-})
+  boardId: common.id,
+});
 
-export type TDeleteBoard = z.infer<typeof ZDeleteBoard>
+export type TDeleteBoard = z.infer<typeof ZDeleteBoard>;
 
+// Update a board
 export const ZUpdateBoard = z.object({
-  title: z.string().min(3, { message: 'Title must be at least 3 characters long.' }),
-  boardId: idSchema,
-})
+  boardId: common.id,
+  title: common.title,
+});
 
-export type TUpdateBoard = z.infer<typeof ZUpdateBoard>
+export type TUpdateBoard = z.infer<typeof ZUpdateBoard>;
+
+// Get board statistics
+export const ZGetBoardStats = z.object({
+  boardId: common.id,
+});
+
+export type TGetBoardStats = z.infer<typeof ZGetBoardStats>;

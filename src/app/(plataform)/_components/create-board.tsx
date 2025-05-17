@@ -13,14 +13,14 @@ type CreateBoardPopoverProps = {
   side?: 'left' | 'right' | 'top' | 'bottom'
   align?: 'start' | 'center' | 'end'
   sideOffset?: number
-  orgId: string
+  userId: string
 }
 
 export function CreateBoardPopover({
   children,
   side = 'bottom',
   sideOffset = 0,
-  orgId,
+  userId,
 }: PropsWithChildren<CreateBoardPopoverProps>) {
   const closeRef = useRef<ElementRef<'button'>>(null)
   const [formData, setFormData] = useState({ title: '' })
@@ -43,7 +43,7 @@ export function CreateBoardPopover({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    mutate({ title: formData.title, orgId })
+    mutate({ title: formData.title, userId })
   }
 
   return (

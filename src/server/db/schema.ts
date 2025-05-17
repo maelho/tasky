@@ -1,93 +1,168 @@
 import { relations, sql } from 'drizzle-orm'
-import { index, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
+import { index, integer, sqliteTable, text, uniqueIndex } from 'drizzle-orm/sqlite-core'
 
-export const actionEnum = {
-  CREATE: 'CREATE',
-  UPDATE: 'UPDATE',
-  DELETE: 'DELETE',
-} as const
+/**
+ * Common column creators for reuse throughout the schema
+ */
+const createIdColumn = (name = 'id') => integer(name, { mode: 'number' }).primaryKey({ autoIncrement: true })
 
-export type Action = (typeof actionEnum)[keyof typeof actionEnum]
+const createStringIdColumn = (name = 'id') => text(name).primaryKey()
 
-export const entityTypeEnum = {
-  BOARD: 'BOARD',
-  LIST: 'LIST',
-  CARD: 'CARD',
-} as const
-
-export type EntityType = (typeof entityTypeEnum)[keyof typeof entityTypeEnum]
-
-export const boards = sqliteTable('board', {
-  id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-  orgId: text('orgId').notNull(),
-  title: text('title').notNull(),
+const createTimestamps = () => ({
   createdAt: integer('created_at', { mode: 'timestamp' })
     .default(sql`(unixepoch())`)
     .notNull(),
   updatedAt: integer('updated_at', { mode: 'timestamp' }).$onUpdate(() => new Date()),
 })
 
+/**
+ * Task Management Tables
+ */
+export const boards = sqliteTable(
+  'board',
+  {
+    id: createIdColumn(),
+    userId: text('user_id').notNull(),
+    title: text('title').notNull(),
+    ...createTimestamps(),
+  },
+  (board) => [index('board_user_id_idx').on(board.userId)],
+)
+
 export type BoardSelect = typeof boards.$inferSelect
-export type BoardInser = typeof boards.$inferInsert
+export type BoardInsert = typeof boards.$inferInsert
 
 export const lists = sqliteTable(
   'list',
   {
-    id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+    id: createIdColumn(),
     title: text('title').notNull(),
     order: integer('order').notNull(),
-    boardId: integer('board_id').notNull(),
-    createdAt: integer('created_at', { mode: 'timestamp' })
-      .default(sql`(unixepoch())`)
-      .notNull(),
-    updatedAt: integer('updated_at', { mode: 'timestamp' }).$onUpdate(() => new Date()),
+    boardId: integer('board_id')
+      .notNull()
+      .references(() => boards.id, { onDelete: 'cascade' }),
+    ...createTimestamps(),
   },
-  (t) => [index('board_idx').on(t.boardId)],
+  (list) => [index('list_board_id_idx').on(list.boardId), index('list_board_order_idx').on(list.boardId, list.order)],
 )
 
 export type ListSelect = typeof lists.$inferSelect
-export type ListInser = typeof lists.$inferInsert
+export type ListInsert = typeof lists.$inferInsert
 
 export const cards = sqliteTable(
   'card',
   {
-    id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+    id: createIdColumn(),
     title: text('title').notNull(),
     order: integer('order').notNull(),
     description: text('description'),
-    listId: integer('list_id').notNull(),
-    createdAt: integer('created_at', { mode: 'timestamp' })
-      .default(sql`(unixepoch())`)
-      .notNull(),
-    updatedAt: integer('updated_at', { mode: 'timestamp' }).$onUpdate(() => new Date()),
+    listId: integer('list_id')
+      .notNull()
+      .references(() => lists.id, { onDelete: 'cascade' }),
+    ...createTimestamps(),
   },
-  (t) => [index('listIdx').on(t.listId)],
+  (card) => [index('card_list_id_idx').on(card.listId), index('card_list_order_idx').on(card.listId, card.order)],
 )
 
 export type CardSelect = typeof cards.$inferSelect
-export type CardInser = typeof cards.$inferInsert
+export type CardInsert = typeof cards.$inferInsert
 
-export const auditLogs = sqliteTable('audit_log', {
-  id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-  orgId: text('org_id').notNull(),
-  action: text('action').$type<Action>().notNull(),
-  entityId: integer('entity_id').notNull(),
-  entityType: text('entity_type').$type<EntityType>().notNull(),
-  entityTitle: text('entity_title').notNull(),
-  userId: text('user_id').notNull(),
-  userImage: text('user_image').notNull(),
-  userName: text('user_name').notNull(),
-  createdAt: integer('created_at', { mode: 'timestamp' })
-    .default(sql`(unixepoch())`)
-    .notNull(),
-  updatedAt: integer('updated_at', { mode: 'timestamp' }).$onUpdate(() => new Date()),
-})
+/**
+ * Authentication Tables
+ */
+export const user = sqliteTable(
+  'user',
+  {
+    id: createStringIdColumn(),
+    name: text('name').notNull(),
+    email: text('email').notNull(),
+    emailVerified: integer('email_verified', { mode: 'boolean' }).default(false).notNull(),
+    image: text('image'),
+    ...createTimestamps(),
+  },
+  (user) => [uniqueIndex('user_email_idx').on(user.email)],
+)
 
-export type AuditLogsSelect = typeof auditLogs.$inferSelect
-export type AuditLogsInser = typeof auditLogs.$inferInsert
+export type UserSelect = typeof user.$inferSelect
+export type UserInsert = typeof user.$inferInsert
 
-export const boardRelations = relations(boards, ({ many }) => ({
+export const session = sqliteTable(
+  'session',
+  {
+    id: createStringIdColumn(),
+    expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
+    token: text('token').notNull(),
+    ipAddress: text('ip_address'),
+    userAgent: text('user_agent'),
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    ...createTimestamps(),
+  },
+  (session) => [
+    uniqueIndex('session_token_idx').on(session.token),
+    index('session_user_id_idx').on(session.userId),
+    index('session_expires_at_idx').on(session.expiresAt),
+  ],
+)
+
+export type SessionSelect = typeof session.$inferSelect
+export type SessionInsert = typeof session.$inferInsert
+
+export const account = sqliteTable(
+  'account',
+  {
+    id: createStringIdColumn(),
+    accountId: text('account_id').notNull(),
+    providerId: text('provider_id').notNull(),
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    accessToken: text('access_token'),
+    refreshToken: text('refresh_token'),
+    idToken: text('id_token'),
+    accessTokenExpiresAt: integer('access_token_expires_at', { mode: 'timestamp' }),
+    refreshTokenExpiresAt: integer('refresh_token_expires_at', { mode: 'timestamp' }),
+    scope: text('scope'),
+    password: text('password'),
+    ...createTimestamps(),
+  },
+  (account) => [
+    uniqueIndex('account_user_provider_idx').on(account.userId, account.providerId),
+    index('account_user_id_idx').on(account.userId),
+  ],
+)
+
+export type AccountSelect = typeof account.$inferSelect
+export type AccountInsert = typeof account.$inferInsert
+
+export const verification = sqliteTable(
+  'verification',
+  {
+    id: createStringIdColumn(),
+    identifier: text('identifier').notNull(),
+    value: text('value').notNull(),
+    expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
+    ...createTimestamps(),
+  },
+  (verification) => [
+    uniqueIndex('verification_identifier_value_idx').on(verification.identifier, verification.value),
+    index('verification_expires_at_idx').on(verification.expiresAt),
+  ],
+)
+
+export type VerificationSelect = typeof verification.$inferSelect
+export type VerificationInsert = typeof verification.$inferInsert
+
+/**
+ * Relations definitions
+ */
+export const boardRelations = relations(boards, ({ many, one }) => ({
   lists: many(lists),
+  user: one(user, {
+    fields: [boards.userId],
+    references: [user.id],
+  }),
 }))
 
 export const listRelations = relations(lists, ({ one, many }) => ({
@@ -105,56 +180,22 @@ export const cardRelations = relations(cards, ({ one }) => ({
   }),
 }))
 
-export const user = sqliteTable('user', {
-  id: text('id').primaryKey(),
-  name: text('name').notNull(),
-  email: text('email').notNull().unique(),
-  emailVerified: integer('email_verified', { mode: 'boolean' }).notNull(),
-  image: text('image'),
-  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
-  updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),
-})
+export const userRelations = relations(user, ({ many }) => ({
+  boards: many(boards),
+  sessions: many(session),
+  accounts: many(account),
+}))
 
-export const session = sqliteTable('session', {
-  id: text('id').primaryKey(),
-  expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
-  token: text('token').notNull().unique(),
-  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
-  updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),
-  ipAddress: text('ip_address'),
-  userAgent: text('user_agent'),
-  userId: text('user_id')
-    .notNull()
-    .references(() => user.id, { onDelete: 'cascade' }),
-})
-
-export const account = sqliteTable('account', {
-  id: text('id').primaryKey(),
-  accountId: text('account_id').notNull(),
-  providerId: text('provider_id').notNull(),
-  userId: text('user_id')
-    .notNull()
-    .references(() => user.id, { onDelete: 'cascade' }),
-  accessToken: text('access_token'),
-  refreshToken: text('refresh_token'),
-  idToken: text('id_token'),
-  accessTokenExpiresAt: integer('access_token_expires_at', {
-    mode: 'timestamp',
+export const sessionRelations = relations(session, ({ one }) => ({
+  user: one(user, {
+    fields: [session.userId],
+    references: [user.id],
   }),
-  refreshTokenExpiresAt: integer('refresh_token_expires_at', {
-    mode: 'timestamp',
-  }),
-  scope: text('scope'),
-  password: text('password'),
-  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
-  updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),
-})
+}))
 
-export const verification = sqliteTable('verification', {
-  id: text('id').primaryKey(),
-  identifier: text('identifier').notNull(),
-  value: text('value').notNull(),
-  expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
-  createdAt: integer('created_at', { mode: 'timestamp' }),
-  updatedAt: integer('updated_at', { mode: 'timestamp' }),
-})
+export const accountRelations = relations(account, ({ one }) => ({
+  user: one(user, {
+    fields: [account.userId],
+    references: [user.id],
+  }),
+}))

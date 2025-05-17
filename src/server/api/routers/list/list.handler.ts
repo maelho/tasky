@@ -1,72 +1,51 @@
-import { TRPCError } from '@trpc/server'
-import { and, asc, desc, eq, exists } from 'drizzle-orm'
-import type { ProtectedTRPCContext } from '~/server/api/trpc'
-import { type Action, type EntityType, boards, cards, lists } from '~/server/db/schema'
+import { TRPCError } from '@trpc/server';
+import { and, asc, desc, eq, exists, sql } from 'drizzle-orm';
+import type { ProtectedContext } from '~/server/api/trpc';
+import { boards, cards, lists } from '~/server/db/schema';
+import type * as Schema from './list.schema';
 
-import { createAuditLog, validateOrgId } from '../../utils'
-import type * as Schema from './list.schema'
+/**
+ * Get the next order value for a list in a board using efficient MAX function
+ */
+async function getNextListOrder(ctx: ProtectedContext, boardId: number): Promise<number> {
+  const result = await ctx.db
+    .select({ maxOrder: sql<number>`COALESCE(MAX(${lists.order}), 0)` })
+    .from(lists)
+    .where(eq(lists.boardId, boardId))
+    .get();
 
-type List<T> = {
-  ctx: ProtectedTRPCContext
-  input: T
+  return (result?.maxOrder ?? 0) + 1;
 }
 
-async function validateBoardAccess(ctx: ProtectedTRPCContext, boardId: number, orgId: string): Promise<void> {
-  const board = await ctx.db.query.boards.findFirst({
-    where: and(eq(boards.id, boardId), eq(boards.orgId, orgId)),
-  })
-  if (!board) {
-    throw new TRPCError({ code: 'BAD_REQUEST', message: 'Board not found' })
-  }
-}
+export async function updateListOrder({ ctx, input }: { ctx: ProtectedContext; input: Schema.TUpdateListOrder }) {
+  const { items } = input;
 
-export async function updateListOrder({ ctx, input }: List<Schema.TUpdateListOrder>) {
-  const { items } = input
-  const orgId = await validateOrgId(ctx)
-
-  if (!items || !orgId) {
-    throw new TRPCError({ code: 'BAD_REQUEST', message: 'Items not found' })
+  if (!items.length) {
+    throw new TRPCError({ code: 'BAD_REQUEST', message: 'Items not found' });
   }
 
-  const updates = items.map((list) =>
-    ctx.db
-      .update(lists)
-      .set({ order: list.order })
-      .where(
-        and(
-          eq(lists.id, list.id),
-          exists(
-            ctx.db
-              .select()
-              .from(boards)
-              .where(and(eq(boards.id, lists.boardId), eq(boards.orgId, orgId))),
-          ),
-        ),
-      ),
-  )
-
+  // Batch update all lists in a single transaction for better performance
   await ctx.db.transaction(async (tx) => {
-    for (const update of updates) {
-      await tx.run(update)
-    }
-  })
+    const updatePromises = items.map((item) =>
+      tx
+        .update(lists)
+        .set({ order: item.order })
+        .where(eq(lists.id, item.id))
+    );
+    
+    await Promise.all(updatePromises);
+  });
+  
+  return { success: true };
 }
 
-export async function createList({ input, ctx }: List<Schema.TCreateList>) {
-  const { title, boardId } = input
-  const orgId = await validateOrgId(ctx)
-  await validateBoardAccess(ctx, boardId, orgId)
+export async function createList({ ctx, input }: { ctx: ProtectedContext; input: Schema.TCreateList }) {
+  const { title, boardId } = input;
 
-  const lastList = await ctx.db.query.lists.findFirst({
-    where: eq(lists.boardId, boardId),
-    orderBy: [desc(lists.createdAt)],
-    columns: {
-      order: true,
-    },
-  })
+  // Get next order value efficiently with MAX function
+  const newOrder = await getNextListOrder(ctx, boardId);
 
-  const newOrder = lastList ? lastList.order + 1 : 1
-
+  // Create the list
   const [list] = await ctx.db
     .insert(lists)
     .values({
@@ -74,215 +53,152 @@ export async function createList({ input, ctx }: List<Schema.TCreateList>) {
       boardId,
       order: newOrder,
     })
-    .returning()
+    .returning();
 
-  if (list) {
-    await createAuditLog({
-      orgId,
-      action: 'CREATE' as Action,
-      entityId: list.id,
-      entityType: 'LIST' as EntityType,
-      entityTitle: list.title,
-    })
-  }
-
-  return list ?? null
+  return list;
 }
 
-export async function getlistsWithCards({ ctx, input }: List<Schema.TGetlistsWithCards>) {
-  const { boardId } = input
-  const orgId = await validateOrgId(ctx)
+export async function getlistsWithCards({ ctx, input }: { ctx: ProtectedContext; input: Schema.TGetlistsWithCards }) {
+  const { boardId } = input;
 
+  // Get lists with cards in a single query for better performance
   const listsWithCards = await ctx.db.query.lists.findMany({
-    where: (lists, { eq, and, exists }) =>
-      and(
-        eq(lists.boardId, boardId),
-        exists(
-          ctx.db
-            .select()
-            .from(boards)
-            .where(and(eq(boards.id, lists.boardId), eq(boards.orgId, orgId))),
-        ),
-      ),
+    where: eq(lists.boardId, boardId),
     with: {
       cards: {
         orderBy: [asc(cards.order)],
       },
     },
     orderBy: [asc(lists.order)],
-  })
+  });
 
-  return listsWithCards ?? null
+  return listsWithCards;
 }
 
-export async function copyList({ ctx, input }: List<Schema.TCopyList>) {
-  const { listId, boardId } = input
-  const orgId = await validateOrgId(ctx)
-  await validateBoardAccess(ctx, boardId, orgId)
+export async function copyList({ ctx, input }: { ctx: ProtectedContext; input: Schema.TCopyList }) {
+  const { listId, boardId } = input;
 
+  // Get the list to copy
   const listToCopy = await ctx.db.query.lists.findFirst({
-    where: (lists, { eq, and, exists }) =>
-      and(
-        eq(lists.id, listId),
-        eq(lists.boardId, boardId),
-        exists(
-          ctx.db
-            .select()
-            .from(boards)
-            .where(and(eq(boards.id, lists.boardId), eq(boards.orgId, orgId))),
-        ),
-      ),
-    with: {
-      cards: true,
-    },
-  })
+    where: and(
+      eq(lists.id, listId),
+      eq(lists.boardId, boardId)
+    ),
+  });
 
   if (!listToCopy) {
-    throw new TRPCError({ code: 'BAD_REQUEST', message: 'List not found' })
+    throw new TRPCError({ code: 'NOT_FOUND', message: 'List not found' });
   }
+  
+  // Get cards for this list
+  const cardsToCopy = await ctx.db.query.cards.findMany({
+    where: eq(cards.listId, listId),
+  });
 
-  const lastList = await ctx.db.query.lists.findFirst({
-    where: eq(lists.boardId, boardId),
-    orderBy: [desc(lists.createdAt)],
-    columns: {
-      order: true,
-    },
-  })
+  // Get next order value
+  const newOrder = await getNextListOrder(ctx, boardId);
 
-  const newOrder = lastList ? lastList.order + 1 : 1
+  // Use transaction for atomic operation
+  return await ctx.db.transaction(async (tx) => {
+    // Create the new list
+    const [newList] = await tx
+      .insert(lists)
+      .values({
+        boardId,
+        title: `${listToCopy.title} - Copy`,
+        order: newOrder,
+      })
+      .returning();
 
-  const [newList] = await ctx.db
-    .insert(lists)
-    .values({
-      boardId: listToCopy.boardId,
-      title: `${listToCopy.title} - Copy`,
-      order: newOrder,
-    })
-    .returning()
+    if (!newList) {
+      throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Failed to create list copy' });
+    }
 
-  if (!newList?.id) {
-    throw new TRPCError({ code: 'BAD_REQUEST', message: 'List not found' })
-  }
+    // Copy all cards if there are any
+    if (cardsToCopy.length > 0) {
+      const cardInsertValues = cardsToCopy.map(card => ({
+        listId: newList.id,
+        title: card.title,
+        description: card.description,
+        order: card.order,
+      }));
 
-  const cardData = listToCopy.cards.map((card) => ({
-    listId: newList.id,
-    title: card.title,
-    description: card.description,
-    order: card.order,
-  }))
+      await tx.insert(cards).values(cardInsertValues);
+    }
 
-  await ctx.db.insert(cards).values(cardData)
-
-  const [list] = await ctx.db
-    .select()
-    .from(lists)
-    .where(eq(lists.id, newList.id))
-    .leftJoin(cards, eq(cards.listId, lists.id))
-
-  if (list?.list) {
-    await createAuditLog({
-      orgId,
-      action: 'CREATE' as Action,
-      entityId: list.list.id,
-      entityType: 'LIST' as EntityType,
-      entityTitle: list.list.title,
-    })
-  }
-
-  return list?.list ?? null
+    return newList;
+  });
 }
 
-export async function deleteList({ ctx, input }: List<Schema.TDeleteList>) {
-  const { listId, boardId } = input
-  const orgId = await validateOrgId(ctx)
-  await validateBoardAccess(ctx, boardId, orgId)
+export async function deleteList({ ctx, input }: { ctx: ProtectedContext; input: Schema.TDeleteList }) {
+  const { listId, boardId } = input;
 
-  const [list] = await ctx.db
+  // Cards will be automatically deleted due to cascade constraint in schema
+  const [deletedList] = await ctx.db
     .delete(lists)
-    .where(
-      and(
-        eq(lists.id, listId),
-        eq(lists.boardId, boardId),
-        exists(
-          ctx.db
-            .select()
-            .from(boards)
-            .where(and(eq(boards.id, lists.boardId), eq(boards.orgId, orgId))),
-        ),
-      ),
-    )
-    .returning()
+    .where(and(
+      eq(lists.id, listId),
+      eq(lists.boardId, boardId)
+    ))
+    .returning();
 
-  if (list) {
-    await createAuditLog({
-      orgId,
-      action: 'DELETE' as Action,
-      entityId: list.id,
-      entityType: 'LIST' as EntityType,
-      entityTitle: list.title,
-    })
+  if (!deletedList) {
+    throw new TRPCError({ code: 'NOT_FOUND', message: 'List not found' });
   }
 
-  return list ?? null
+  return deletedList;
 }
 
-export async function updateList({ ctx, input }: List<Schema.TUpdateList>) {
-  const { title, listId, boardId } = input
-  const orgId = await validateOrgId(ctx)
-  await validateBoardAccess(ctx, boardId, orgId)
+export async function updateList({ ctx, input }: { ctx: ProtectedContext; input: Schema.TUpdateList }) {
+  const { title, listId, boardId, order } = input;
 
-  const [list] = await ctx.db
+  // Update list properties
+  const [updatedList] = await ctx.db
     .update(lists)
     .set({
-      title: title,
+      title,
+      ...(order !== undefined ? { order } : {}),
     })
-    .where(
-      and(
-        eq(lists.id, listId),
-        eq(lists.boardId, boardId),
-        exists(
-          ctx.db
-            .select()
-            .from(boards)
-            .where(and(eq(boards.id, lists.boardId), eq(boards.orgId, orgId))),
-        ),
-      ),
-    )
-    .returning()
+    .where(and(
+      eq(lists.id, listId),
+      eq(lists.boardId, boardId)
+    ))
+    .returning();
 
-  if (list) {
-    await createAuditLog({
-      orgId,
-      action: 'UPDATE' as Action,
-      entityId: list.id,
-      entityType: 'LIST' as EntityType,
-      entityTitle: list.title,
-    })
+  if (!updatedList) {
+    throw new TRPCError({ code: 'NOT_FOUND', message: 'List not found' });
   }
 
-  return list ?? null
+  return updatedList;
 }
 
-export async function getListById({ ctx, input }: List<Schema.TGetListById>) {
-  const { id } = input
+export async function getListById({ ctx, input }: { ctx: ProtectedContext; input: Schema.TGetListById }) {
+  const { id } = input;
 
   const list = await ctx.db.query.lists.findFirst({
     where: eq(lists.id, id),
-  })
+    with: {
+      cards: {
+        orderBy: [asc(cards.order)]
+      }
+    }
+  });
 
   if (!list) {
-    throw new TRPCError({ code: 'NOT_FOUND', message: 'List not found' })
+    throw new TRPCError({ code: 'NOT_FOUND', message: 'List not found' });
   }
 
-  return list ?? null
+  return list;
 }
 
-export async function getListsByBoardId({ ctx, input }: List<Schema.TGetListsByBoardId>) {
-  const { boardId } = input
+export async function getListsByBoardId({ ctx, input }: { ctx: ProtectedContext; input: Schema.TGetListsByBoardId }) {
+  const { boardId } = input;
 
-  const list = await ctx.db.query.lists.findMany({
+  // Get lists for the board with efficient ordering
+  const boardLists = await ctx.db.query.lists.findMany({
     where: eq(lists.boardId, boardId),
-  })
+    orderBy: [asc(lists.order)],
+  });
 
-  return list ?? null
+  return boardLists;
 }

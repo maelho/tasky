@@ -1,68 +1,84 @@
-import { z } from 'zod'
+import { z } from 'zod';
+import * as common from '../../schemas/common';
 
-// Common schema for ID fields
-const idSchema = z.number().int().positive({ message: 'ID must be a positive integer.' })
-
+/**
+ * Schema for creating a new card in a list
+ */
 export const ZCreateCard = z.object({
-  title: z
-    .string()
-    .min(3, { message: 'Title must be at least 3 characters long.' })
-    .max(255, { message: 'Title must be at most 255 characters long.' }),
-  listId: idSchema,
-})
+  title: common.title,
+  listId: common.id,
+});
 
-export type TCreateCard = z.infer<typeof ZCreateCard>
+export type TCreateCard = z.infer<typeof ZCreateCard>;
 
-// Schema for card item in update operation
+/**
+ * Schema for a card item in batch update operations
+ */
 const cardItemSchema = z.object({
-  id: idSchema,
-  title: z.string().min(3, { message: 'Title must be at least 3 characters long.' }),
-  order: z.number().int().nonnegative({ message: 'Order must be a non-negative integer.' }),
-  listId: idSchema,
-})
+  id: common.id,
+  order: common.order,
+  listId: common.id,
+});
 
+/**
+ * Schema for updating multiple cards' order in a single operation
+ * Supports moving cards between lists
+ */
 export const ZUpdateCardOrder = z.object({
-  items: z.array(cardItemSchema).nonempty({ message: 'At least one item is required.' }),
-})
+  items: z.array(cardItemSchema).min(1, { 
+    message: 'At least one item is required.' 
+  }),
+});
 
-export type TUpdateCardOrder = z.infer<typeof ZUpdateCardOrder>
+export type TUpdateCardOrder = z.infer<typeof ZUpdateCardOrder>;
 
+/**
+ * Schema for getting a card by its ID
+ */
 export const ZGetCardById = z.object({
-  id: idSchema,
-})
+  id: common.id,
+});
 
-export type TGetCardById = z.infer<typeof ZGetCardById>
+export type TGetCardById = z.infer<typeof ZGetCardById>;
 
+/**
+ * Schema for updating a card's properties
+ */
 export const ZUpdateCard = z.object({
-  id: idSchema,
-  title: z
-    .string()
-    .min(3, { message: 'Title must be at least 3 characters long.' })
-    .max(255, { message: 'Title must be at most 255 characters long.' })
-    .optional(),
-  order: z.number().int().nonnegative({ message: 'Order must be a non-negative integer.' }).optional(),
-  listId: z.number().int().positive({ message: 'List ID must be a positive integer.' }).optional(),
+  id: common.id,
+  title: common.title.optional(),
   description: z.string().optional(),
-})
+  order: common.order.optional(),
+  listId: common.id.optional(),
+});
 
-export type TUpdateCard = z.infer<typeof ZUpdateCard>
+export type TUpdateCard = z.infer<typeof ZUpdateCard>;
 
+/**
+ * Schema for copying a card
+ */
 export const ZCopyCard = z.object({
-  id: idSchema,
-  boardId: idSchema,
-})
+  id: common.id,
+  boardId: common.id,
+});
 
-export type TCopyCard = z.infer<typeof ZCopyCard>
+export type TCopyCard = z.infer<typeof ZCopyCard>;
 
+/**
+ * Schema for deleting a card
+ */
 export const ZDeleteCard = z.object({
-  id: idSchema,
-  boardId: idSchema,
-})
+  id: common.id,
+  boardId: common.id,
+});
 
-export type TDeleteCard = z.infer<typeof ZDeleteCard>
+export type TDeleteCard = z.infer<typeof ZDeleteCard>;
 
+/**
+ * Schema for getting all cards in a list
+ */
 export const ZGetCardsByListId = z.object({
-  listId: z.number().int().positive(),
-})
+  listId: common.id,
+});
 
-export type TGetCardsByListId = z.infer<typeof ZGetCardsByListId>
+export type TGetCardsByListId = z.infer<typeof ZGetCardsByListId>;
