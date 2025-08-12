@@ -9,7 +9,12 @@ import { useAtom } from "jotai";
 import { toast } from "sonner";
 
 import { cardModalAtom } from "~/hooks/use-card-modal";
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from "~/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from "~/components/ui/dialog";
 
 import { Actions } from "./actions";
 import { Activity } from "./activity";
@@ -81,7 +86,9 @@ export function CardModal() {
           <div className="grid grid-cols-1 md:grid-cols-4 md:gap-4">
             <div className="col-span-3">
               <div className="w-full space-y-6">
-                <p className="text-red-500">Error loading card data: {cardError.message}</p>
+                <p className="text-red-500">
+                  Error loading card data: {cardError.message}
+                </p>
               </div>
             </div>
           </div>
@@ -103,13 +110,25 @@ export function CardModal() {
             <DialogDescription>{cardData?.description}</DialogDescription>
           </>
         </VisuallyHidden>
-        {isCardLoading || !cardData ? <Header.Skeleton /> : <Header data={cardData} />}
+        {isCardLoading || !cardData ? (
+          <Header.Skeleton />
+        ) : (
+          <Header data={cardData} />
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-4 md:gap-4">
           <div className="col-span-3">
             <div className="w-full space-y-6">
-              {cardData ? <Description data={cardData} /> : <Description.Skeleton />}
-              {isLogsLoading ? <Activity.Skeleton /> : <Activity items={auditLogsData ?? []} />}
+              {cardData ? (
+                <Description data={cardData} />
+              ) : (
+                <Description.Skeleton />
+              )}
+              {isLogsLoading ? (
+                <Activity.Skeleton />
+              ) : (
+                <Activity items={auditLogsData ?? []} />
+              )}
             </div>
           </div>
           {cardData ? <Actions data={cardData} /> : <Actions.Skeleton />}

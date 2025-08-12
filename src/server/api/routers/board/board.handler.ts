@@ -41,7 +41,10 @@ export async function getBoards({ ctx, input }: Board<Schema.TGetBoards>) {
   return boardResults ?? null;
 }
 
-export async function getBoardById({ ctx, input }: Board<Schema.TGetBoardById>) {
+export async function getBoardById({
+  ctx,
+  input,
+}: Board<Schema.TGetBoardById>) {
   const board = await ctx.db
     .select()
     .from(boards)

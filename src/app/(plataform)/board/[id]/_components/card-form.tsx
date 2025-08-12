@@ -1,6 +1,12 @@
 "use client";
 
-import { forwardRef, useRef, useState, type ElementRef, type FormEvent } from "react";
+import {
+  forwardRef,
+  useRef,
+  useState,
+  type ElementRef,
+  type FormEvent,
+} from "react";
 import { api } from "~/trpc/react";
 import { Plus, X } from "lucide-react";
 import { toast } from "sonner";
@@ -48,7 +54,9 @@ export const CardForm = forwardRef<HTMLTextAreaElement, CardFormProps>(
       resetForm();
     }
 
-    function handleTextareaKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+    function handleTextareaKeyDown(
+      e: React.KeyboardEvent<HTMLTextAreaElement>,
+    ) {
       if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
         formRef.current?.requestSubmit();
@@ -66,7 +74,11 @@ export const CardForm = forwardRef<HTMLTextAreaElement, CardFormProps>(
     return (
       <div className="px-2 pt-2">
         {isEditing ? (
-          <form ref={formRef} onSubmit={handleFormSubmit} className="m-1 space-y-4 px-1 py-0.5">
+          <form
+            ref={formRef}
+            onSubmit={handleFormSubmit}
+            className="m-1 space-y-4 px-1 py-0.5"
+          >
             <Textarea
               id="title"
               name="title"
@@ -75,7 +87,7 @@ export const CardForm = forwardRef<HTMLTextAreaElement, CardFormProps>(
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               className={cn(
-                "resize-none shadow-sm outline-none ring-0 focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0",
+                "resize-none shadow-sm ring-0 outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0",
               )}
               placeholder="Enter a title for this card..."
             />
@@ -96,7 +108,7 @@ export const CardForm = forwardRef<HTMLTextAreaElement, CardFormProps>(
         ) : (
           <Button
             onClick={enableEditing}
-            className="h-auto w-full justify-start px-2 py-1.5 text-sm text-muted-foreground"
+            className="text-muted-foreground h-auto w-full justify-start px-2 py-1.5 text-sm"
             size="sm"
             variant="ghost"
           >

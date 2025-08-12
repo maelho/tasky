@@ -14,11 +14,13 @@ export function ActivityItem({ data }: ActivityItemProps) {
         <AvatarImage src={data.userImage} />
       </Avatar>
       <div className="flex flex-col space-y-0.5">
-        <p className="text-sm text-muted-foreground">
-          <span className="font-semibold lowercase text-neutral-700">{data.userName}</span>{" "}
+        <p className="text-muted-foreground text-sm">
+          <span className="font-semibold text-neutral-700 lowercase">
+            {data.userName}
+          </span>{" "}
           {generateLogMessage(data)}
         </p>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-muted-foreground text-xs">
           {formatDateToLocal(data.createdAt.toString())}
         </p>
       </div>

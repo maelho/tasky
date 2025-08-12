@@ -6,7 +6,7 @@ import { Button } from "~/components/ui/button";
 export async function Navbar() {
   return (
     <nav className="fixed inset-x-0 flex h-20">
-      <div className="container flex w-full items-center justify-between  gap-4">
+      <div className="container flex w-full items-center justify-between gap-4">
         <h1 className="scroll-m-20 text-2xl font-semibold tracking-tight lg:text-2xl"></h1>
         <div className="space-x-4">
           <Button size="sm" variant="ghost" asChild>

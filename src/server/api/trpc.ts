@@ -26,7 +26,10 @@ type AuthObject = ReturnType<typeof getAuth>;
  * @see https://trpc.io/docs/server/context
  */
 
-export const createTRPCContext = async (opts: { headers: Headers; clerkAuth: AuthObject }) => {
+export const createTRPCContext = async (opts: {
+  headers: Headers;
+  clerkAuth: AuthObject;
+}) => {
   return {
     auth: opts.clerkAuth,
     db,
@@ -48,7 +51,8 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
       ...shape,
       data: {
         ...shape.data,
-        zodError: error.cause instanceof ZodError ? error.cause.flatten() : null,
+        zodError:
+          error.cause instanceof ZodError ? error.cause.flatten() : null,
       },
     };
   },
@@ -124,7 +128,9 @@ const isAuthed = t.middleware(({ ctx, next }) => {
  *
  * @see https://trpc.io/docs/procedures
  */
-export const protectedProcedure = t.procedure.use(timingMiddleware).use(isAuthed);
+export const protectedProcedure = t.procedure
+  .use(timingMiddleware)
+  .use(isAuthed);
 
 export type TRPCContext = Awaited<ReturnType<typeof createTRPCContext>>;
 export type ProtectedTRPCContext = TRPCContext & {

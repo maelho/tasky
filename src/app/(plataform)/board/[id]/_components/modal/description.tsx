@@ -67,13 +67,18 @@ export function Description({ data }: DescriptionProps) {
               placeholder="Add a more detailed description"
               defaultValue={data.description ?? ""}
               className={cn(
-                "resize-none shadow-sm outline-none ring-0 focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 mt-2 w-full",
+                "mt-2 w-full resize-none shadow-sm ring-0 outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0",
               )}
               ref={textareaRef}
             />
             <div className="flex items-center gap-x-2">
               <Button disabled={updateCard.isPending}>Save</Button>
-              <Button type="button" onClick={disableEditing} size="sm" variant="ghost">
+              <Button
+                type="button"
+                onClick={disableEditing}
+                size="sm"
+                variant="ghost"
+              >
                 Cancel
               </Button>
             </div>
@@ -82,7 +87,7 @@ export function Description({ data }: DescriptionProps) {
           <div
             onClick={enableEditing}
             role="button"
-            className="min-h-[78px] rounded-md bg-muted px-3.5 py-3 text-sm font-medium"
+            className="bg-muted min-h-[78px] rounded-md px-3.5 py-3 text-sm font-medium"
           >
             {data.description ?? "Add a more detailed description..."}
           </div>

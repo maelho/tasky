@@ -1,13 +1,23 @@
 "use client";
 
-import { useRef, useState, type ElementRef, type PropsWithChildren } from "react";
+import {
+  useRef,
+  useState,
+  type ElementRef,
+  type PropsWithChildren,
+} from "react";
 import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
 import { X } from "lucide-react";
 
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
-import { Popover, PopoverClose, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
+import {
+  Popover,
+  PopoverClose,
+  PopoverContent,
+  PopoverTrigger,
+} from "~/components/ui/popover";
 
 type CreateBoardPopoverProps = {
   side?: "left" | "right" | "top" | "bottom";
@@ -50,13 +60,13 @@ export function CreateBoardPopover({
     <Popover>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
       <PopoverContent className="w-80 pt-3" side={side} sideOffset={sideOffset}>
-        <div className="pb-4 text-center text-sm font-medium text-muted-foreground">
+        <div className="text-muted-foreground pb-4 text-center text-sm font-medium">
           Create board
         </div>
         <PopoverClose ref={closeRef} asChild>
           <Button
             variant="ghost"
-            className="absolute right-2 top-2 h-auto w-auto p-2 text-muted-foreground"
+            className="text-muted-foreground absolute top-2 right-2 h-auto w-auto p-2"
           >
             <X className="h-4 w-4" />
           </Button>

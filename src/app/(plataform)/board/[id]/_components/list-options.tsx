@@ -5,7 +5,12 @@ import { MoreHorizontal, X } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "~/components/ui/button";
-import { Popover, PopoverClose, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
+import {
+  Popover,
+  PopoverClose,
+  PopoverContent,
+  PopoverTrigger,
+} from "~/components/ui/popover";
 import { Separator } from "~/components/ui/separator";
 
 type ListOptionsProps = {
@@ -55,10 +60,12 @@ export const ListOptions = ({ data, onAddCard }: ListOptionsProps) => {
         </Button>
       </PopoverTrigger>
       <PopoverContent className="px-0 py-3" side="bottom" align="start">
-        <div className="pb-4 text-center text-sm font-medium text-neutral-600">List actions</div>
+        <div className="pb-4 text-center text-sm font-medium text-neutral-600">
+          List actions
+        </div>
         <PopoverClose ref={closeRef} asChild>
           <Button
-            className="absolute right-2 top-2 h-auto w-auto p-2 text-neutral-600"
+            className="absolute top-2 right-2 h-auto w-auto p-2 text-neutral-600"
             variant="ghost"
           >
             <X className="h-4 w-4" />
@@ -73,7 +80,12 @@ export const ListOptions = ({ data, onAddCard }: ListOptionsProps) => {
         </Button>
         <form action={onCopy}>
           <input hidden name="id" id="id" defaultValue={data.id} />
-          <input hidden name="boardId" id="boardId" defaultValue={data.boardId} />
+          <input
+            hidden
+            name="boardId"
+            id="boardId"
+            defaultValue={data.boardId}
+          />
           <Button
             size="sm"
             type="submit"
@@ -87,7 +99,12 @@ export const ListOptions = ({ data, onAddCard }: ListOptionsProps) => {
         <Separator />
         <form action={onDelete}>
           <input hidden name="id" id="id" defaultValue={data.id} />
-          <input hidden name="boardId" id="boardId" defaultValue={data.boardId} />
+          <input
+            hidden
+            name="boardId"
+            id="boardId"
+            defaultValue={data.boardId}
+          />
           <Button
             size="sm"
             type="submit"

@@ -2,7 +2,13 @@
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
 import { relations, sql } from "drizzle-orm";
-import { index, int, integer, sqliteTableCreator, text } from "drizzle-orm/sqlite-core";
+import {
+  index,
+  int,
+  integer,
+  sqliteTableCreator,
+  text,
+} from "drizzle-orm/sqlite-core";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -38,7 +44,9 @@ export const boards = createTable("board", {
   createdAt: int("created_at", { mode: "timestamp" })
     .default(sql`(unixepoch())`)
     .notNull(),
-  updatedAt: int("updated_at", { mode: "timestamp" }).$onUpdate(() => new Date()),
+  updatedAt: int("updated_at", { mode: "timestamp" }).$onUpdate(
+    () => new Date(),
+  ),
 });
 
 export type BoardSelect = typeof boards.$inferSelect;
@@ -55,7 +63,9 @@ export const lists = createTable(
     createdAt: int("created_at", { mode: "timestamp" })
       .default(sql`(unixepoch())`)
       .notNull(),
-    updatedAt: int("updated_at", { mode: "timestamp" }).$onUpdate(() => new Date()),
+    updatedAt: int("updated_at", { mode: "timestamp" }).$onUpdate(
+      () => new Date(),
+    ),
   },
   (t) => {
     return {
@@ -79,7 +89,9 @@ export const cards = createTable(
     createdAt: int("created_at", { mode: "timestamp" })
       .default(sql`(unixepoch())`)
       .notNull(),
-    updatedAt: int("updated_at", { mode: "timestamp" }).$onUpdate(() => new Date()),
+    updatedAt: int("updated_at", { mode: "timestamp" }).$onUpdate(
+      () => new Date(),
+    ),
   },
   (t) => {
     return {
@@ -105,7 +117,9 @@ export const auditLogs = createTable("audit_log", {
   createdAt: int("created_at", { mode: "timestamp" })
     .default(sql`(unixepoch())`)
     .notNull(),
-  updatedAt: int("updated_at", { mode: "timestamp" }).$onUpdate(() => new Date()),
+  updatedAt: int("updated_at", { mode: "timestamp" }).$onUpdate(
+    () => new Date(),
+  ),
 });
 
 export type AuditLogsSelect = typeof auditLogs.$inferSelect;

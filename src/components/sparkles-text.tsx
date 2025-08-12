@@ -1,6 +1,11 @@
 "use client";
 
-import { useEffect, useState, type CSSProperties, type ReactElement } from "react";
+import {
+  useEffect,
+  useState,
+  type CSSProperties,
+  type ReactElement,
+} from "react";
 import { motion } from "framer-motion";
 
 import { cn } from "~/lib/utils";

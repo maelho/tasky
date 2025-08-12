@@ -23,7 +23,7 @@ export default function CardItem({ data, index }: CardItemProps) {
           ref={provided.innerRef}
           role="button"
           onClick={() => onOpen(data.id)}
-          className="truncate rounded-md border-2 border-transparent bg-primary-foreground px-3 py-2 text-sm shadow-sm hover:border-background"
+          className="bg-primary-foreground hover:border-background truncate rounded-md border-2 border-transparent px-3 py-2 text-sm shadow-sm"
         >
           {data.title}
         </div>

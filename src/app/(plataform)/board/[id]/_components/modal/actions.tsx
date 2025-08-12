@@ -23,27 +23,33 @@ export function Actions({ data }: ActionsProps) {
 
   const utils = api.useUtils();
 
-  const { mutate: copyCard, isPending: isCopying } = api.card.copyCard.useMutation({
-    onSuccess: async (copiedCard) => {
-      toast.success(`Card "${copiedCard?.title}" copied`);
-      onClose();
-      await utils.list.getlistsWithCards.invalidate({ boardId: Number(params.id) });
-    },
-    onError: (error) => {
-      toast.error(error?.data?.zodError?.fieldErrors.title);
-    },
-  });
+  const { mutate: copyCard, isPending: isCopying } =
+    api.card.copyCard.useMutation({
+      onSuccess: async (copiedCard) => {
+        toast.success(`Card "${copiedCard?.title}" copied`);
+        onClose();
+        await utils.list.getlistsWithCards.invalidate({
+          boardId: Number(params.id),
+        });
+      },
+      onError: (error) => {
+        toast.error(error?.data?.zodError?.fieldErrors.title);
+      },
+    });
 
-  const { mutate: deleteCard, isPending: isDeleting } = api.card.deleteCard.useMutation({
-    onSuccess: async (deletedCard) => {
-      toast.success(`Card "${deletedCard.title}" deleted`);
-      onClose();
-      await utils.list.getlistsWithCards.invalidate({ boardId: Number(params.id) });
-    },
-    onError: (error) => {
-      toast.error(error?.data?.zodError?.fieldErrors.title);
-    },
-  });
+  const { mutate: deleteCard, isPending: isDeleting } =
+    api.card.deleteCard.useMutation({
+      onSuccess: async (deletedCard) => {
+        toast.success(`Card "${deletedCard.title}" deleted`);
+        onClose();
+        await utils.list.getlistsWithCards.invalidate({
+          boardId: Number(params.id),
+        });
+      },
+      onError: (error) => {
+        toast.error(error?.data?.zodError?.fieldErrors.title);
+      },
+    });
 
   const handleCopy = () => {
     const boardId = Number(params.id);

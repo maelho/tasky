@@ -30,13 +30,15 @@ export function ActivityList() {
   }
 
   if (error) {
-    return <p className="text-red-500">Error loading audit logs: {error.message}</p>;
+    return (
+      <p className="text-red-500">Error loading audit logs: {error.message}</p>
+    );
   }
 
   return (
     <ol className="mt-4 space-y-4">
       {auditLogs?.length === 0 ? (
-        <p className="text-center text-xs text-muted-foreground">
+        <p className="text-muted-foreground text-center text-xs">
           No activity found inside this organization
         </p>
       ) : (

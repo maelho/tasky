@@ -27,11 +27,22 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${recursive.variable}`} suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${recursive.variable}`}
+      suppressHydrationWarning
+    >
       <body className="overflow-x-hidden">
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
           <ClerkProvider publishableKey={env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}>
             <TRPCReactProvider>{children}</TRPCReactProvider>
           </ClerkProvider>

@@ -41,7 +41,10 @@ export function ListItem({ index, data }: ListItemProps) {
           ref={provided.innerRef}
           className="h-full w-[272px] shrink-0 select-none"
         >
-          <div {...provided.dragHandleProps} className="w-full rounded-md bg-muted pb-2 shadow-md">
+          <div
+            {...provided.dragHandleProps}
+            className="bg-muted w-full rounded-md pb-2 shadow-md"
+          >
             <ListHeader onAddCard={enableEditing} data={data} />
             <Droppable droppableId={String(data.id)} type="card">
               {(provided) => (

@@ -59,15 +59,20 @@ export function ListContainer({ boardId }: ListContainerProps) {
         return;
       }
 
-      if (source.droppableId === destination.droppableId && source.index === destination.index) {
+      if (
+        source.droppableId === destination.droppableId &&
+        source.index === destination.index
+      ) {
         return;
       }
 
       if (type === "list") {
-        const items = reorder(orderedList, source.index, destination.index).map((item, index) => ({
-          ...item,
-          order: index,
-        }));
+        const items = reorder(orderedList, source.index, destination.index).map(
+          (item, index) => ({
+            ...item,
+            order: index,
+          }),
+        );
 
         setOrderedList(items);
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -77,8 +82,12 @@ export function ListContainer({ boardId }: ListContainerProps) {
 
       if (type === "card") {
         const newOrderedList = [...orderedList];
-        const sourceList = newOrderedList.find((list) => list.id === Number(source.droppableId));
-        const destList = newOrderedList.find((list) => list.id === Number(destination.droppableId));
+        const sourceList = newOrderedList.find(
+          (list) => list.id === Number(source.droppableId),
+        );
+        const destList = newOrderedList.find(
+          (list) => list.id === Number(destination.droppableId),
+        );
 
         if (!sourceList || !destList) {
           return;
@@ -93,7 +102,11 @@ export function ListContainer({ boardId }: ListContainerProps) {
         }
 
         if (source.droppableId === destination.droppableId) {
-          const reorderedCards = reorder(sourceList.cards, source.index, destination.index);
+          const reorderedCards = reorder(
+            sourceList.cards,
+            source.index,
+            destination.index,
+          );
 
           reorderedCards.forEach((card, idx) => {
             card.order = idx;
@@ -133,7 +146,9 @@ export function ListContainer({ boardId }: ListContainerProps) {
   );
 
   const memoizedListItems = useMemo(() => {
-    return orderedList.map((list, index) => <ListItem key={list.id} index={index} data={list} />);
+    return orderedList.map((list, index) => (
+      <ListItem key={list.id} index={index} data={list} />
+    ));
   }, [orderedList]);
 
   if (isLoading) return <div>Loading...</div>;
@@ -143,7 +158,11 @@ export function ListContainer({ boardId }: ListContainerProps) {
     <DragDropContext onDragEnd={onDragEnd}>
       <Droppable droppableId="lists" type="list" direction="horizontal">
         {(provided) => (
-          <ol {...provided.droppableProps} ref={provided.innerRef} className="flex h-full gap-x-3">
+          <ol
+            {...provided.droppableProps}
+            ref={provided.innerRef}
+            className="flex h-full gap-x-3"
+          >
             {memoizedListItems}
             {provided.placeholder}
             <ListForm />

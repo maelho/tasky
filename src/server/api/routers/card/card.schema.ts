@@ -1,7 +1,10 @@
 import { z } from "zod";
 
 // Common schema for ID fields
-const idSchema = z.number().int().positive({ message: "ID must be a positive integer." });
+const idSchema = z
+  .number()
+  .int()
+  .positive({ message: "ID must be a positive integer." });
 
 export const ZCreateCard = z.object({
   title: z
@@ -16,13 +19,20 @@ export type TCreateCard = z.infer<typeof ZCreateCard>;
 // Schema for card item in update operation
 const cardItemSchema = z.object({
   id: idSchema,
-  title: z.string().min(3, { message: "Title must be at least 3 characters long." }),
-  order: z.number().int().nonnegative({ message: "Order must be a non-negative integer." }),
+  title: z
+    .string()
+    .min(3, { message: "Title must be at least 3 characters long." }),
+  order: z
+    .number()
+    .int()
+    .nonnegative({ message: "Order must be a non-negative integer." }),
   listId: idSchema,
 });
 
 export const ZUpdateCardOrder = z.object({
-  items: z.array(cardItemSchema).nonempty({ message: "At least one item is required." }),
+  items: z
+    .array(cardItemSchema)
+    .nonempty({ message: "At least one item is required." }),
 });
 
 export type TUpdateCardOrder = z.infer<typeof ZUpdateCardOrder>;
@@ -45,7 +55,11 @@ export const ZUpdateCard = z.object({
     .int()
     .nonnegative({ message: "Order must be a non-negative integer." })
     .optional(),
-  listId: z.number().int().positive({ message: "List ID must be a positive integer." }).optional(),
+  listId: z
+    .number()
+    .int()
+    .positive({ message: "List ID must be a positive integer." })
+    .optional(),
   description: z.string().optional(),
 });
 
