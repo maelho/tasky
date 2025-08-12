@@ -1,0 +1,32 @@
+User-agent: *
+Allow: /
+
+# Block access to authentication and API routes
+Disallow: /api/
+Disallow: /sign-in
+Disallow: /sign-up
+Disallow: /select-org
+
+# Block access to private/protected routes
+Disallow: /dashboard
+Disallow: /board/
+Disallow: /organization/
+
+# Allow access to public assets
+Allow: /favicon.ico
+Allow: /tasky.svg
+Allow: /tasky.png
+Allow: /*.css
+Allow: /*.js
+Allow: /*.png
+Allow: /*.jpg
+Allow: /*.jpeg
+Allow: /*.gif
+Allow: /*.svg
+Allow: /*.webp
+
+# Sitemap location
+Sitemap: https://your-domain.com/sitemap.xml
+
+# Crawl delay (optional - adjust based on your server capacity)
+Crawl-delay: 1
