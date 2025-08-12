@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unnecessary-type-assertion */
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unnecessary-type-assertion */
 import { TRPCError } from "@trpc/server";
 import type { ProtectedTRPCContext } from "~/server/api/trpc";
 import { auditLogs, type Action, type EntityType } from "~/server/db/schema";
