@@ -2,7 +2,7 @@ import type { ProtectedTRPCContext } from "~/server/api/trpc";
 import { boards, type Action, type EntityType } from "~/server/db/schema";
 import { and, desc, eq } from "drizzle-orm";
 
-import { createAuditLog, validateOrgId } from "../../utils";
+import { createOrgAuditLog, requireOrgAccess, validateOrgAccess } from "../../utils";
 import type * as Schema from "./board.schema";
 
 type Board<T> = {
@@ -11,6 +11,9 @@ type Board<T> = {
 };
 
 export async function createBoard({ ctx, input }: Board<Schema.TCreateBoard>) {
+  const orgCtx = requireOrgAccess(ctx);
+  validateOrgAccess(ctx, input.orgId);
+
   const [board] = await ctx.db
     .insert(boards)
     .values({
@@ -20,8 +23,7 @@ export async function createBoard({ ctx, input }: Board<Schema.TCreateBoard>) {
     .returning();
 
   if (board) {
-    await createAuditLog({
-      orgId: input.orgId,
+    await createOrgAuditLog(orgCtx, {
       action: "CREATE" as Action,
       entityId: board.id,
       entityType: "BOARD" as EntityType,
@@ -33,6 +35,8 @@ export async function createBoard({ ctx, input }: Board<Schema.TCreateBoard>) {
 }
 
 export async function getBoards({ ctx, input }: Board<Schema.TGetBoards>) {
+  validateOrgAccess(ctx, input.orgId);
+
   const boardResults = await ctx.db.query.boards.findMany({
     where: eq(boards.orgId, input.orgId),
     orderBy: [desc(boards.createdAt)],
@@ -41,21 +45,23 @@ export async function getBoards({ ctx, input }: Board<Schema.TGetBoards>) {
   return boardResults ?? null;
 }
 
-export async function getBoardById({
-  ctx,
-  input,
-}: Board<Schema.TGetBoardById>) {
+export async function getBoardById({ ctx, input }: Board<Schema.TGetBoardById>) {
+  validateOrgAccess(ctx, input.orgId);
+
   const board = await ctx.db
     .select()
     .from(boards)
     .where(and(eq(boards.id, input.boardId), eq(boards.orgId, input.orgId)))
     .get();
+
   return board ?? null;
 }
 
 export async function deleteBoard({ ctx, input }: Board<Schema.TDeleteBoard>) {
   const { boardId } = input;
-  const orgId = await validateOrgId(ctx);
+
+  const orgCtx = requireOrgAccess(ctx);
+  const orgId = orgCtx.auth.orgId;
 
   const [board] = await ctx.db
     .delete(boards)
@@ -63,8 +69,7 @@ export async function deleteBoard({ ctx, input }: Board<Schema.TDeleteBoard>) {
     .returning();
 
   if (board) {
-    await createAuditLog({
-      orgId,
+    await createOrgAuditLog(orgCtx, {
       action: "DELETE" as Action,
       entityId: board.id,
       entityType: "BOARD" as EntityType,
@@ -77,7 +82,9 @@ export async function deleteBoard({ ctx, input }: Board<Schema.TDeleteBoard>) {
 
 export async function updateBoard({ ctx, input }: Board<Schema.TUpdateBoard>) {
   const { title, boardId } = input;
-  const orgId = await validateOrgId(ctx);
+
+  const orgCtx = requireOrgAccess(ctx);
+  const orgId = orgCtx.auth.orgId;
 
   const [board] = await ctx.db
     .update(boards)
@@ -86,8 +93,7 @@ export async function updateBoard({ ctx, input }: Board<Schema.TUpdateBoard>) {
     .returning();
 
   if (board) {
-    await createAuditLog({
-      orgId,
+    await createOrgAuditLog(orgCtx, {
       action: "UPDATE" as Action,
       entityId: board.id,
       entityType: "BOARD" as EntityType,

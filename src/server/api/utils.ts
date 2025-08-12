@@ -1,58 +1,116 @@
-import { currentUser } from "@clerk/nextjs/server";
 import { TRPCError } from "@trpc/server";
 
-import { db } from "../db";
 import { auditLogs, type Action, type EntityType } from "../db/schema";
-import type { ProtectedTRPCContext } from "./trpc";
+import type { OrgTRPCContext, ProtectedTRPCContext } from "./trpc";
 
-export async function validateOrgId(
-  ctx: ProtectedTRPCContext,
-): Promise<string> {
+export function validateOrgId(ctx: ProtectedTRPCContext): string {
   const { orgId } = ctx.auth;
   if (!orgId) {
-    throw new TRPCError({ code: "BAD_REQUEST", message: "OrgId not found" });
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "User must be in an organization to perform this action",
+    });
   }
   return orgId;
 }
 
-export async function createAuditLog(data: {
-  orgId: string;
-  action: Action;
-  entityId: number;
-  entityType: EntityType;
-  entityTitle: string;
-  userId?: string;
-  userImage?: string;
-  userName?: string;
-}) {
+export function getUserFromContext(ctx: ProtectedTRPCContext) {
+  const { userId } = ctx.auth;
+
+  const sessionClaims = ctx.auth.sessionClaims;
+  const firstName = sessionClaims?.firstName as string | undefined;
+  const lastName = sessionClaims?.lastName as string | undefined;
+  const imageUrl = sessionClaims?.imageUrl as string | undefined;
+
+  return {
+    userId,
+    firstName: firstName ?? "",
+    lastName: lastName ?? "",
+    imageUrl: imageUrl ?? "",
+    fullName: `${firstName ?? ""} ${lastName ?? ""}`.trim() || "Unknown User",
+  };
+}
+
+export async function createAuditLog(
+  ctx: ProtectedTRPCContext,
+  data: {
+    orgId: string;
+    action: Action;
+    entityId: number;
+    entityType: EntityType;
+    entityTitle: string;
+  },
+) {
   try {
-    const user = await currentUser();
+    const user = getUserFromContext(ctx);
 
-    if (!user) {
-      throw new TRPCError({
-        code: "UNAUTHORIZED",
-        message: "User not authenticated",
-      });
-    }
-
-    const updateData = {
+    const auditLogData = {
       orgId: data.orgId,
       action: data.action,
       entityId: data.entityId,
       entityType: data.entityType,
       entityTitle: data.entityTitle,
-      userId: user.id,
+      userId: user.userId,
       userImage: user.imageUrl,
-      userName: `${user.firstName} ${user.lastName}`,
+      userName: user.fullName,
     };
 
-    const newAuditLog = await db
-      .insert(auditLogs)
-      .values(updateData)
-      .returning();
-    return newAuditLog[0];
+    const [newAuditLog] = await ctx.db.insert(auditLogs).values(auditLogData).returning();
+
+    return newAuditLog;
   } catch (error) {
     console.error("Error creating audit log:", error);
-    throw error;
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Failed to create audit log",
+      cause: error,
+    });
   }
+}
+
+export async function createOrgAuditLog(
+  ctx: OrgTRPCContext,
+  data: {
+    action: Action;
+    entityId: number;
+    entityType: EntityType;
+    entityTitle: string;
+  },
+) {
+  return createAuditLog(ctx, {
+    ...data,
+    orgId: ctx.auth.orgId,
+  });
+}
+
+export function validateOrgAccess(ctx: ProtectedTRPCContext, resourceOrgId: string) {
+  const userOrgId = ctx.auth.orgId;
+
+  if (!userOrgId) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "User must be in an organization to access this resource",
+    });
+  }
+
+  if (userOrgId !== resourceOrgId) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "User does not have access to this organization's resources",
+    });
+  }
+}
+
+export function hasOrgAccess(ctx: ProtectedTRPCContext): ctx is OrgTRPCContext {
+  return !!ctx.auth.orgId;
+}
+
+export function requireOrgAccess(ctx: ProtectedTRPCContext): OrgTRPCContext {
+  if (!hasOrgAccess(ctx)) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "User must be in an organization to perform this action",
+    });
+  }
+  return ctx;
 }
