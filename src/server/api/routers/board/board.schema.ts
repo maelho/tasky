@@ -34,7 +34,9 @@ export const ZDeleteBoard = z.object({
 export type TDeleteBoard = z.infer<typeof ZDeleteBoard>;
 
 export const ZUpdateBoard = z.object({
-  title: z.string().min(3, { message: "Title must be at least 3 characters long." }),
+  title: z
+    .string()
+    .min(3, { message: "Title must be at least 3 characters long." }),
   boardId: idSchema,
 });
 

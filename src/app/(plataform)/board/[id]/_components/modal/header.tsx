@@ -64,7 +64,7 @@ export function Header({ data }: HeaderProps) {
             className="relative -left-1.5 mb-0.5 w-[95%] truncate border-transparent bg-transparent px-1 text-xl font-semibold"
           />
         </form>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           in list <span className="underline">{data.list.title}</span>
         </p>
       </div>

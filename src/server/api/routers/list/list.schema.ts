@@ -7,12 +7,19 @@ const boardIdSchema = z.number().int().positive();
 // Schema for list item in update operation
 const listItemSchema = z.object({
   id: listIdSchema,
-  title: z.string().min(3, { message: "Title must be at least 3 characters long." }),
-  order: z.number().int().nonnegative({ message: "Order must be a non-negative integer." }),
+  title: z
+    .string()
+    .min(3, { message: "Title must be at least 3 characters long." }),
+  order: z
+    .number()
+    .int()
+    .nonnegative({ message: "Order must be a non-negative integer." }),
 });
 
 export const ZUpdateListOrder = z.object({
-  items: z.array(listItemSchema).nonempty({ message: "At least one item is required." }),
+  items: z
+    .array(listItemSchema)
+    .nonempty({ message: "At least one item is required." }),
 });
 
 export type TUpdateListOrder = z.infer<typeof ZUpdateListOrder>;

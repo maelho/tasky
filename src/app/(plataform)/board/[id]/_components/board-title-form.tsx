@@ -58,7 +58,7 @@ export function BoardTitleForm({ data }: BoardTitleFormProps) {
         onBlur={handleBlur}
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        className="h-7 border-none border-ring bg-transparent px-[7px] py-1 text-lg font-bold focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-transparent focus-visible:ring-offset-transparent"
+        className="border-ring h-7 border-none bg-transparent px-[7px] py-1 text-lg font-bold focus-visible:ring-0 focus-visible:ring-transparent focus-visible:ring-offset-transparent focus-visible:outline-none"
       />
     </form>
   ) : (

@@ -34,20 +34,20 @@ export function ThemeToggle() {
 
   return (
     <Button
-      className="relative w-8 h-8 flex items-center justify-center rounded-full bg-background border border-input overflow-hidden"
+      className="bg-background border-input relative flex h-8 w-8 items-center justify-center overflow-hidden rounded-full border"
       onClick={toggleTheme}
       aria-label="Switch Theme"
       variant="outline"
     >
       <div
-        className={`absolute inset-0 flex items-center justify-center transition-transform duration-300 transform ${
-          toggled ? "-rotate-90 scale-0" : "rotate-0 scale-100"
+        className={`absolute inset-0 flex transform items-center justify-center transition-transform duration-300 ${
+          toggled ? "scale-0 -rotate-90" : "scale-100 rotate-0"
         }`}
       >
         {resolvedTheme === "dark" ? (
-          <MoonIcon className="w-5 h-5" />
+          <MoonIcon className="h-5 w-5" />
         ) : (
-          <SunIcon className="w-5 h-5" />
+          <SunIcon className="h-5 w-5" />
         )}
       </div>
     </Button>

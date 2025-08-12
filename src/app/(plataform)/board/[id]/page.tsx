@@ -52,7 +52,7 @@ export default async function BoardIdPage(props: { params: BoardIdPageProps }) {
   return (
     <Provider>
       <CardModal />
-      <div className="space-y-5 mb-5">
+      <div className="mb-5 space-y-5">
         <BoardNavbar data={board} orgId={orgId} />
         <ScrollArea>
           <div className="mb-10">

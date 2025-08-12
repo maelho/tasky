@@ -5,7 +5,9 @@ import { Paths } from "~/config/site";
 
 import { Navbar } from "./_components/navbar";
 
-export default async function LandingLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default async function LandingLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
   const { userId, orgId } = await auth();
 
   if (userId && !orgId) {
@@ -19,7 +21,7 @@ export default async function LandingLayout({ children }: Readonly<{ children: R
   return (
     <div>
       <Navbar />
-      <main className="container mx-auto  pt-28">{children}</main>
+      <main className="container mx-auto pt-28">{children}</main>
     </div>
   );
 }

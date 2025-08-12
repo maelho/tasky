@@ -10,7 +10,7 @@ type BoardNavbarProps = {
 
 export async function BoardNavbar({ data, orgId }: BoardNavbarProps) {
   return (
-    <div className=" flex h-14  rounded-2xl justify-between bg-muted  items-center gap-x-4  px-6">
+    <div className="bg-muted flex h-14 items-center justify-between gap-x-4 rounded-2xl px-6">
       <BoardTitleForm data={data} />
       <div>
         <BoardOptions id={data.id} orgId={orgId} />

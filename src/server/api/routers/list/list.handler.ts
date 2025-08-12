@@ -1,6 +1,12 @@
 import { TRPCError } from "@trpc/server";
 import type { ProtectedTRPCContext } from "~/server/api/trpc";
-import { boards, cards, lists, type Action, type EntityType } from "~/server/db/schema";
+import {
+  boards,
+  cards,
+  lists,
+  type Action,
+  type EntityType,
+} from "~/server/db/schema";
 import { and, asc, desc, eq, exists } from "drizzle-orm";
 
 import { createAuditLog, validateOrgId } from "../../utils";
@@ -24,7 +30,10 @@ async function validateBoardAccess(
   }
 }
 
-export async function updateListOrder({ ctx, input }: List<Schema.TUpdateListOrder>) {
+export async function updateListOrder({
+  ctx,
+  input,
+}: List<Schema.TUpdateListOrder>) {
   const { items } = input;
   const orgId = await validateOrgId(ctx);
 
@@ -43,7 +52,9 @@ export async function updateListOrder({ ctx, input }: List<Schema.TUpdateListOrd
             ctx.db
               .select()
               .from(boards)
-              .where(and(eq(boards.id, lists.boardId), eq(boards.orgId, orgId))),
+              .where(
+                and(eq(boards.id, lists.boardId), eq(boards.orgId, orgId)),
+              ),
           ),
         ),
       ),
@@ -93,7 +104,10 @@ export async function createList({ input, ctx }: List<Schema.TCreateList>) {
   return list ?? null;
 }
 
-export async function getlistsWithCards({ ctx, input }: List<Schema.TGetlistsWithCards>) {
+export async function getlistsWithCards({
+  ctx,
+  input,
+}: List<Schema.TGetlistsWithCards>) {
   const { boardId } = input;
   const orgId = await validateOrgId(ctx);
 
@@ -281,7 +295,10 @@ export async function getListById({ ctx, input }: List<Schema.TGetListById>) {
   return list ?? null;
 }
 
-export async function getListsByBoardId({ ctx, input }: List<Schema.TGetListsByBoardId>) {
+export async function getListsByBoardId({
+  ctx,
+  input,
+}: List<Schema.TGetListsByBoardId>) {
   const { boardId } = input;
 
   const list = await ctx.db.query.lists.findMany({

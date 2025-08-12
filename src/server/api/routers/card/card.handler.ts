@@ -43,7 +43,10 @@ async function validateListAccess(
   }
 }
 
-async function getLastCardOrder(ctx: ProtectedTRPCContext, listId: number): Promise<number> {
+async function getLastCardOrder(
+  ctx: ProtectedTRPCContext,
+  listId: number,
+): Promise<number> {
   const lastCard = await ctx.db.query.cards.findFirst({
     where: eq(cards.listId, listId),
     orderBy: [desc(cards.createdAt)],
@@ -92,7 +95,10 @@ export async function createCard({ input, ctx }: Card<Schema.TCreateCard>) {
   return card;
 }
 
-export async function updateCardOrder({ input, ctx }: Card<Schema.TUpdateCardOrder>) {
+export async function updateCardOrder({
+  input,
+  ctx,
+}: Card<Schema.TUpdateCardOrder>) {
   const { items } = input;
   const orgId = await validateOrgId(ctx);
 
@@ -205,7 +211,10 @@ export async function updateCard({ input, ctx }: Card<Schema.TUpdateCard>) {
   return card ?? null;
 }
 
-async function getLastListOrder(ctx: ProtectedTRPCContext, boardId: number): Promise<number> {
+async function getLastListOrder(
+  ctx: ProtectedTRPCContext,
+  boardId: number,
+): Promise<number> {
   const lastList = await ctx.db.query.lists.findFirst({
     where: eq(lists.boardId, boardId),
     orderBy: [desc(lists.createdAt)],
@@ -307,7 +316,10 @@ export async function deleteCard({ input, ctx }: Card<Schema.TDeleteCard>) {
   return { id, title: card.title };
 }
 
-export async function getCardsByListId({ input, ctx }: Card<Schema.TGetCardsByListId>) {
+export async function getCardsByListId({
+  input,
+  ctx,
+}: Card<Schema.TGetCardsByListId>) {
   const { listId } = input;
 
   // Fetch the cards by list ID

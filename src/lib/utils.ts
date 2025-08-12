@@ -1,4 +1,4 @@
-import { actionEnum, type AuditLogsSelect } from "~/server/db/schema";
+import type { AuditLogsSelect } from "~/server/db/schema";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -6,56 +6,29 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-/**
- * Capitalizes each word in a string separated by a specified separator.
- * @param str - The input string.
- * @param separator - The separator to split the string by (default is a space).
- * @returns The capitalized string.
- */
-export function capitalizeOrg(str: string, separator = " "): string {
-  return str
-    .split(separator)
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
-}
-
-/**
- * Formats a date string to a local date format.
- * @param dateStr - The date string to format.
- * @param locale - The locale to use for formatting (default is 'en-US').
- * @returns The formatted date string.
- */
-export const formatDateToLocal = (dateStr: string, locale = "en-US"): string => {
-  const date = new Date(dateStr);
+export function formatDateToLocal(dateString: string): string {
+  const date = new Date(dateString);
   const options: Intl.DateTimeFormatOptions = {
-    day: "numeric",
-    month: "short",
     year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   };
-  return new Intl.DateTimeFormat(locale, options).format(date);
-};
-
-/**
- * Constructs an absolute URL using the provided path and the public app URL.
- * @param path - The path to append to the base URL.
- * @returns The absolute URL.
- */
-export function absoluteUrl(path: string): string {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
-  return `${baseUrl}${path}`;
+  return date.toLocaleDateString("en-US", options);
 }
 
-export function generateLogMessage(log: AuditLogsSelect) {
-  const { action, entityTitle, entityType } = log;
+export function generateLogMessage(data: AuditLogsSelect): string {
+  const { action, entityType, entityTitle } = data;
 
   switch (action) {
-    case actionEnum.CREATE:
+    case "CREATE":
       return `created ${entityType.toLowerCase()} "${entityTitle}"`;
-    case actionEnum.UPDATE:
+    case "UPDATE":
       return `updated ${entityType.toLowerCase()} "${entityTitle}"`;
-    case actionEnum.DELETE:
+    case "DELETE":
       return `deleted ${entityType.toLowerCase()} "${entityTitle}"`;
     default:
-      return `unknown action ${entityType.toLowerCase()} "${entityTitle}"`;
+      return `performed action on ${entityType.toLowerCase()} "${entityTitle}"`;
   }
 }

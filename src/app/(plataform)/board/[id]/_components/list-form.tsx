@@ -1,6 +1,12 @@
 "use client";
 
-import { useCallback, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
+import {
+  useCallback,
+  useRef,
+  useState,
+  type FormEvent,
+  type KeyboardEvent,
+} from "react";
 import { useParams } from "next/navigation";
 import { api } from "~/trpc/react";
 import { Plus, X } from "lucide-react";
@@ -64,14 +70,14 @@ export function ListForm() {
         <form
           ref={formRef}
           onSubmit={handleSubmit}
-          className="w-full space-y-4 rounded-md bg-muted p-3"
+          className="bg-muted w-full space-y-4 rounded-md p-3"
         >
           <Input
             id="title"
             ref={inputRef}
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="border-transparent px-2 py-1 text-sm font-medium transition hover:border-input focus:border-input"
+            className="hover:border-input focus:border-input border-transparent px-2 py-1 text-sm font-medium transition"
             placeholder="Enter list title..."
           />
           {error?.data?.zodError?.fieldErrors.title && (
@@ -91,7 +97,7 @@ export function ListForm() {
       ) : (
         <button
           onClick={enableEditing}
-          className="flex w-full items-center rounded-md bg-muted/75 p-3 text-sm font-medium transition hover:bg-muted"
+          className="bg-muted/75 hover:bg-muted flex w-full items-center rounded-md p-3 text-sm font-medium transition"
         >
           <Plus className="mr-2 h-4 w-4" />
           Add a list

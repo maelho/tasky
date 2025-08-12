@@ -3,7 +3,12 @@
 import { useMemo } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ClerkLoaded, ClerkLoading, OrganizationSwitcher, UserButton } from "@clerk/nextjs";
+import {
+  ClerkLoaded,
+  ClerkLoading,
+  OrganizationSwitcher,
+  UserButton,
+} from "@clerk/nextjs";
 import { type BoardSelect } from "~/server/db/schema";
 import { api } from "~/trpc/react";
 import { ActivityIcon, LayoutDashboardIcon, SettingsIcon } from "lucide-react";
@@ -33,7 +38,7 @@ function BoardDropdownItem({ board }: { board: BoardSelect }) {
   return (
     <DropdownMenuItem asChild>
       <Link href={path}>
-        <span className={isMatchingPath ? "font-bold " : ""}>{board.title}</span>
+        <span className={isMatchingPath ? "font-bold" : ""}>{board.title}</span>
       </Link>
     </DropdownMenuItem>
   );
@@ -47,7 +52,10 @@ export function SelectBoardButton({ orgId }: ItemProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button aria-label="Boards" variant={pathname.includes("board") ? "secondary" : "ghost"}>
+        <Button
+          aria-label="Boards"
+          variant={pathname.includes("board") ? "secondary" : "ghost"}
+        >
           <LayoutDashboardIcon size={20} />
         </Button>
       </DropdownMenuTrigger>
@@ -59,7 +67,9 @@ export function SelectBoardButton({ orgId }: ItemProps) {
             {isPending ? (
               <Skeleton className="w-full" />
             ) : (
-              memoizedBoards?.map((board) => <BoardDropdownItem key={board.id} board={board} />)
+              memoizedBoards?.map((board) => (
+                <BoardDropdownItem key={board.id} board={board} />
+              ))
             )}
           </ScrollArea>
         </DropdownMenuGroup>
@@ -129,7 +139,7 @@ export function UserClerkButton() {
   return (
     <>
       <ClerkLoading>
-        <Skeleton className="w-8 h-8 rounded-full " />
+        <Skeleton className="h-8 w-8 rounded-full" />
       </ClerkLoading>
       <ClerkLoaded>
         <UserButton appearance={appearance} />
