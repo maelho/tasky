@@ -61,7 +61,9 @@ export function hasOrganizationAccess(auth: {
   return !!auth.userId && !!auth.orgId;
 }
 
-export function isAuthenticated(auth: { userId?: string | null }): auth is { userId: string } {
+export function isAuthenticated(auth: {
+  userId?: string | null;
+}): auth is { userId: string } {
   return !!auth.userId;
 }
 

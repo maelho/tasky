@@ -7,5 +7,6 @@ export const logsRouter = createTRPCRouter({
   getAuditLogs: protectedProcedure
     .input(schema.ZGetAuditLogs)
     .query(handler.getAuditLogs),
+
   getAllAuditLogs: protectedProcedure.query(handler.getAllAuditLogs),
 });

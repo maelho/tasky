@@ -68,7 +68,10 @@ export const CardForm = forwardRef<HTMLTextAreaElement, CardFormProps>(
       mutate({ title, listId });
     }
 
-    useOnClickOutside(formRef, handleOutsideClick);
+    useOnClickOutside(
+      formRef as React.RefObject<HTMLElement>,
+      handleOutsideClick,
+    );
     useEventListener("keydown", handleEscapeKey);
 
     return (

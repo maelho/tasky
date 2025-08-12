@@ -26,7 +26,9 @@ export function Description({ data }: DescriptionProps) {
   const utils = api.useUtils();
   const updateCard = api.card.updateCard.useMutation({
     onSuccess: async (updatedCard) => {
-      await utils.card.getCardById.invalidate({ id: updatedCard?.id });
+      await utils.card.getCardById.invalidate({
+        id: updatedCard?.id as number,
+      });
       toast.success(`Card "${data.title}" updated`);
       disableEditing();
     },
@@ -47,7 +49,7 @@ export function Description({ data }: DescriptionProps) {
   };
 
   useEventListener("keydown", onKeyDown);
-  useOnClickOutside(formRef, disableEditing);
+  useOnClickOutside(formRef as React.RefObject<HTMLElement>, disableEditing);
 
   const onSubmit = (formData: FormData) => {
     const description = formData.get("description") as string;

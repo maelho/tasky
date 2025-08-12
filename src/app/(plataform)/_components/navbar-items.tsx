@@ -46,7 +46,10 @@ function BoardDropdownItem({ board }: { board: BoardSelect }) {
 
 export function SelectBoardButton({ orgId }: ItemProps) {
   const { data: boards, isPending } = api.board.getBoards.useQuery({ orgId });
-  const memoizedBoards = useMemo(() => boards, [boards]);
+  const memoizedBoards = useMemo(
+    () => boards as BoardSelect[] | undefined,
+    [boards],
+  );
   const pathname = usePathname();
 
   return (

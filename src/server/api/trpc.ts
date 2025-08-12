@@ -116,6 +116,7 @@ export type ProtectedTRPCContext = TRPCContext & {
   auth: NonNullable<TRPCContext["auth"]> & {
     userId: string;
   };
+  db: typeof db;
 };
 
 export type OrgTRPCContext = TRPCContext & {
@@ -123,4 +124,5 @@ export type OrgTRPCContext = TRPCContext & {
     userId: string;
     orgId: string;
   };
+  db: typeof db;
 };

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 import { api } from "~/trpc/server";
@@ -12,13 +13,16 @@ import { CardModal } from "./_components/modal";
 
 type BoardIdPageProps = Promise<{ id: string }>;
 
-export async function generateMetadata(props: { params: BoardIdPageProps }) {
+export async function generateMetadata(props: {
+  params: BoardIdPageProps;
+}): Promise<Metadata> {
   const { orgId } = await auth();
 
   if (!orgId) {
     return createPageMetadata({
       title: "Board",
-      description: "Access your project board to manage tasks and collaborate with your team",
+      description:
+        "Access your project board to manage tasks and collaborate with your team",
       noIndex: true,
     });
   }
@@ -46,7 +50,8 @@ export async function generateMetadata(props: { params: BoardIdPageProps }) {
   } catch {
     return createPageMetadata({
       title: "Board",
-      description: "Access your project board to manage tasks and collaborate with your team",
+      description:
+        "Access your project board to manage tasks and collaborate with your team",
       noIndex: true,
     });
   }

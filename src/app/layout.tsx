@@ -1,5 +1,6 @@
 import "~/styles/globals.css";
 
+import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { env } from "~/env";
 import { recursive } from "~/fonts";
@@ -9,7 +10,7 @@ import { defaultMetadata } from "~/lib/metadata";
 import { Toaster } from "~/components/ui/sonner";
 import { ThemeProvider } from "~/components/theme-provider";
 
-export const metadata = defaultMetadata;
+export const metadata: Metadata = defaultMetadata;
 
 export default function RootLayout({
   children,
