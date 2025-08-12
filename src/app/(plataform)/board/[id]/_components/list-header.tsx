@@ -17,7 +17,7 @@ export function ListHeader({ data, onAddCard }: ListHeaderProps) {
   const { mutate: updateList } = api.list.updateList.useMutation({
     onSuccess: async (data) => {
       toast.success(`Renamed to "${data?.title}"`);
-      setTitle(data?.title ?? "");
+      setTitle((data?.title as string) ?? "");
       disableEditing();
     },
   });

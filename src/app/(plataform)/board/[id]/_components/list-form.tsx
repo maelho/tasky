@@ -57,7 +57,7 @@ export function ListForm() {
   );
 
   useEventListener("keydown", () => handleKeyDown);
-  useOnClickOutside(formRef, disableEditing);
+  useOnClickOutside(formRef as React.RefObject<HTMLElement>, disableEditing);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();

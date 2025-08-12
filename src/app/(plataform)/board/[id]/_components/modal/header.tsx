@@ -23,7 +23,7 @@ export function Header({ data }: HeaderProps) {
       await utils.list.invalidate();
 
       toast.success(`Renamed to "${updatedCard?.title}"`);
-      setTitle(updatedCard?.title ?? "");
+      setTitle((updatedCard?.title as string) ?? "");
     },
     onError: (error) => {
       toast.error(error?.data?.zodError?.fieldErrors.title);

@@ -18,7 +18,7 @@ export function BoardTitleForm({ data }: BoardTitleFormProps) {
     onSuccess: async (updatedData) => {
       await utils.board.invalidate();
       toast.success(`Board "${updatedData?.title}" updated!`);
-      setTitle(updatedData?.title ?? "");
+      setTitle((updatedData?.title as string) ?? "");
       disableEditing();
     },
     onError: (error) => {

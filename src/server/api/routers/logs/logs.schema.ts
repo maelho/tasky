@@ -1,7 +1,9 @@
-import { z } from "zod";
+import { type z } from "zod";
 
-export const ZGetAuditLogs = z.object({
-  id: z.number(),
+import { createEntitySchema, idSchema } from "../../shared/schema-utils";
+
+export const ZGetAuditLogs = createEntitySchema({
+  id: idSchema,
 });
 
 export type TGetAuditLogs = z.infer<typeof ZGetAuditLogs>;

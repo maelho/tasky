@@ -55,7 +55,10 @@ export async function createAuditLog(
       userName: user.fullName,
     };
 
-    const [newAuditLog] = await ctx.db.insert(auditLogs).values(auditLogData).returning();
+    const [newAuditLog] = await ctx.db
+      .insert(auditLogs)
+      .values(auditLogData)
+      .returning();
 
     return newAuditLog;
   } catch (error) {
@@ -83,7 +86,10 @@ export async function createOrgAuditLog(
   });
 }
 
-export function validateOrgAccess(ctx: ProtectedTRPCContext, resourceOrgId: string) {
+export function validateOrgAccess(
+  ctx: ProtectedTRPCContext,
+  resourceOrgId: string,
+) {
   const userOrgId = ctx.auth.orgId;
 
   if (!userOrgId) {
