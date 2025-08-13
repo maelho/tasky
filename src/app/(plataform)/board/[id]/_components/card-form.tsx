@@ -81,6 +81,8 @@ export const CardForm = forwardRef<HTMLTextAreaElement, CardFormProps>(
             ref={formRef}
             onSubmit={handleFormSubmit}
             className="m-1 space-y-4 px-1 py-0.5"
+            role="form"
+            aria-label="Add new card"
           >
             <Textarea
               id="title"
@@ -93,17 +95,47 @@ export const CardForm = forwardRef<HTMLTextAreaElement, CardFormProps>(
                 "resize-none shadow-sm ring-0 outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0",
               )}
               placeholder="Enter a title for this card..."
+              aria-label="Card title"
+              aria-required="true"
+              aria-invalid={!!error?.data?.zodError?.fieldErrors.title}
+              aria-describedby={
+                error?.data?.zodError?.fieldErrors.title
+                  ? "card-title-error"
+                  : "card-title-help"
+              }
             />
+            <div id="card-title-help" className="sr-only">
+              Press Enter to create card, Shift+Enter for new line, Escape to
+              cancel
+            </div>
             {error?.data?.zodError?.fieldErrors.title && (
-              <span className="mb-8 text-xs text-red-500">
+              <span
+                id="card-title-error"
+                className="mb-8 text-xs text-red-500"
+                role="alert"
+                aria-live="polite"
+              >
                 {error.data.zodError.fieldErrors.title}
               </span>
             )}
             <div className="flex items-center gap-x-1">
-              <Button size="sm" type="submit" disabled={isPending}>
+              <Button
+                size="sm"
+                type="submit"
+                disabled={isPending}
+                aria-label={
+                  isPending ? "Adding card, please wait" : "Add card to list"
+                }
+              >
                 {isPending ? "Add card..." : "Add card"}
               </Button>
-              <Button onClick={resetForm} size="sm" variant="ghost">
+              <Button
+                onClick={resetForm}
+                size="sm"
+                variant="ghost"
+                aria-label="Cancel adding card"
+                type="button"
+              >
                 <X className="h-5 w-5" />
               </Button>
             </div>
@@ -114,8 +146,9 @@ export const CardForm = forwardRef<HTMLTextAreaElement, CardFormProps>(
             className="text-muted-foreground h-auto w-full justify-start px-2 py-1.5 text-sm"
             size="sm"
             variant="ghost"
+            aria-label="Add a new card to this list"
           >
-            <Plus className="mr-2 h-4 w-4" />
+            <Plus className="mr-2 h-4 w-4" aria-hidden="true" />
             Add a card
           </Button>
         )}

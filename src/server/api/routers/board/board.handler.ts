@@ -3,7 +3,11 @@ import { boards, cards, lists, type EntityType } from "~/server/db/schema";
 import { and, eq, inArray } from "drizzle-orm";
 
 import { createCrudHandlers } from "../../shared/crud-handler";
-import { createAuditLog, requireOrgAccess, validateOrgAccess } from "../../shared/db-utils";
+import {
+  createAuditLog,
+  requireOrgAccess,
+  validateOrgAccess,
+} from "../../shared/db-utils";
 import type * as Schema from "./board.schema";
 
 type Board<T> = {
@@ -31,11 +35,17 @@ export async function createBoard({ ctx, input }: Board<Schema.TCreateBoard>) {
 export async function getBoards({ ctx, input }: Board<Schema.TGetBoards>) {
   validateOrgAccess(ctx, input.orgId);
 
-  const boardResults = await boardCrud.findMany(ctx, eq(boards.orgId, input.orgId));
+  const boardResults = await boardCrud.findMany(
+    ctx,
+    eq(boards.orgId, input.orgId),
+  );
   return boardResults ?? null;
 }
 
-export async function getBoardById({ ctx, input }: Board<Schema.TGetBoardById>) {
+export async function getBoardById({
+  ctx,
+  input,
+}: Board<Schema.TGetBoardById>) {
   validateOrgAccess(ctx, input.orgId);
 
   const board = await ctx.db
@@ -65,7 +75,10 @@ export async function deleteBoard({ ctx, input }: Board<Schema.TDeleteBoard>) {
   // Delete in the correct order: cards -> lists -> board
   await ctx.db.transaction(async (tx) => {
     // First get all list IDs for this board
-    const boardLists = await tx.select({ id: lists.id }).from(lists).where(eq(lists.boardId, input.boardId));
+    const boardLists = await tx
+      .select({ id: lists.id })
+      .from(lists)
+      .where(eq(lists.boardId, input.boardId));
 
     // Delete all cards in all lists of this board
     if (boardLists.length > 0) {

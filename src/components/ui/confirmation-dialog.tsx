@@ -79,7 +79,11 @@ export function ConfirmationDialog({
             <Icon className={`h-5 w-5 ${config.iconColor}`} />
             {title}
           </DialogTitle>
-          {description && <DialogDescription className="text-left">{description}</DialogDescription>}
+          {description && (
+            <DialogDescription className="text-left">
+              {description}
+            </DialogDescription>
+          )}
         </DialogHeader>
 
         {children && <div className="py-2">{children}</div>}
@@ -88,7 +92,11 @@ export function ConfirmationDialog({
           <Button variant="outline" onClick={handleCancel} disabled={isLoading}>
             {cancelLabel}
           </Button>
-          <Button variant={config.confirmVariant} onClick={handleConfirm} disabled={isLoading}>
+          <Button
+            variant={config.confirmVariant}
+            onClick={handleConfirm}
+            disabled={isLoading}
+          >
             {isLoading ? "Processing..." : confirmLabel}
           </Button>
         </DialogFooter>

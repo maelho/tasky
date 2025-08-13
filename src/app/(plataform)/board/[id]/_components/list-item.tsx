@@ -1,7 +1,11 @@
 "use client";
 
 import { useRef, useState, type ElementRef } from "react";
-import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import {
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
 import { cn } from "~/lib/utils";
@@ -20,7 +24,14 @@ export function ListItem({ data }: ListItemProps) {
   const textareaRef = useRef<ElementRef<"textarea">>(null);
   const [isEditing, setIsEditing] = useState(false);
 
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
     id: data.id,
     data: {
       type: "list",
@@ -50,7 +61,10 @@ export function ListItem({ data }: ListItemProps) {
     <div
       ref={setNodeRef}
       style={style}
-      className={cn("h-full w-[272px] shrink-0 select-none", isDragging && "opacity-50")}
+      className={cn(
+        "h-full w-[272px] shrink-0 select-none",
+        isDragging && "opacity-50",
+      )}
     >
       <div className="bg-muted w-full rounded-md pb-2 shadow-md">
         <div {...attributes} {...listeners}>
@@ -59,10 +73,16 @@ export function ListItem({ data }: ListItemProps) {
 
         <DroppableArea
           id={`list-${data.id}`}
-          className={cn("mx-1 px-1 py-0.5", data.cards && data.cards.length > 0 ? "mt-2" : "mt-0")}
+          className={cn(
+            "mx-1 px-1 py-0.5",
+            data.cards && data.cards.length > 0 ? "mt-2" : "mt-0",
+          )}
         >
-          <SortableContext items={cardIds} strategy={verticalListSortingStrategy}>
-            <div className="flex flex-col gap-y-2 min-h-[20px]">
+          <SortableContext
+            items={cardIds}
+            strategy={verticalListSortingStrategy}
+          >
+            <div className="flex min-h-[20px] flex-col gap-y-2">
               {data.cards?.map((card) => (
                 <CardItem key={card.id} data={card} />
               ))}

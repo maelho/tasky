@@ -10,11 +10,17 @@ type BoardNavbarProps = {
 
 export async function BoardNavbar({ data, orgId }: BoardNavbarProps) {
   return (
-    <div className="bg-muted flex h-14 items-center justify-between gap-x-4 rounded-2xl px-6">
-      <BoardTitleForm data={data} />
-      <div>
+    <nav
+      className="bg-muted flex h-14 items-center justify-between gap-x-4 rounded-2xl px-6"
+      aria-label="Board navigation"
+      role="banner"
+    >
+      <div role="main" aria-label="Board title">
+        <BoardTitleForm data={data} />
+      </div>
+      <div role="region" aria-label="Board actions">
         <BoardOptions id={data.id} orgId={orgId} />
       </div>
-    </div>
+    </nav>
   );
 }

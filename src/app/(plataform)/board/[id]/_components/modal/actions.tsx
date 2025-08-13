@@ -30,8 +30,11 @@ export function Actions({ data }: ActionsProps) {
         boardId: Number(params.id),
       });
     },
-    onError: (error) => {
-      toast.error(error?.data?.zodError?.fieldErrors.title);
+    onError: (error: unknown) => {
+      const errorMessage =
+        (error as { data?: { zodError?: { fieldErrors?: { title?: string } } } })?.data?.zodError?.fieldErrors?.title ??
+        "Failed to copy card";
+      toast.error(errorMessage);
     },
   });
 
@@ -43,8 +46,11 @@ export function Actions({ data }: ActionsProps) {
         boardId: Number(params.id),
       });
     },
-    onError: (error) => {
-      toast.error(error?.data?.zodError?.fieldErrors.title);
+    onError: (error: unknown) => {
+      const errorMessage =
+        (error as { data?: { zodError?: { fieldErrors?: { title?: string } } } })?.data?.zodError?.fieldErrors?.title ??
+        "Failed to delete card";
+      toast.error(errorMessage);
     },
   });
 
@@ -77,7 +83,7 @@ export function Actions({ data }: ActionsProps) {
   return (
     <div className="mt-2 space-y-2">
       <p className="text-xs font-semibold">Actions</p>
-      <Button onClick={handleCopy} disabled={isCopying} className="w-full justify-start" size="inline">
+      <Button onClick={handleCopy} disabled={isCopying} className="w-full justify-start" size="sm">
         <Copy className="mr-2 h-4 w-4" />
         Copy
       </Button>
@@ -86,7 +92,7 @@ export function Actions({ data }: ActionsProps) {
         disabled={isDeleting}
         className="w-full justify-start"
         variant="destructive"
-        size="inline"
+        size="sm"
       >
         <Trash className="mr-2 h-4 w-4" />
         Delete

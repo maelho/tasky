@@ -71,6 +71,8 @@ export function ListForm() {
           ref={formRef}
           onSubmit={handleSubmit}
           className="bg-muted w-full space-y-4 rounded-md p-3"
+          role="form"
+          aria-label="Add new list"
         >
           <Input
             id="title"
@@ -79,27 +81,57 @@ export function ListForm() {
             onChange={(e) => setTitle(e.target.value)}
             className="hover:border-input focus:border-input border-transparent px-2 py-1 text-sm font-medium transition"
             placeholder="Enter list title..."
+            aria-label="List title"
+            aria-required="true"
+            aria-invalid={!!error?.data?.zodError?.fieldErrors.title}
+            aria-describedby={
+              error?.data?.zodError?.fieldErrors.title
+                ? "list-title-error"
+                : "list-title-help"
+            }
           />
+          <div id="list-title-help" className="sr-only">
+            Press Enter to create list, Escape to cancel
+          </div>
           {error?.data?.zodError?.fieldErrors.title && (
-            <span className="mb-8 text-xs text-red-500">
+            <span
+              id="list-title-error"
+              className="mb-8 text-xs text-red-500"
+              role="alert"
+              aria-live="polite"
+            >
               {error.data.zodError.fieldErrors.title}
             </span>
           )}
           <div className="flex items-center gap-x-1">
-            <Button size="sm" type="submit" disabled={isPending}>
+            <Button
+              size="sm"
+              type="submit"
+              disabled={isPending}
+              aria-label={
+                isPending ? "Adding list, please wait" : "Add list to board"
+              }
+            >
               {isPending ? "Add list..." : "Add list"}
             </Button>
-            <Button onClick={disableEditing} size="sm" variant="ghost">
-              <X className="h-5 w-5" />
+            <Button
+              onClick={disableEditing}
+              size="sm"
+              variant="ghost"
+              aria-label="Cancel adding list"
+              type="button"
+            >
+              <X className="h-5 w-5" aria-hidden="true" />
             </Button>
           </div>
         </form>
       ) : (
         <button
           onClick={enableEditing}
-          className="bg-muted/75 hover:bg-muted flex w-full items-center rounded-md p-3 text-sm font-medium transition"
+          className="bg-muted/75 hover:bg-muted focus:ring-ring flex w-full items-center rounded-md p-3 text-sm font-medium transition focus:ring-2 focus:ring-offset-2"
+          aria-label="Add a new list to this board"
         >
-          <Plus className="mr-2 h-4 w-4" />
+          <Plus className="mr-2 h-4 w-4" aria-hidden="true" />
           Add a list
         </button>
       )}

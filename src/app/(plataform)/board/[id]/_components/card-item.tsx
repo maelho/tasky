@@ -16,7 +16,14 @@ type CardItemProps = {
 export function CardItem({ data, isDragOverlay = false }: CardItemProps) {
   const [, onOpen] = useAtom(onOpenAtom);
 
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
     id: data.id,
     data: {
       type: "card",
@@ -32,7 +39,10 @@ export function CardItem({ data, isDragOverlay = false }: CardItemProps) {
 
   if (isDragOverlay) {
     return (
-      <div className="bg-primary-foreground rotate-3 transform cursor-grabbing rounded-md border-2 border-transparent px-3 py-2 text-sm shadow-lg">
+      <div
+        className="bg-primary-foreground rotate-3 transform cursor-grabbing rounded-md border-2 border-transparent px-3 py-2 text-sm shadow-lg"
+        aria-hidden="true"
+      >
         {data.title}
       </div>
     );
@@ -45,13 +55,26 @@ export function CardItem({ data, isDragOverlay = false }: CardItemProps) {
       {...attributes}
       {...listeners}
       role="button"
+      tabIndex={0}
       onClick={() => onOpen(data.id)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onOpen(data.id);
+        }
+      }}
+      aria-label={`Card: ${data.title}. Press Enter or Space to open, use arrow keys to move`}
+      aria-describedby={`card-${data.id}-description`}
       className={cn(
-        "bg-primary-foreground hover:border-background truncate cursor-grab rounded-md border-2 border-transparent px-3 py-2 text-sm shadow-sm transition-colors",
-        isDragging && "opacity-50",
+        "bg-primary-foreground hover:border-background focus:ring-ring cursor-grab truncate rounded-md border-2 border-transparent px-3 py-2 text-sm shadow-sm transition-colors focus:ring-2 focus:ring-offset-2",
+        isDragging && "cursor-grabbing opacity-50",
       )}
     >
       {data.title}
+      <div id={`card-${data.id}-description`} className="sr-only">
+        Draggable card. Use mouse to drag or keyboard to navigate and press
+        Enter to open.
+      </div>
     </div>
   );
 }
