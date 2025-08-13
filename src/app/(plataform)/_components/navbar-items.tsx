@@ -3,7 +3,12 @@
 import { useMemo } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ClerkLoaded, ClerkLoading, OrganizationSwitcher, UserButton } from "@clerk/nextjs";
+import {
+  ClerkLoaded,
+  ClerkLoading,
+  OrganizationSwitcher,
+  UserButton,
+} from "@clerk/nextjs";
 import { type BoardSelect } from "~/server/db/schema";
 import { api } from "~/trpc/react";
 import { ActivityIcon, LayoutDashboardIcon, SettingsIcon } from "lucide-react";
@@ -50,7 +55,10 @@ export function SelectBoardButton({ orgId }: ItemProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button aria-label="Boards" variant={pathname.includes("board") ? "secondary" : "ghost"}>
+        <Button
+          aria-label="Boards"
+          variant={pathname.includes("board") ? "secondary" : "ghost"}
+        >
           <LayoutDashboardIcon size={20} />
         </Button>
       </DropdownMenuTrigger>
@@ -77,7 +85,12 @@ export function SettingsButton({ orgId }: ItemProps) {
   const { path, isMatchingPath } = useOrganizationPath("Settings", orgId);
 
   return (
-    <Button size={"icon"} aria-label="Settings" variant={isMatchingPath ? "secondary" : "ghost"} asChild>
+    <Button
+      size={"icon"}
+      aria-label="Settings"
+      variant={isMatchingPath ? "secondary" : "ghost"}
+      asChild
+    >
       <Link href={path}>
         <SettingsIcon size={20} />
       </Link>
@@ -89,7 +102,12 @@ export function ActivityButton({ orgId }: ItemProps) {
   const { path, isMatchingPath } = useOrganizationPath("Activity", orgId);
 
   return (
-    <Button size={"icon"} aria-label="Activity" variant={isMatchingPath ? "secondary" : "ghost"} asChild>
+    <Button
+      size={"icon"}
+      aria-label="Activity"
+      variant={isMatchingPath ? "secondary" : "ghost"}
+      asChild
+    >
       <Link href={path}>
         <ActivityIcon size={20} />
       </Link>

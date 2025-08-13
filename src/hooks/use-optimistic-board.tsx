@@ -11,19 +11,30 @@ interface OptimisticBoardContextType {
   lists: ListWithCards[];
   isLoading: boolean;
   isError: boolean;
-  moveCard: (cardId: number, sourceListId: number, destListId: number, sourceIndex: number, destIndex: number) => void;
+  moveCard: (
+    cardId: number,
+    sourceListId: number,
+    destListId: number,
+    sourceIndex: number,
+    destIndex: number,
+  ) => void;
   moveList: (listId: number, sourceIndex: number, destIndex: number) => void;
   refetch: () => void;
 }
 
-const OptimisticBoardContext = createContext<OptimisticBoardContextType | undefined>(undefined);
+const OptimisticBoardContext = createContext<
+  OptimisticBoardContextType | undefined
+>(undefined);
 
 interface OptimisticBoardProviderProps {
   children: React.ReactNode;
   boardId: number;
 }
 
-export function OptimisticBoardProvider({ children, boardId }: OptimisticBoardProviderProps) {
+export function OptimisticBoardProvider({
+  children,
+  boardId,
+}: OptimisticBoardProviderProps) {
   const {
     data: lists,
     isLoading,
@@ -56,7 +67,13 @@ export function OptimisticBoardProvider({ children, boardId }: OptimisticBoardPr
   });
 
   const moveCard = useCallback(
-    (cardId: number, sourceListId: number, destListId: number, sourceIndex: number, destIndex: number) => {
+    (
+      cardId: number,
+      sourceListId: number,
+      destListId: number,
+      sourceIndex: number,
+      destIndex: number,
+    ) => {
       if (!lists) return;
 
       utils.list.getlistsWithCards.setData({ boardId }, (old) => {
@@ -69,7 +86,10 @@ export function OptimisticBoardProvider({ children, boardId }: OptimisticBoardPr
         if (!sourceList || !destList) return old;
 
         const sourceCards = [...(sourceList.cards || [])];
-        const destCards = sourceListId === destListId ? sourceCards : [...(destList.cards || [])];
+        const destCards =
+          sourceListId === destListId
+            ? sourceCards
+            : [...(destList.cards || [])];
 
         const [movedCard] = sourceCards.splice(sourceIndex, 1);
         if (!movedCard) return old;
@@ -99,12 +119,21 @@ export function OptimisticBoardProvider({ children, boardId }: OptimisticBoardPr
         return newLists;
       });
 
-      const updatedCacheData = utils.list.getlistsWithCards.getData({ boardId });
+      const updatedCacheData = utils.list.getlistsWithCards.getData({
+        boardId,
+      });
       if (updatedCacheData) {
-        const allAffectedCards: Array<{ id: number; title: string; order: number; listId: number }> = [];
+        const allAffectedCards: Array<{
+          id: number;
+          title: string;
+          order: number;
+          listId: number;
+        }> = [];
 
         if (sourceListId === destListId) {
-          const updatedList = updatedCacheData.find((list) => list.id === destListId);
+          const updatedList = updatedCacheData.find(
+            (list) => list.id === destListId,
+          );
           if (updatedList?.cards) {
             allAffectedCards.push(
               ...updatedList.cards.map((card) => ({
@@ -116,8 +145,12 @@ export function OptimisticBoardProvider({ children, boardId }: OptimisticBoardPr
             );
           }
         } else {
-          const updatedSourceList = updatedCacheData.find((list) => list.id === sourceListId);
-          const updatedDestList = updatedCacheData.find((list) => list.id === destListId);
+          const updatedSourceList = updatedCacheData.find(
+            (list) => list.id === sourceListId,
+          );
+          const updatedDestList = updatedCacheData.find(
+            (list) => list.id === destListId,
+          );
 
           if (updatedSourceList?.cards) {
             allAffectedCards.push(
@@ -189,7 +222,10 @@ export function OptimisticBoardProvider({ children, boardId }: OptimisticBoardPr
               id: list.id,
               title: list.title,
               order: list.order,
-            })) as [{ id: number; title: string; order: number }, ...{ id: number; title: string; order: number }[]],
+            })) as [
+              { id: number; title: string; order: number },
+              ...{ id: number; title: string; order: number }[],
+            ],
           });
         }
       }
@@ -209,13 +245,19 @@ export function OptimisticBoardProvider({ children, boardId }: OptimisticBoardPr
     [lists, isLoading, isError, moveCard, moveList, refetch],
   );
 
-  return <OptimisticBoardContext.Provider value={value}>{children}</OptimisticBoardContext.Provider>;
+  return (
+    <OptimisticBoardContext.Provider value={value}>
+      {children}
+    </OptimisticBoardContext.Provider>
+  );
 }
 
 export function useOptimisticBoard() {
   const context = useContext(OptimisticBoardContext);
   if (context === undefined) {
-    throw new Error("useOptimisticBoard must be used within an OptimisticBoardProvider");
+    throw new Error(
+      "useOptimisticBoard must be used within an OptimisticBoardProvider",
+    );
   }
   return context;
 }

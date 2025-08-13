@@ -5,7 +5,9 @@ import type { ProtectedTRPCContext } from "~/server/api/trpc";
 import { auditLogs, type Action, type EntityType } from "~/server/db/schema";
 import { eq, type SQL } from "drizzle-orm";
 
-export async function validateOrgId(ctx: ProtectedTRPCContext): Promise<string> {
+export async function validateOrgId(
+  ctx: ProtectedTRPCContext,
+): Promise<string> {
   const orgId = ctx.auth.orgId;
   if (!orgId) {
     throw new TRPCError({
@@ -27,7 +29,10 @@ export function requireOrgAccess(ctx: ProtectedTRPCContext) {
   return { ...ctx, auth: { ...ctx.auth, orgId } };
 }
 
-export function validateOrgAccess(ctx: ProtectedTRPCContext, inputOrgId: string): void {
+export function validateOrgAccess(
+  ctx: ProtectedTRPCContext,
+  inputOrgId: string,
+): void {
   if (ctx.auth.orgId !== inputOrgId) {
     throw new TRPCError({
       code: "FORBIDDEN",
@@ -86,7 +91,10 @@ export async function createOrgAuditLog(
   });
 }
 
-export function createOrgAccessCondition<T extends { orgId: any }>(table: T, orgId: string): SQL {
+export function createOrgAccessCondition<T extends { orgId: any }>(
+  table: T,
+  orgId: string,
+): SQL {
   return eq(table.orgId as any, orgId);
 }
 
