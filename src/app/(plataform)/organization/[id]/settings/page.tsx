@@ -1,9 +1,9 @@
-import OrganizationProfileSettings from "./_comoponents/organization-profile";
+import { OrganizationProfile } from "~/components/organization";
 
 export default async function SettingsPage() {
   return (
     <div className="w-full">
-      <OrganizationProfileSettings />
+      <OrganizationProfile />
     </div>
   );
 }

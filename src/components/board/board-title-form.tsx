@@ -11,7 +11,7 @@ interface BoardTitleFormProps {
   data: BoardSelect;
 }
 
-export function BoardTitleForm({ data }: BoardTitleFormProps) {
+export default function BoardTitleForm({ data }: BoardTitleFormProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(data.title);
@@ -103,7 +103,7 @@ export function BoardTitleForm({ data }: BoardTitleFormProps) {
           onKeyDown={handleKeyDown}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="text-lg font-bold px-[7px] py-1 h-7 bg-transparent focus-visible:bg-white dark:focus-visible:bg-muted transition-colors border-none shadow-sm"
+          className="dark:focus-visible:bg-muted h-7 border-none bg-transparent px-[7px] py-1 text-lg font-bold shadow-sm transition-colors focus-visible:bg-white"
           disabled={updateBoard.isPending}
         />
       </form>
@@ -113,7 +113,7 @@ export function BoardTitleForm({ data }: BoardTitleFormProps) {
   return (
     <button
       onClick={enableEditing}
-      className="font-bold text-lg h-auto p-1 px-2 rounded-sm hover:bg-muted/50 transition-colors text-left"
+      className="hover:bg-muted/50 h-auto rounded-sm p-1 px-2 text-left text-lg font-bold transition-colors"
       disabled={updateBoard.isPending}
     >
       {data.title}

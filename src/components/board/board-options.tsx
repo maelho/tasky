@@ -9,14 +9,19 @@ import { toast } from "sonner";
 import { Paths } from "~/config/site";
 import { Button } from "~/components/ui/button";
 import { ConfirmationDialog } from "~/components/ui/confirmation-dialog";
-import { Popover, PopoverClose, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
+import {
+  Popover,
+  PopoverClose,
+  PopoverContent,
+  PopoverTrigger,
+} from "~/components/ui/popover";
 
 type BoardOptionsProps = {
   id: number;
   orgId: string;
 };
 
-export function BoardOptions({ id, orgId }: BoardOptionsProps) {
+export default function BoardOptions({ id, orgId }: BoardOptionsProps) {
   const router = useRouter();
   const utils = api.useUtils();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -68,7 +73,7 @@ export function BoardOptions({ id, orgId }: BoardOptionsProps) {
           </Button>
         </PopoverTrigger>
         <PopoverContent
-          className="w-48 px-0 py-3 relative"
+          className="relative w-48 px-0 py-3"
           side="bottom"
           align="end"
           role="menu"
@@ -76,7 +81,7 @@ export function BoardOptions({ id, orgId }: BoardOptionsProps) {
         >
           <PopoverClose asChild>
             <Button
-              className="absolute top-2 right-2 h-6 w-6 p-0 text-muted-foreground hover:text-foreground"
+              className="text-muted-foreground hover:text-foreground absolute top-2 right-2 h-6 w-6 p-0"
               variant="ghost"
               size="sm"
               aria-label="Close board options menu"
@@ -86,7 +91,7 @@ export function BoardOptions({ id, orgId }: BoardOptionsProps) {
           </PopoverClose>
           <div
             id="board-actions-title"
-            className="px-3 pb-3 pr-8 text-xs font-medium text-muted-foreground uppercase tracking-wider"
+            className="text-muted-foreground px-3 pr-8 pb-3 text-xs font-medium tracking-wider uppercase"
           >
             Board actions
           </div>
@@ -94,7 +99,7 @@ export function BoardOptions({ id, orgId }: BoardOptionsProps) {
           <Button
             variant="ghost"
             onClick={() => setShowDeleteDialog(true)}
-            className="h-9 w-full justify-start rounded-none px-3 text-sm font-normal text-destructive hover:bg-destructive/10 hover:text-destructive"
+            className="text-destructive hover:bg-destructive/10 hover:text-destructive h-9 w-full justify-start rounded-none px-3 text-sm font-normal"
             role="menuitem"
             aria-label="Delete this board permanently"
           >
@@ -115,9 +120,13 @@ export function BoardOptions({ id, orgId }: BoardOptionsProps) {
         onCancel={handleDeleteCancel}
         aria-describedby="delete-board-description"
       >
-        <div id="delete-board-description" className="text-muted-foreground text-sm">
+        <div
+          id="delete-board-description"
+          className="text-muted-foreground text-sm"
+        >
           <p className="mb-2">
-            Are you sure you want to delete this board? This action cannot be undone and will permanently delete:
+            Are you sure you want to delete this board? This action cannot be
+            undone and will permanently delete:
           </p>
           <ul className="mt-2 ml-4 list-disc space-y-1" role="list">
             <li>All lists in this board</li>

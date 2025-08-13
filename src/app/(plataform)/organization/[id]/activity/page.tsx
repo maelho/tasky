@@ -1,9 +1,6 @@
 import { Suspense } from "react";
 
-import {
-  ActivityList,
-  ActivityListSkeleton,
-} from "./_components/activity-list";
+import { ActivityList, ActivityListSkeleton } from "~/components/activity";
 
 export default function ActivityPage() {
   return (
