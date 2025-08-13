@@ -1,21 +1,20 @@
-import { Calendar, Users, Zap } from "lucide-react";
 import { AnimatedFeatures } from "~/components/landing/animated-features";
 
 const features = [
   {
-    icon: Calendar,
+    icon: "Calendar",
     title: "Organize",
     description:
       "Create boards and lists to structure your work the way you think. Intuitive and effortless.",
   },
   {
-    icon: Users,
+    icon: "Users",
     title: "Collaborate",
     description:
       "Share with your team and work together on what matters most. Real-time updates included.",
   },
   {
-    icon: Zap,
+    icon: "Zap",
     title: "Focus",
     description:
       "Stay aligned on priorities and track progress. Built for speed and efficiency.",

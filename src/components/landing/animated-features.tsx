@@ -2,6 +2,7 @@
 
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
+import { Calendar, Users, Zap } from "lucide-react";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -26,10 +27,16 @@ const cardVariants = {
 };
 
 interface Feature {
-  icon: React.ElementType;
+  icon: string;
   title: string;
   description: string;
 }
+
+const iconMap = {
+  Calendar,
+  Users,
+  Zap,
+} as const;
 
 interface AnimatedFeaturesProps {
   features: Feature[];
@@ -48,7 +55,7 @@ export function AnimatedFeatures({ features }: AnimatedFeaturesProps) {
       animate={isInView ? "visible" : "hidden"}
     >
       {features.map((feature, index) => {
-        const Icon = feature.icon;
+        const Icon = iconMap[feature.icon as keyof typeof iconMap];
 
         return (
           <motion.div
