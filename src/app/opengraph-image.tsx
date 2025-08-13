@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 
 import { SiteConfig } from "~/config/site";
 
-export const runtime = "edge";
+export const runtime = "nodejs";
 
 export const alt = SiteConfig.title;
 export const size = {
