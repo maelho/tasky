@@ -327,7 +327,11 @@ export default function SignInPage() {
                     <SignIn.Action
                       asChild
                       resend
-                      fallback={({ resendableAfter }) => (
+                      fallback={({
+                        resendableAfter,
+                      }: {
+                        resendableAfter: number;
+                      }) => (
                         <Button
                           variant="ghost"
                           size="sm"
