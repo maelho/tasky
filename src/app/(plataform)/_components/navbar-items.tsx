@@ -6,9 +6,8 @@ import { usePathname } from "next/navigation";
 import { ClerkLoaded, ClerkLoading, OrganizationSwitcher, UserButton } from "@clerk/nextjs";
 import { type BoardSelect } from "~/server/db/schema";
 import { api } from "~/trpc/react";
-import { ActivityIcon, LayoutDashboardIcon, SettingsIcon } from "lucide-react";
+import { ActivityIcon, ChevronDown, LayoutDashboardIcon, SettingsIcon } from "lucide-react";
 
-import { useClerkAppearance } from "~/hooks/use-clerk-appearance";
 import { useBoardPath, useOrganizationPath } from "~/hooks/use-path-matcher";
 import { Button } from "~/components/ui/button";
 import {
@@ -32,8 +31,11 @@ function BoardDropdownItem({ board }: { board: BoardSelect }) {
 
   return (
     <DropdownMenuItem asChild>
-      <Link href={path}>
-        <span className={isMatchingPath ? "font-bold" : ""}>{board.title}</span>
+      <Link href={path} className="w-full cursor-pointer">
+        <div className="flex items-center gap-2 w-full">
+          <LayoutDashboardIcon size={14} className="text-muted-foreground" />
+          <span className={`truncate flex-1 ${isMatchingPath ? "font-semibold text-primary" : ""}`}>{board.title}</span>
+        </div>
       </Link>
     </DropdownMenuItem>
   );
@@ -43,31 +45,50 @@ export function SelectBoardButton({ orgId }: ItemProps) {
   const { data: boards, isPending } = api.board.getBoards.useQuery({ orgId });
   const memoizedBoards = useMemo(() => boards as BoardSelect[] | undefined, [boards]);
   const pathname = usePathname();
+  const isActive = pathname.includes("board");
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
-          aria-label="Boards"
-          variant={pathname.includes("board") ? "secondary" : "ghost"}
-          className="gap-1 px-2 sm:px-3"
+          variant={isActive ? "default" : "ghost"}
+          size="sm"
+          className="h-8 px-3 gap-2 font-medium transition-all hover:scale-105"
         >
           <LayoutDashboardIcon size={16} />
-          <span className="hidden md:inline">Boards</span>
+          <span className="hidden sm:inline">Boards</span>
+          <ChevronDown size={14} className="opacity-50" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56">
-        <DropdownMenuLabel>Boards</DropdownMenuLabel>
+      <DropdownMenuContent className="w-64" align="start">
+        <DropdownMenuLabel className="font-semibold">Your Boards</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <ScrollArea className="h-40">
-            {isPending ? (
-              <Skeleton className="w-full" />
-            ) : (
-              memoizedBoards?.map((board) => <BoardDropdownItem key={board.id} board={board} />)
-            )}
-          </ScrollArea>
+          {isPending ? (
+            <div className="p-2 space-y-2">
+              <Skeleton className="h-8 w-full rounded-md" />
+              <Skeleton className="h-8 w-full rounded-md" />
+              <Skeleton className="h-8 w-full rounded-md" />
+            </div>
+          ) : memoizedBoards && memoizedBoards.length > 0 ? (
+            <ScrollArea className="max-h-64">
+              <div className="p-1">
+                {memoizedBoards.map((board) => (
+                  <BoardDropdownItem key={board.id} board={board} />
+                ))}
+              </div>
+            </ScrollArea>
+          ) : (
+            <div className="p-4 text-center text-muted-foreground text-sm">No boards found</div>
+          )}
         </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link href={`/organization/${orgId}`} className="w-full cursor-pointer font-medium text-primary">
+            <LayoutDashboardIcon size={14} className="mr-2" />
+            View all boards
+          </Link>
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -78,14 +99,14 @@ export function SettingsButton({ orgId }: ItemProps) {
 
   return (
     <Button
-      aria-label="Settings"
-      variant={isMatchingPath ? "secondary" : "ghost"}
-      className="gap-1 px-2 sm:px-3"
+      variant={isMatchingPath ? "default" : "ghost"}
+      size="sm"
+      className="h-8 px-3 gap-2 font-medium transition-all hover:scale-105"
       asChild
     >
       <Link href={path}>
         <SettingsIcon size={16} />
-        <span className="hidden md:inline">Settings</span>
+        <span className="hidden sm:inline">Settings</span>
       </Link>
     </Button>
   );
@@ -96,26 +117,24 @@ export function ActivityButton({ orgId }: ItemProps) {
 
   return (
     <Button
-      aria-label="Activity"
-      variant={isMatchingPath ? "secondary" : "ghost"}
-      className="gap-1 px-2 sm:px-3"
+      variant={isMatchingPath ? "default" : "ghost"}
+      size="sm"
+      className="h-8 px-3 gap-2 font-medium transition-all hover:scale-105"
       asChild
     >
       <Link href={path}>
         <ActivityIcon size={16} />
-        <span className="hidden md:inline">Activity</span>
+        <span className="hidden sm:inline">Activity</span>
       </Link>
     </Button>
   );
 }
 
 export function OrganizationSwitcherButton() {
-  const appearance = useClerkAppearance();
-
   return (
-    <>
+    <div className="flex items-center">
       <ClerkLoading>
-        <Skeleton className="flex h-7 w-[117.77px]" />
+        <Skeleton className="h-8 w-24 rounded-md" />
       </ClerkLoading>
       <ClerkLoaded>
         <OrganizationSwitcher
@@ -123,24 +142,21 @@ export function OrganizationSwitcherButton() {
           afterCreateOrganizationUrl="/organization/:id"
           afterLeaveOrganizationUrl="/select-org"
           afterSelectOrganizationUrl="/organization/:id"
-          appearance={appearance}
         />
       </ClerkLoaded>
-    </>
+    </div>
   );
 }
 
 export function UserClerkButton() {
-  const appearance = useClerkAppearance();
-
   return (
-    <>
+    <div className="flex items-center">
       <ClerkLoading>
         <Skeleton className="h-8 w-8 rounded-full" />
       </ClerkLoading>
       <ClerkLoaded>
-        <UserButton appearance={appearance} />
+        <UserButton />
       </ClerkLoaded>
-    </>
+    </div>
   );
 }

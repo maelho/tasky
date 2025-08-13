@@ -4,6 +4,7 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import type { CardSelect } from "~/server/db/schema";
 import { useAtom } from "jotai";
+import { Calendar, MessageSquare } from "lucide-react";
 
 import { cn } from "~/lib/utils";
 import { onOpenAtom } from "~/hooks/use-card-modal";
@@ -16,14 +17,7 @@ type CardItemProps = {
 export function CardItem({ data, isDragOverlay = false }: CardItemProps) {
   const [, onOpen] = useAtom(onOpenAtom);
 
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: data.id,
     data: {
       type: "card",
@@ -40,10 +34,10 @@ export function CardItem({ data, isDragOverlay = false }: CardItemProps) {
   if (isDragOverlay) {
     return (
       <div
-        className="bg-primary-foreground rotate-3 transform cursor-grabbing rounded-md border-2 border-transparent px-3 py-2 text-sm shadow-lg"
+        className="bg-card border-2 border-primary/20 rotate-2 transform cursor-grabbing rounded-lg px-4 py-3 text-sm shadow-xl backdrop-blur-sm"
         aria-hidden="true"
       >
-        {data.title}
+        <div className="font-medium text-foreground line-clamp-3 leading-relaxed">{data.title}</div>
       </div>
     );
   }
@@ -66,14 +60,42 @@ export function CardItem({ data, isDragOverlay = false }: CardItemProps) {
       aria-label={`Card: ${data.title}. Press Enter or Space to open, use arrow keys to move`}
       aria-describedby={`card-${data.id}-description`}
       className={cn(
-        "bg-primary-foreground hover:border-background focus:ring-ring cursor-grab truncate rounded-md border-2 border-transparent px-3 py-2 text-sm shadow-sm transition-colors focus:ring-2 focus:ring-offset-2",
-        isDragging && "cursor-grabbing opacity-50",
+        "group bg-card hover:bg-card/90 border border-border/50 hover:border-border hover:shadow-md cursor-grab rounded-lg p-4 text-sm transition-all duration-200",
+        "focus:ring-2 focus:ring-primary/20 focus:ring-offset-2 focus:border-primary/50 focus:outline-none",
+        "hover:-translate-y-0.5 hover:shadow-lg",
+        isDragging && "cursor-grabbing opacity-60 shadow-xl rotate-1 scale-105",
       )}
     >
-      {data.title}
+      <div className="space-y-3">
+        <div className="font-medium text-foreground leading-relaxed line-clamp-4 group-hover:text-primary/90 transition-colors">
+          {data.title}
+        </div>
+
+        {data.description && (
+          <div className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">{data.description}</div>
+        )}
+
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            {data.description && (
+              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                <MessageSquare className="h-3 w-3" />
+                <span>1</span>
+              </div>
+            )}
+
+            {data.createdAt && (
+              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                <Calendar className="h-3 w-3" />
+                <span>{new Date(data.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
       <div id={`card-${data.id}-description`} className="sr-only">
-        Draggable card. Use mouse to drag or keyboard to navigate and press
-        Enter to open.
+        Draggable card. Use mouse to drag or keyboard to navigate and press Enter to open.
       </div>
     </div>
   );

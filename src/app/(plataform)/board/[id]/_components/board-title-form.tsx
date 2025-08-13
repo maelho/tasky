@@ -1,95 +1,122 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { BoardSelect } from "~/server/db/schema";
 import { api } from "~/trpc/react";
 import { toast } from "sonner";
 
-import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 
-type BoardTitleFormProps = {
+interface BoardTitleFormProps {
   data: BoardSelect;
-};
+}
 
 export function BoardTitleForm({ data }: BoardTitleFormProps) {
-  const utils = api.useUtils();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [title, setTitle] = useState(data.title);
+
   const updateBoard = api.board.updateBoard.useMutation({
-    onSuccess: async (updatedData) => {
-      await utils.board.invalidate();
-      toast.success(`Board "${updatedData?.title}" updated!`);
-      setTitle((updatedData?.title as string) ?? "");
-      disableEditing();
+    onSuccess: () => {
+      toast.success("Board title updated successfully!");
+      setIsEditing(false);
     },
     onError: (error: unknown) => {
       const errorMessage =
         (
           error as {
-            data?: { zodError?: { fieldErrors?: { title?: string } } };
+            data?: { zodError?: { fieldErrors?: { title?: string[] } } };
+            message?: string;
           }
-        )?.data?.zodError?.fieldErrors?.title ?? "Failed to update board title";
+        )?.data?.zodError?.fieldErrors?.title?.[0] ??
+        (error as { message?: string })?.message ??
+        "Failed to update board title";
       toast.error(errorMessage);
+      setTitle(data.title);
+      setIsEditing(false);
     },
   });
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [isEditing, setIsEditing] = useState(false);
-  const [title, setTitle] = useState(data?.title);
+
+  useEffect(() => {
+    setTitle(data.title);
+  }, [data.title]);
 
   const enableEditing = () => {
     setIsEditing(true);
+    setTitle(data.title);
     setTimeout(() => {
       inputRef.current?.focus();
       inputRef.current?.select();
+    }, 0);
+  };
+
+  const disableEditing = () => {
+    setIsEditing(false);
+    setTitle(data.title);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (updateBoard.isPending) return;
+
+    const trimmedTitle = title.trim();
+
+    if (!trimmedTitle) {
+      toast.error("Board title cannot be empty");
+      setTitle(data.title);
+      return;
+    }
+
+    if (trimmedTitle === data.title) {
+      setIsEditing(false);
+      return;
+    }
+
+    updateBoard.mutate({
+      boardId: data.id,
+      title: trimmedTitle,
     });
   };
 
-  const disableEditing = () => setIsEditing(false);
-
-  const handleSubmit = (formData: FormData) => {
-    const newTitle = formData.get("title") as string;
-    if (newTitle === data.title) {
-      return disableEditing();
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Escape") {
+      disableEditing();
     }
-    updateBoard.mutate({ boardId: data.id, title: newTitle });
   };
 
-  const handleBlur = () => inputRef.current?.form?.requestSubmit();
+  const handleBlur = () => {
+    setTimeout(() => {
+      if (isEditing && !updateBoard.isPending) {
+        const formEvent = new Event("submit") as unknown as React.FormEvent;
+        handleSubmit(formEvent);
+      }
+    }, 100);
+  };
 
-  return isEditing ? (
-    <form
-      action={handleSubmit}
-      className="flex items-center gap-x-2"
-      role="form"
-      aria-label="Edit board title"
-    >
-      <Input
-        ref={inputRef}
-        id="title"
-        name="title"
-        onBlur={handleBlur}
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        className="border-ring h-7 border-none bg-transparent px-[7px] py-1 text-lg font-bold focus-visible:ring-0 focus-visible:ring-transparent focus-visible:ring-offset-transparent focus-visible:outline-none"
-        aria-label="Board title"
-        aria-describedby="board-title-help"
-        onKeyDown={(e) => {
-          if (e.key === "Escape") {
-            disableEditing();
-          }
-        }}
-      />
-      <div id="board-title-help" className="sr-only">
-        Press Enter to save changes, Escape to cancel
-      </div>
-    </form>
-  ) : (
-    <Button
+  if (isEditing) {
+    return (
+      <form onSubmit={handleSubmit} className="flex items-center gap-x-2">
+        <Input
+          ref={inputRef}
+          onBlur={handleBlur}
+          onKeyDown={handleKeyDown}
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          className="text-lg font-bold px-[7px] py-1 h-7 bg-transparent focus-visible:bg-white dark:focus-visible:bg-muted transition-colors border-none shadow-sm"
+          disabled={updateBoard.isPending}
+        />
+      </form>
+    );
+  }
+
+  return (
+    <button
       onClick={enableEditing}
-      variant={"ghost"}
-      className="focus:ring-ring h-auto w-auto p-1 px-2 text-lg font-bold focus:ring-2 focus:ring-offset-2"
-      aria-label={`Board title: ${title}. Click to edit`}
+      className="font-bold text-lg h-auto p-1 px-2 rounded-sm hover:bg-muted/50 transition-colors text-left"
+      disabled={updateBoard.isPending}
     >
-      {title}
-    </Button>
+      {data.title}
+    </button>
   );
 }

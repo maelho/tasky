@@ -1,130 +1,149 @@
 "use client";
 
-import {
-  useRef,
-  useState,
-  type ElementRef,
-  type PropsWithChildren,
-} from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
-import { X } from "lucide-react";
+import { Plus } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "~/components/ui/button";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
-import {
-  Popover,
-  PopoverClose,
-  PopoverContent,
-  PopoverTrigger,
-} from "~/components/ui/popover";
+import { Label } from "~/components/ui/label";
 
-type CreateBoardPopoverProps = {
-  side?: "left" | "right" | "top" | "bottom";
-  align?: "start" | "center" | "end";
-  sideOffset?: number;
+type CreateBoardDialogProps = {
   orgId: string;
+  children?: React.ReactNode;
 };
 
-export function CreateBoardPopover({
-  children,
-  side = "bottom",
-  sideOffset = 0,
-  orgId,
-}: PropsWithChildren<CreateBoardPopoverProps>) {
-  const closeRef = useRef<ElementRef<"button">>(null);
-  const [formData, setFormData] = useState({ title: "" });
-
+export function CreateBoardDialog({ children, orgId }: CreateBoardDialogProps) {
+  const [open, setOpen] = useState(false);
+  const [title, setTitle] = useState("");
   const router = useRouter();
-
   const utils = api.useUtils();
+
   const { mutate, error, isPending } = api.board.create.useMutation({
     onSuccess: async (data) => {
-      await utils.board.invalidate();
-      closeRef.current?.click();
-      setFormData({ title: "" });
-      router.replace(`/board/${data?.id}`);
+      toast.success(`Board "${data?.title}" created successfully!`);
+      await utils.board.getBoards.invalidate({ orgId });
+      setOpen(false);
+      setTitle("");
+      router.push(`/board/${data?.id}`);
+    },
+    onError: (error: unknown) => {
+      const errorMessage =
+        (
+          error as {
+            data?: { zodError?: { fieldErrors?: { title?: string[] } } };
+            message?: string;
+          }
+        )?.data?.zodError?.fieldErrors?.title?.[0] ??
+        (error as { message?: string })?.message ??
+        "Failed to create board. Please try again.";
+      toast.error(errorMessage);
     },
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    mutate({ title: formData.title, orgId });
+    if (!title.trim()) {
+      toast.error("Board title is required");
+      return;
+    }
+    mutate({ title: title.trim(), orgId });
   };
 
+  const handleOpenChange = (newOpen: boolean) => {
+    setOpen(newOpen);
+    if (!newOpen) {
+      setTitle("");
+    }
+  };
+
+  const defaultTrigger = (
+    <Button className="gap-2">
+      <Plus size={16} />
+      Create Board
+    </Button>
+  );
+
   return (
-    <Popover>
-      <PopoverTrigger asChild>{children}</PopoverTrigger>
-      <PopoverContent
-        className="w-80 pt-3"
-        side={side}
-        sideOffset={sideOffset}
-        aria-labelledby="create-board-title"
-        aria-describedby="create-board-form"
-      >
-        <div
-          id="create-board-title"
-          className="text-muted-foreground pb-4 text-center text-sm font-medium"
-        >
-          Create board
-        </div>
-        <PopoverClose ref={closeRef} asChild>
-          <Button
-            variant="ghost"
-            className="text-muted-foreground absolute top-2 right-2 h-auto w-auto p-2"
-            aria-label="Close create board dialog"
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        </PopoverClose>
-        <form
-          id="create-board-form"
-          onSubmit={handleSubmit}
-          className="space-y-4"
-          role="form"
-          aria-label="Create new board"
-        >
-          <Input
-            name="title"
-            type="text"
-            placeholder="Enter board title"
-            value={formData.title}
-            onChange={handleChange}
-            aria-label="Board title"
-            aria-required="true"
-            aria-invalid={!!error?.data?.zodError?.fieldErrors.title}
-            aria-describedby={
-              error?.data?.zodError?.fieldErrors.title
-                ? "title-error"
-                : undefined
-            }
-          />
-          {error?.data?.zodError?.fieldErrors.title && (
-            <span
-              id="title-error"
-              className="mb-8 text-xs text-red-500"
-              role="alert"
-              aria-live="polite"
-            >
-              {error.data.zodError.fieldErrors.title}
-            </span>
-          )}
-          <Button
-            className="w-full"
-            type="submit"
-            disabled={isPending}
-            aria-label={
-              isPending ? "Creating board, please wait" : "Create board"
-            }
-          >
-            {isPending ? "Creating..." : "Create"}
-          </Button>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogTrigger asChild>{children ?? defaultTrigger}</DialogTrigger>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <Plus size={18} className="text-primary" />
+            New Board
+          </DialogTitle>
+        </DialogHeader>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="board-title">Board Title</Label>
+            <Input
+              id="board-title"
+              name="title"
+              type="text"
+              placeholder="e.g. My Project Board"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              aria-required="true"
+              aria-invalid={
+                !!(
+                  error as {
+                    data?: { zodError?: { fieldErrors?: { title?: string[] } } };
+                  }
+                )?.data?.zodError?.fieldErrors?.title
+              }
+              className={
+                (
+                  error as {
+                    data?: { zodError?: { fieldErrors?: { title?: string[] } } };
+                  }
+                )?.data?.zodError?.fieldErrors?.title
+                  ? "border-destructive"
+                  : ""
+              }
+              autoFocus
+            />
+            {(
+              error as {
+                data?: { zodError?: { fieldErrors?: { title?: string[] } } };
+              }
+            )?.data?.zodError?.fieldErrors?.title && (
+              <p className="text-sm text-destructive" role="alert">
+                {
+                  (
+                    error as {
+                      data?: { zodError?: { fieldErrors?: { title?: string[] } } };
+                    }
+                  )?.data?.zodError?.fieldErrors?.title?.[0]
+                }
+              </p>
+            )}
+          </div>
+
+          <DialogFooter className="flex flex-col-reverse gap-2 sm:flex-row sm:gap-3">
+            <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={isPending}>
+              Cancel
+            </Button>
+            <Button type="submit" disabled={isPending || !title.trim()} className="gap-2">
+              {isPending ? (
+                <>
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                  Creating...
+                </>
+              ) : (
+                <>
+                  <Plus size={16} />
+                  Create Board
+                </>
+              )}
+            </Button>
+          </DialogFooter>
         </form>
-      </PopoverContent>
-    </Popover>
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -1,241 +1,192 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useSignIn } from "@clerk/nextjs";
+import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 
-import { SiteConfig } from "~/config/site";
-import { cn } from "~/lib/utils";
 import { Button } from "~/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
-import { Icons } from "~/components/ui/icons";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 
-interface LoginFormProps {
-  className?: string;
-  onSubmit?: (data: { email: string; password: string }) => void;
-  onGoogleLogin?: () => void;
-  onGitHubLogin?: () => void;
-  isLoading?: boolean;
-  error?: string;
-  showSocialLogins?: boolean;
-  showForgotPassword?: boolean;
-  showSignUpLink?: boolean;
+interface FormData {
+  email: string;
+  password: string;
 }
 
-export function LoginForm({
-  className,
-  onSubmit,
-  onGoogleLogin,
-  onGitHubLogin,
-  isLoading = false,
-  error,
-  showSocialLogins = true,
-  showForgotPassword = true,
-  showSignUpLink = true,
-}: LoginFormProps) {
-  const [formData, setFormData] = useState({
+interface FieldErrors {
+  email?: string;
+  password?: string;
+  general?: string;
+}
+
+export function LoginForm() {
+  const { isLoaded, signIn, setActive } = useSignIn();
+  const router = useRouter();
+
+  const [formData, setFormData] = useState<FormData>({
     email: "",
     password: "",
   });
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-  const [fieldErrors, setFieldErrors] = useState<{
-    email?: string;
-    password?: string;
-  }>({});
-
-  const handleInputChange =
-    (field: keyof typeof formData) =>
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = e.target.value;
-      setFormData((prev) => ({ ...prev, [field]: value }));
-
-      // Clear field error when user starts typing
-      if (fieldErrors[field]) {
-        setFieldErrors((prev) => ({ ...prev, [field]: undefined }));
-      }
-    };
-
-  const validateForm = () => {
-    const errors: typeof fieldErrors = {};
-
-    if (!formData.email) {
-      errors.email = "Email is required";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      errors.email = "Please enter a valid email address";
+  const validateField = (field: keyof FormData, value: string): string | undefined => {
+    switch (field) {
+      case "email":
+        if (!value) return "Email is required";
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return "Please enter a valid email";
+        return undefined;
+      case "password":
+        if (!value) return "Password is required";
+        if (value.length < 8) return "Password must be at least 8 characters";
+        return undefined;
+      default:
+        return undefined;
     }
-
-    if (!formData.password) {
-      errors.password = "Password is required";
-    }
-
-    setFieldErrors(errors);
-    return Object.keys(errors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleInputChange = (field: keyof FormData) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setFormData((prev) => ({ ...prev, [field]: value }));
+
+    if (fieldErrors[field]) {
+      setFieldErrors((prev) => ({ ...prev, [field]: undefined }));
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!validateForm()) {
+    if (!isLoaded || isLoading) return;
+
+    const errors: FieldErrors = {};
+    (Object.keys(formData) as Array<keyof FormData>).forEach((field) => {
+      const error = validateField(field, formData[field]);
+      if (error) errors[field] = error;
+    });
+
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
       return;
     }
 
-    onSubmit?.(formData);
+    setIsLoading(true);
+    setFieldErrors({});
+
+    try {
+      const result = await signIn.create({
+        identifier: formData.email,
+        password: formData.password,
+      });
+
+      if (result.status === "complete") {
+        await setActive({ session: result.createdSessionId });
+        router.push("/");
+      } else {
+        setFieldErrors({ general: "Sign in failed. Please try again." });
+      }
+    } catch (err) {
+      const error = err as { errors?: Array<{ message: string; code: string }> };
+      if (error.errors?.[0]) {
+        const { message, code } = error.errors[0];
+        if (code === "form_identifier_not_found") {
+          setFieldErrors({ email: "No account found with this email" });
+        } else if (code === "form_password_incorrect") {
+          setFieldErrors({ password: "Incorrect password" });
+        } else {
+          setFieldErrors({ general: message || "Sign in failed. Please try again." });
+        }
+      } else {
+        setFieldErrors({ general: "Something went wrong. Please try again." });
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <div className={cn("flex flex-col gap-6", className)}>
-      <Card>
-        <CardHeader className="text-center">
-          <div className="mb-4 flex justify-center">
-            <div className="bg-primary text-primary-foreground flex h-12 w-12 items-center justify-center rounded-lg">
-              <span className="text-lg font-bold">T</span>
-            </div>
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="email" className="text-sm font-medium">
+            Email
+          </Label>
+          <div className="relative">
+            <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              id="email"
+              type="email"
+              placeholder="Enter your email"
+              value={formData.email}
+              onChange={handleInputChange("email")}
+              className={`pl-10 ${fieldErrors.email ? "border-destructive focus-visible:ring-destructive" : ""}`}
+              disabled={isLoading}
+              aria-invalid={!!fieldErrors.email}
+              aria-describedby={fieldErrors.email ? "email-error" : undefined}
+            />
           </div>
-          <CardTitle className="text-2xl font-semibold">Welcome back</CardTitle>
-          <CardDescription>
-            Sign in to your {SiteConfig.title} account
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit}>
-            <div className="flex flex-col gap-6">
-              {showSocialLogins && (
-                <>
-                  <div className="grid grid-cols-2 gap-3">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={onGoogleLogin}
-                      disabled={isLoading}
-                      className="w-full"
-                    >
-                      {isLoading ? (
-                        <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-                      ) : (
-                        <Icons.google className="mr-2 h-4 w-4" />
-                      )}
-                      Google
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={onGitHubLogin}
-                      disabled={isLoading}
-                      className="w-full"
-                    >
-                      {isLoading ? (
-                        <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-                      ) : (
-                        <Icons.gitHub className="mr-2 h-4 w-4" />
-                      )}
-                      GitHub
-                    </Button>
-                  </div>
+          {fieldErrors.email && (
+            <p id="email-error" className="text-sm text-destructive" role="alert">
+              {fieldErrors.email}
+            </p>
+          )}
+        </div>
 
-                  <div className="relative">
-                    <div className="absolute inset-0 flex items-center">
-                      <span className="w-full border-t" />
-                    </div>
-                    <div className="relative flex justify-center text-xs uppercase">
-                      <span className="bg-background text-muted-foreground px-2">
-                        Or continue with email
-                      </span>
-                    </div>
-                  </div>
-                </>
-              )}
+        <div className="space-y-2">
+          <Label htmlFor="password" className="text-sm font-medium">
+            Password
+          </Label>
+          <div className="relative">
+            <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              id="password"
+              type={showPassword ? "text" : "password"}
+              placeholder="Enter your password"
+              value={formData.password}
+              onChange={handleInputChange("password")}
+              className={`pl-10 pr-10 ${fieldErrors.password ? "border-destructive focus-visible:ring-destructive" : ""}`}
+              disabled={isLoading}
+              aria-invalid={!!fieldErrors.password}
+              aria-describedby={fieldErrors.password ? "password-error" : undefined}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+              disabled={isLoading}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+            >
+              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
+          </div>
+          {fieldErrors.password && (
+            <p id="password-error" className="text-sm text-destructive" role="alert">
+              {fieldErrors.password}
+            </p>
+          )}
+        </div>
+      </div>
 
-              {error && (
-                <div className="bg-destructive/15 text-destructive rounded-md px-3 py-2 text-sm">
-                  {error}
-                </div>
-              )}
+      {fieldErrors.general && (
+        <div className="rounded-md bg-destructive/10 border border-destructive/20 p-3">
+          <p className="text-sm text-destructive" role="alert">
+            {fieldErrors.general}
+          </p>
+        </div>
+      )}
 
-              <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="Enter your email"
-                  value={formData.email}
-                  onChange={handleInputChange("email")}
-                  disabled={isLoading}
-                  className={cn(
-                    fieldErrors.email &&
-                      "border-destructive focus-visible:ring-destructive",
-                  )}
-                  required
-                />
-                {fieldErrors.email && (
-                  <p className="text-destructive text-sm">
-                    {fieldErrors.email}
-                  </p>
-                )}
-              </div>
-
-              <div className="grid gap-2">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="password">Password</Label>
-                  {showForgotPassword && (
-                    <Link
-                      href="/forgot-password"
-                      className="text-sm underline-offset-4 hover:underline"
-                      tabIndex={-1}
-                    >
-                      Forgot your password?
-                    </Link>
-                  )}
-                </div>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="Enter your password"
-                  value={formData.password}
-                  onChange={handleInputChange("password")}
-                  disabled={isLoading}
-                  className={cn(
-                    fieldErrors.password &&
-                      "border-destructive focus-visible:ring-destructive",
-                  )}
-                  required
-                />
-                {fieldErrors.password && (
-                  <p className="text-destructive text-sm">
-                    {fieldErrors.password}
-                  </p>
-                )}
-              </div>
-
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? (
-                  <>
-                    <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-                    Signing in...
-                  </>
-                ) : (
-                  "Sign in"
-                )}
-              </Button>
-            </div>
-
-            {showSignUpLink && (
-              <div className="mt-4 text-center text-sm">
-                Don&apos;t have an account?{" "}
-                <Link href="/sign-up" className="underline underline-offset-4">
-                  Sign up
-                </Link>
-              </div>
-            )}
-          </form>
-        </CardContent>
-      </Card>
-    </div>
+      <Button type="submit" className="w-full" disabled={isLoading}>
+        {isLoading ? (
+          <>
+            <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+            Signing in...
+          </>
+        ) : (
+          "Sign In"
+        )}
+      </Button>
+    </form>
   );
 }

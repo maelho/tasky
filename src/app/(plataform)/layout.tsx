@@ -4,9 +4,7 @@ import { HydrateClient } from "~/trpc/server";
 
 import { Navbar } from "./_components/navbar";
 
-export default async function DashboardLayout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
+export default async function DashboardLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const { orgId } = await auth();
 
   if (!orgId) {
@@ -15,10 +13,10 @@ export default async function DashboardLayout({
 
   return (
     <HydrateClient>
-      <main className="container mx-auto min-h-svh">
+      <div className="min-h-screen overflow-x-hidden">
         <Navbar orgId={orgId} />
-        {children}
-      </main>
+        <main className="container mx-auto px-4 sm:px-6 lg:px-8">{children}</main>
+      </div>
     </HydrateClient>
   );
 }

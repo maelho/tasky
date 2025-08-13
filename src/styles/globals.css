@@ -38,7 +38,9 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
-  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+    "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
   --radius: 0.5rem;
@@ -76,32 +78,34 @@
   --popover: oklch(0.9911 0 0);
   --popover-foreground: oklch(0.2435 0 0);
   --primary: oklch(0.4341 0.0392 41.9938);
-  --primary-foreground: oklch(1.0000 0 0);
-  --secondary: oklch(0.9200 0.0651 74.3695);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.92 0.0651 74.3695);
   --secondary-foreground: oklch(0.3499 0.0685 40.8288);
   --muted: oklch(0.9521 0 0);
   --muted-foreground: oklch(0.5032 0 0);
-  --accent: oklch(0.9310 0 0);
+  --accent: oklch(0.931 0 0);
   --accent-foreground: oklch(0.2435 0 0);
-  --destructive: oklch(0.6271 0.1936 33.3390);
+  --destructive: oklch(0.6271 0.1936 33.339);
   --border: oklch(0.8822 0 0);
   --input: oklch(0.8822 0 0);
   --ring: oklch(0.4341 0.0392 41.9938);
   --chart-1: oklch(0.4341 0.0392 41.9938);
-  --chart-2: oklch(0.9200 0.0651 74.3695);
-  --chart-3: oklch(0.9310 0 0);
+  --chart-2: oklch(0.92 0.0651 74.3695);
+  --chart-3: oklch(0.931 0 0);
   --chart-4: oklch(0.9367 0.0523 75.5009);
   --chart-5: oklch(0.4338 0.0437 41.6746);
   --sidebar: oklch(0.9881 0 0);
   --sidebar-foreground: oklch(0.2645 0 0);
-  --sidebar-primary: oklch(0.3250 0 0);
+  --sidebar-primary: oklch(0.325 0 0);
   --sidebar-primary-foreground: oklch(0.9881 0 0);
   --sidebar-accent: oklch(0.9761 0 0);
-  --sidebar-accent-foreground: oklch(0.3250 0 0);
+  --sidebar-accent-foreground: oklch(0.325 0 0);
   --sidebar-border: oklch(0.9401 0 0);
   --sidebar-ring: oklch(0.7731 0 0);
-  --destructive-foreground: oklch(1.0000 0 0);
-  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  --destructive-foreground: oklch(1 0 0);
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+    "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --shadow-color: oklch(0 0 0);
@@ -114,11 +118,11 @@
   --spacing: 0.25rem;
   --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
   --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
-  --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 1px 2px -1px hsl(0 0% 0% / 0.10);
-  --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 1px 2px -1px hsl(0 0% 0% / 0.10);
-  --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 2px 4px -1px hsl(0 0% 0% / 0.10);
-  --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 4px 6px -1px hsl(0 0% 0% / 0.10);
-  --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 8px 10px -1px hsl(0 0% 0% / 0.10);
+  --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
+  --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
+  --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.1);
+  --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);
+  --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);
   --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
   --tracking-normal: 0em;
 }
@@ -131,33 +135,35 @@
   --popover: oklch(0.2134 0 0);
   --popover-foreground: oklch(0.9491 0 0);
   --primary: oklch(0.9247 0.0524 66.1732);
-  --primary-foreground: oklch(0.2029 0.0240 200.1962);
-  --secondary: oklch(0.3163 0.0190 63.6992);
+  --primary-foreground: oklch(0.2029 0.024 200.1962);
+  --secondary: oklch(0.3163 0.019 63.6992);
   --secondary-foreground: oklch(0.9247 0.0524 66.1732);
-  --muted: oklch(0.2520 0 0);
+  --muted: oklch(0.252 0 0);
   --muted-foreground: oklch(0.7699 0 0);
-  --accent: oklch(0.2850 0 0);
+  --accent: oklch(0.285 0 0);
   --accent-foreground: oklch(0.9491 0 0);
-  --destructive: oklch(0.6271 0.1936 33.3390);
+  --destructive: oklch(0.6271 0.1936 33.339);
   --border: oklch(0.2351 0.0115 91.7467);
   --input: oklch(0.4017 0 0);
   --ring: oklch(0.9247 0.0524 66.1732);
   --chart-1: oklch(0.9247 0.0524 66.1732);
-  --chart-2: oklch(0.3163 0.0190 63.6992);
-  --chart-3: oklch(0.2850 0 0);
+  --chart-2: oklch(0.3163 0.019 63.6992);
+  --chart-3: oklch(0.285 0 0);
   --chart-4: oklch(0.3481 0.0219 67.0001);
   --chart-5: oklch(0.9245 0.0533 67.0855);
   --sidebar: oklch(0.2103 0.0059 285.8852);
   --sidebar-foreground: oklch(0.9674 0.0013 286.3752);
   --sidebar-primary: oklch(0.4882 0.2172 264.3763);
-  --sidebar-primary-foreground: oklch(1.0000 0 0);
+  --sidebar-primary-foreground: oklch(1 0 0);
   --sidebar-accent: oklch(0.2739 0.0055 286.0326);
   --sidebar-accent-foreground: oklch(0.9674 0.0013 286.3752);
   --sidebar-border: oklch(0.2739 0.0055 286.0326);
-  --sidebar-ring: oklch(0.8711 0.0055 286.2860);
-  --destructive-foreground: oklch(1.0000 0 0);
+  --sidebar-ring: oklch(0.8711 0.0055 286.286);
+  --destructive-foreground: oklch(1 0 0);
   --radius: 0.5rem;
-  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+    "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --shadow-color: oklch(0 0 0);
@@ -170,11 +176,11 @@
   --spacing: 0.25rem;
   --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
   --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
-  --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 1px 2px -1px hsl(0 0% 0% / 0.10);
-  --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 1px 2px -1px hsl(0 0% 0% / 0.10);
-  --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 2px 4px -1px hsl(0 0% 0% / 0.10);
-  --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 4px 6px -1px hsl(0 0% 0% / 0.10);
-  --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 8px 10px -1px hsl(0 0% 0% / 0.10);
+  --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
+  --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
+  --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.1);
+  --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);
+  --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);
   --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
 }
 
@@ -185,5 +191,256 @@
   body {
     @apply bg-background text-foreground;
     letter-spacing: var(--tracking-normal);
+  }
+}
+
+@layer utilities {
+  .line-clamp-1 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+  }
+
+  .line-clamp-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .line-clamp-3 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+
+  .line-clamp-4 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+  }
+
+  .line-clamp-none {
+    overflow: visible;
+    display: block;
+    -webkit-box-orient: horizontal;
+    -webkit-line-clamp: none;
+  }
+
+  /* Clerk Organization Switcher Overrides */
+  .cl-organizationSwitcherTrigger {
+    background-color: hsl(var(--background)) !important;
+    border: 1px solid hsl(var(--border)) !important;
+    border-radius: 0.5rem !important;
+    color: hsl(var(--foreground)) !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    height: 2rem !important;
+    min-height: 2rem !important;
+    max-height: 2rem !important;
+    min-width: 6rem !important;
+    max-width: 10rem !important;
+    padding: 0 0.75rem !important;
+    line-height: 2rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 0.5rem !important;
+    transition: all 0.2s ease-in-out !important;
+  }
+
+  .cl-organizationSwitcherTrigger:hover {
+    background-color: hsl(var(--muted)) !important;
+    border-color: hsl(var(--border)) !important;
+    transform: scale(1.02) !important;
+  }
+
+  .cl-organizationSwitcherTrigger:focus {
+    border-color: hsl(var(--ring)) !important;
+    box-shadow: 0 0 0 3px hsl(var(--ring) / 0.1) !important;
+    outline: none !important;
+    background-color: hsl(var(--background)) !important;
+  }
+
+  .cl-organizationSwitcherTriggerIcon {
+    color: hsl(var(--muted-foreground)) !important;
+    width: 1rem !important;
+    height: 1rem !important;
+  }
+
+  .cl-organizationPreviewMainIdentifier {
+    color: hsl(var(--foreground)) !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    max-width: none !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
+    white-space: nowrap !important;
+  }
+
+  .cl-organizationPreviewSecondaryIdentifier {
+    display: none !important;
+  }
+
+  .cl-organizationSwitcherTrigger .cl-organizationPreview {
+    background-color: transparent !important;
+    display: flex !important;
+    align-items: center !important;
+    flex: 1 !important;
+    min-width: 0 !important;
+  }
+
+  .cl-organizationSwitcherTrigger .cl-organizationPreviewTextContainer {
+    background-color: transparent !important;
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 !important;
+    min-width: 0 !important;
+  }
+
+  .cl-organizationSwitcherTrigger .cl-organizationPreviewMainIdentifier {
+    color: hsl(var(--foreground)) !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    max-width: 8rem !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  /* User Button Overrides */
+  .cl-userButtonAvatarBox {
+    width: 2rem !important;
+    height: 2rem !important;
+    max-width: 2rem !important;
+    max-height: 2rem !important;
+    min-width: 2rem !important;
+    min-height: 2rem !important;
+    border-radius: 50% !important;
+    border: 1px solid hsl(var(--border)) !important;
+    transition: all 0.2s ease-in-out !important;
+  }
+
+  .cl-userButtonAvatarBox:hover {
+    border-color: hsl(var(--ring)) !important;
+    transform: scale(1.05) !important;
+  }
+
+  .cl-userButtonAvatarImage {
+    width: 2rem !important;
+    height: 2rem !important;
+  }
+
+  /* Popover Cards */
+  .cl-organizationSwitcherPopoverCard {
+    background-color: hsl(var(--popover)) !important;
+    border: 1px solid hsl(var(--border)) !important;
+    border-radius: 0.75rem !important;
+    box-shadow:
+      0 10px 15px -3px rgb(0 0 0 / 0.1),
+      0 4px 6px -4px rgb(0 0 0 / 0.1) !important;
+    padding: 0.75rem !important;
+  }
+
+  .cl-userButtonPopoverCard {
+    background-color: hsl(var(--background)) !important;
+    border: 1px solid hsl(var(--border)) !important;
+    border-radius: 0.75rem !important;
+    box-shadow:
+      0 10px 15px -3px rgb(0 0 0 / 0.1),
+      0 4px 6px -4px rgb(0 0 0 / 0.1) !important;
+    padding: 0.5rem !important;
+    min-width: 14rem !important;
+    color: hsl(var(--foreground)) !important;
+  }
+
+  .cl-userPreview {
+    background-color: transparent !important;
+    border-radius: 0.5rem !important;
+    padding: 0.75rem !important;
+    border: none !important;
+  }
+
+  .cl-userPreviewMainIdentifier {
+    color: hsl(var(--foreground)) !important;
+    font-size: 0.875rem !important;
+    font-weight: 600 !important;
+  }
+
+  .cl-userPreviewSecondaryIdentifier {
+    color: hsl(var(--muted-foreground)) !important;
+    font-size: 0.75rem !important;
+  }
+
+  .cl-userButtonPopoverActionButton {
+    background-color: transparent !important;
+    border: none !important;
+    border-radius: 0.5rem !important;
+    color: hsl(var(--foreground)) !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    padding: 0.75rem 1rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 0.75rem !important;
+    width: 100% !important;
+    text-align: left !important;
+    transition: all 0.2s ease-in-out !important;
+  }
+
+  .cl-userButtonPopoverActionButton:hover {
+    background-color: hsl(var(--muted)) !important;
+    color: hsl(var(--foreground)) !important;
+  }
+
+  .cl-userButtonPopoverActionButtonIcon {
+    color: hsl(var(--muted-foreground)) !important;
+    width: 1rem !important;
+    height: 1rem !important;
+  }
+
+  .cl-userButtonPopoverActionButtonText {
+    color: hsl(var(--foreground)) !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+  }
+
+  .cl-userButtonPopoverFooter {
+    background-color: hsl(var(--background)) !important;
+    border-top: 1px solid hsl(var(--border)) !important;
+    padding: 0.5rem !important;
+    margin-top: 0.5rem !important;
+  }
+
+  /* Clerk Development Mode Footer */
+  .cl-userButtonPopoverFooter .cl-badge,
+  .cl-userButtonPopoverFooter .cl-footerAction {
+    background-color: hsl(var(--muted)) !important;
+    color: hsl(var(--muted-foreground)) !important;
+    border: none !important;
+    border-radius: 0.25rem !important;
+    font-size: 0.75rem !important;
+    padding: 0.25rem 0.5rem !important;
+    text-align: center !important;
+  }
+
+  .cl-userButtonPopoverFooter .cl-badge:hover,
+  .cl-userButtonPopoverFooter .cl-footerAction:hover {
+    background-color: hsl(var(--muted-foreground) / 0.1) !important;
+  }
+
+  .cl-userButtonPopoverFooter .cl-footerActionText {
+    color: hsl(var(--muted-foreground)) !important;
+    font-size: 0.75rem !important;
   }
 }

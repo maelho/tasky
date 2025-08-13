@@ -2,7 +2,7 @@
 
 import { useRef, useState, type ElementRef } from "react";
 import { api } from "~/trpc/react";
-import { AlignLeft } from "lucide-react";
+import { AlignLeft, Edit3 } from "lucide-react";
 import { toast } from "sonner";
 import { useEventListener, useOnClickOutside } from "usehooks-ts";
 
@@ -33,7 +33,18 @@ export function Description({ data }: DescriptionProps) {
       disableEditing();
     },
     onError: (error) => {
-      toast.error(error?.data?.zodError?.fieldErrors.description);
+      const errorMessage =
+        error?.data &&
+        "zodError" in error.data &&
+        error.data.zodError &&
+        typeof error.data.zodError === "object" &&
+        "fieldErrors" in error.data.zodError &&
+        error.data.zodError.fieldErrors &&
+        typeof error.data.zodError.fieldErrors === "object" &&
+        "description" in error.data.zodError.fieldErrors
+          ? String(error.data.zodError.fieldErrors.description)
+          : "Failed to update description";
+      toast.error(errorMessage);
     },
   });
 
@@ -57,55 +68,80 @@ export function Description({ data }: DescriptionProps) {
   };
 
   return (
-    <div className="flex w-full items-start gap-x-3">
-      <AlignLeft className="mt-0.5 h-5 w-5 text-neutral-700" />
-      <div className="w-full">
-        <p className="mb-2 font-semibold text-neutral-700">Description</p>
-        {isEditing ? (
-          <form action={onSubmit} ref={formRef} className="space-y-2">
-            <Textarea
-              id="description"
-              name="description"
-              placeholder="Add a more detailed description"
-              defaultValue={data.description ?? ""}
-              className={cn(
-                "mt-2 w-full resize-none shadow-sm ring-0 outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0",
-              )}
-              ref={textareaRef}
-            />
-            <div className="flex items-center gap-x-2">
-              <Button disabled={updateCard.isPending}>Save</Button>
-              <Button
-                type="button"
-                onClick={disableEditing}
-                size="sm"
-                variant="ghost"
-              >
-                Cancel
-              </Button>
-            </div>
-          </form>
-        ) : (
+    <div className="space-y-3">
+      <div className="flex items-center gap-x-3">
+        <div className="p-2 rounded-lg bg-secondary/50 text-secondary-foreground shrink-0">
+          <AlignLeft className="h-4 w-4" />
+        </div>
+        <h3 className="font-semibold text-foreground">Description</h3>
+      </div>
+
+      {isEditing ? (
+        <form action={onSubmit} ref={formRef} className="space-y-3 ml-11">
+          <Textarea
+            id="description"
+            name="description"
+            placeholder="Add a more detailed description..."
+            defaultValue={data.description ?? ""}
+            className="min-h-[120px] resize-none border border-border bg-background text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+            ref={textareaRef}
+          />
+          <div className="flex items-center gap-x-2">
+            <Button disabled={updateCard.isPending} size="sm" className="h-8 px-3">
+              {updateCard.isPending ? "Saving..." : "Save"}
+            </Button>
+            <Button type="button" onClick={disableEditing} size="sm" variant="ghost" className="h-8 px-3">
+              Cancel
+            </Button>
+          </div>
+        </form>
+      ) : (
+        <div className="ml-11">
           <div
             onClick={enableEditing}
             role="button"
-            className="bg-muted min-h-[78px] rounded-md px-3.5 py-3 text-sm font-medium"
+            tabIndex={0}
+            className={cn(
+              "group relative rounded-lg border-2 border-dashed border-border/60 bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer",
+              "min-h-[80px] p-4 text-sm",
+              data.description && "border-solid border-border bg-background hover:bg-muted/20",
+            )}
           >
-            {data.description ?? "Add a more detailed description..."}
+            {data.description ? (
+              <>
+                <p className="text-foreground whitespace-pre-wrap leading-relaxed">{data.description}</p>
+                <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="p-1 rounded bg-background/80 backdrop-blur-sm border shadow-sm">
+                    <Edit3 className="h-3 w-3 text-muted-foreground" />
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="flex items-center justify-center h-full text-muted-foreground">
+                <div className="text-center space-y-2">
+                  <Edit3 className="h-5 w-5 mx-auto opacity-40" />
+                  <p>Add a more detailed description...</p>
+                </div>
+              </div>
+            )}
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
 
 Description.Skeleton = function DescriptionSkeleton() {
   return (
-    <div className="flex w-full items-start gap-x-3">
-      <Skeleton className="h-6 w-6 bg-neutral-200" />
-      <div className="w-full">
-        <Skeleton className="mb-2 h-6 w-24 bg-neutral-200" />
-        <Skeleton className="h-[78px] w-full bg-neutral-200" />
+    <div className="space-y-3">
+      <div className="flex items-center gap-x-3">
+        <div className="p-2 rounded-lg bg-muted shrink-0">
+          <Skeleton className="h-4 w-4" />
+        </div>
+        <Skeleton className="h-5 w-24" />
+      </div>
+      <div className="ml-11">
+        <Skeleton className="h-[80px] w-full rounded-lg" />
       </div>
     </div>
   );

@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  useCallback,
-  useRef,
-  useState,
-  type FormEvent,
-  type KeyboardEvent,
-} from "react";
+import { useCallback, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 import { useParams } from "next/navigation";
 import { api } from "~/trpc/react";
 import { Plus, X } from "lucide-react";
@@ -83,9 +77,27 @@ export function ListForm() {
             placeholder="Enter list title..."
             aria-label="List title"
             aria-required="true"
-            aria-invalid={!!error?.data?.zodError?.fieldErrors.title}
+            aria-invalid={
+              !!(
+                error?.data &&
+                "zodError" in error.data &&
+                error.data.zodError &&
+                typeof error.data.zodError === "object" &&
+                "fieldErrors" in error.data.zodError &&
+                error.data.zodError.fieldErrors &&
+                typeof error.data.zodError.fieldErrors === "object" &&
+                "title" in error.data.zodError.fieldErrors
+              )
+            }
             aria-describedby={
-              error?.data?.zodError?.fieldErrors.title
+              error?.data &&
+              "zodError" in error.data &&
+              error.data.zodError &&
+              typeof error.data.zodError === "object" &&
+              "fieldErrors" in error.data.zodError &&
+              error.data.zodError.fieldErrors &&
+              typeof error.data.zodError.fieldErrors === "object" &&
+              "title" in error.data.zodError.fieldErrors
                 ? "list-title-error"
                 : "list-title-help"
             }
@@ -93,34 +105,28 @@ export function ListForm() {
           <div id="list-title-help" className="sr-only">
             Press Enter to create list, Escape to cancel
           </div>
-          {error?.data?.zodError?.fieldErrors.title && (
-            <span
-              id="list-title-error"
-              className="mb-8 text-xs text-red-500"
-              role="alert"
-              aria-live="polite"
-            >
-              {error.data.zodError.fieldErrors.title}
-            </span>
-          )}
+          {error?.data &&
+            "zodError" in error.data &&
+            error.data.zodError &&
+            typeof error.data.zodError === "object" &&
+            "fieldErrors" in error.data.zodError &&
+            error.data.zodError.fieldErrors &&
+            typeof error.data.zodError.fieldErrors === "object" &&
+            "title" in error.data.zodError.fieldErrors && (
+              <span id="list-title-error" className="mb-8 text-xs text-red-500" role="alert" aria-live="polite">
+                {String(error.data.zodError.fieldErrors.title)}
+              </span>
+            )}
           <div className="flex items-center gap-x-1">
             <Button
               size="sm"
               type="submit"
               disabled={isPending}
-              aria-label={
-                isPending ? "Adding list, please wait" : "Add list to board"
-              }
+              aria-label={isPending ? "Adding list, please wait" : "Add list to board"}
             >
               {isPending ? "Add list..." : "Add list"}
             </Button>
-            <Button
-              onClick={disableEditing}
-              size="sm"
-              variant="ghost"
-              aria-label="Cancel adding list"
-              type="button"
-            >
+            <Button onClick={disableEditing} size="sm" variant="ghost" aria-label="Cancel adding list" type="button">
               <X className="h-5 w-5" aria-hidden="true" />
             </Button>
           </div>
