@@ -1,26 +1,37 @@
 "use client";
 
 import { useRef, useState, type ElementRef } from "react";
-import { Draggable, Droppable } from "@hello-pangea/dnd";
-import type { CardSelect, ListSelect } from "~/server/db/schema";
+import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 import { cn } from "~/lib/utils";
+import type { ListWithCards } from "~/hooks/use-optimistic-board";
 
 import { CardForm } from "./card-form";
-import CardItem from "./card-item";
+import { CardItem } from "./card-item";
+import { DroppableArea } from "./droppable-area";
 import { ListHeader } from "./list-header";
 
-export type ListWithCards = ListSelect & { cards: CardSelect[] };
-
 type ListItemProps = {
-  index: number;
   data: ListWithCards;
 };
 
-export function ListItem({ index, data }: ListItemProps) {
+export function ListItem({ data }: ListItemProps) {
   const textareaRef = useRef<ElementRef<"textarea">>(null);
-
   const [isEditing, setIsEditing] = useState(false);
+
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: data.id,
+    data: {
+      type: "list",
+      list: data,
+    },
+  });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
 
   function disableEditing() {
     setIsEditing(false);
@@ -33,47 +44,40 @@ export function ListItem({ index, data }: ListItemProps) {
     });
   }
 
-  return (
-    <Draggable draggableId={String(data.id)} index={index}>
-      {(provided) => (
-        <li
-          {...provided.draggableProps}
-          ref={provided.innerRef}
-          className="h-full w-[272px] shrink-0 select-none"
-        >
-          <div
-            {...provided.dragHandleProps}
-            className="bg-muted w-full rounded-md pb-2 shadow-md"
-          >
-            <ListHeader onAddCard={enableEditing} data={data} />
-            <Droppable droppableId={String(data.id)} type="card">
-              {(provided) => (
-                <ol
-                  ref={provided.innerRef}
-                  {...provided.droppableProps}
-                  className={cn(
-                    "mx-1 flex flex-col gap-y-2 px-1 py-0.5",
-                    data.cards.length > 0 ? "mt-2" : "mt-0",
-                  )}
-                >
-                  {data.cards.map((card, index) => (
-                    <CardItem index={index} key={card.id} data={card} />
-                  ))}
-                  {provided.placeholder}
-                </ol>
-              )}
-            </Droppable>
+  const cardIds = data.cards?.map((card) => card.id) || [];
 
-            <CardForm
-              listId={data.id}
-              ref={textareaRef}
-              isEditing={isEditing}
-              enableEditing={enableEditing}
-              disableEditing={disableEditing}
-            />
-          </div>
-        </li>
-      )}
-    </Draggable>
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={cn("h-full w-[272px] shrink-0 select-none", isDragging && "opacity-50")}
+    >
+      <div className="bg-muted w-full rounded-md pb-2 shadow-md">
+        <div {...attributes} {...listeners}>
+          <ListHeader onAddCard={enableEditing} data={data} />
+        </div>
+
+        <DroppableArea
+          id={`list-${data.id}`}
+          className={cn("mx-1 px-1 py-0.5", data.cards && data.cards.length > 0 ? "mt-2" : "mt-0")}
+        >
+          <SortableContext items={cardIds} strategy={verticalListSortingStrategy}>
+            <div className="flex flex-col gap-y-2 min-h-[20px]">
+              {data.cards?.map((card) => (
+                <CardItem key={card.id} data={card} />
+              ))}
+            </div>
+          </SortableContext>
+        </DroppableArea>
+
+        <CardForm
+          listId={data.id}
+          ref={textareaRef}
+          isEditing={isEditing}
+          enableEditing={enableEditing}
+          disableEditing={disableEditing}
+        />
+      </div>
+    </div>
   );
 }

@@ -5,6 +5,7 @@ import { api } from "~/trpc/server";
 import { Provider } from "jotai";
 
 import { createPageMetadata } from "~/lib/metadata";
+import { OptimisticBoardProvider } from "~/hooks/use-optimistic-board";
 import { ScrollArea, ScrollBar } from "~/components/ui/scroll-area";
 
 import { BoardNavbar } from "./_components/board-navbar";
@@ -13,16 +14,13 @@ import { CardModal } from "./_components/modal";
 
 type BoardIdPageProps = Promise<{ id: string }>;
 
-export async function generateMetadata(props: {
-  params: BoardIdPageProps;
-}): Promise<Metadata> {
+export async function generateMetadata(props: { params: BoardIdPageProps }): Promise<Metadata> {
   const { orgId } = await auth();
 
   if (!orgId) {
     return createPageMetadata({
       title: "Board",
-      description:
-        "Access your project board to manage tasks and collaborate with your team",
+      description: "Access your project board to manage tasks and collaborate with your team",
       noIndex: true,
     });
   }
@@ -50,8 +48,7 @@ export async function generateMetadata(props: {
   } catch {
     return createPageMetadata({
       title: "Board",
-      description:
-        "Access your project board to manage tasks and collaborate with your team",
+      description: "Access your project board to manage tasks and collaborate with your team",
       noIndex: true,
     });
   }
@@ -77,16 +74,18 @@ export default async function BoardIdPage(props: { params: BoardIdPageProps }) {
   void api.list.getlistsWithCards.prefetch({ boardId: board.id });
   return (
     <Provider>
-      <CardModal />
-      <div className="mb-5 space-y-5">
-        <BoardNavbar data={board} orgId={orgId} />
-        <ScrollArea>
-          <div className="mb-10">
-            <ListContainer boardId={board.id} />
-          </div>
-          <ScrollBar hidden orientation="horizontal" />
-        </ScrollArea>
-      </div>
+      <OptimisticBoardProvider boardId={board.id}>
+        <CardModal />
+        <div className="mb-5 space-y-5">
+          <BoardNavbar data={board} orgId={orgId} />
+          <ScrollArea>
+            <div className="mb-10">
+              <ListContainer boardId={board.id} />
+            </div>
+            <ScrollBar hidden orientation="horizontal" />
+          </ScrollArea>
+        </div>
+      </OptimisticBoardProvider>
     </Provider>
   );
 }

@@ -1,12 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unnecessary-type-assertion */
+import { clerkClient } from "@clerk/nextjs/server";
 import { TRPCError } from "@trpc/server";
 import type { ProtectedTRPCContext } from "~/server/api/trpc";
 import { auditLogs, type Action, type EntityType } from "~/server/db/schema";
 import { eq, type SQL } from "drizzle-orm";
 
-export async function validateOrgId(
-  ctx: ProtectedTRPCContext,
-): Promise<string> {
+export async function validateOrgId(ctx: ProtectedTRPCContext): Promise<string> {
   const orgId = ctx.auth.orgId;
   if (!orgId) {
     throw new TRPCError({
@@ -28,10 +27,7 @@ export function requireOrgAccess(ctx: ProtectedTRPCContext) {
   return { ...ctx, auth: { ...ctx.auth, orgId } };
 }
 
-export function validateOrgAccess(
-  ctx: ProtectedTRPCContext,
-  inputOrgId: string,
-): void {
+export function validateOrgAccess(ctx: ProtectedTRPCContext, inputOrgId: string): void {
   if (ctx.auth.orgId !== inputOrgId) {
     throw new TRPCError({
       code: "FORBIDDEN",
@@ -52,12 +48,13 @@ export async function createAuditLog(
 ) {
   try {
     const userId = ctx.auth.userId;
-    const sessionClaims = ctx.auth.sessionClaims;
-    const firstName = sessionClaims?.firstName as string | undefined;
-    const lastName = sessionClaims?.lastName as string | undefined;
-    const imageUrl = sessionClaims?.imageUrl as string | undefined;
-    const fullName =
-      `${firstName ?? ""} ${lastName ?? ""}`.trim() || "Unknown User";
+
+    const clerk = await clerkClient();
+    const user = await clerk.users.getUser(userId);
+    const firstName = user.firstName ?? "";
+    const lastName = user.lastName ?? "";
+    const fullName = `${firstName} ${lastName}`.trim() || "Unknown User";
+    const imageUrl = user.imageUrl ?? "";
 
     await ctx.db.insert(auditLogs).values({
       orgId: params.orgId,
@@ -66,7 +63,7 @@ export async function createAuditLog(
       entityType: params.entityType,
       entityTitle: params.entityTitle,
       userId,
-      userImage: imageUrl ?? "",
+      userImage: imageUrl,
       userName: fullName,
     });
   } catch (error) {
@@ -89,10 +86,7 @@ export async function createOrgAuditLog(
   });
 }
 
-export function createOrgAccessCondition<T extends { orgId: any }>(
-  table: T,
-  orgId: string,
-): SQL {
+export function createOrgAccessCondition<T extends { orgId: any }>(table: T, orgId: string): SQL {
   return eq(table.orgId as any, orgId);
 }
 
