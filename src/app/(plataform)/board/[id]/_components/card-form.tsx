@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  forwardRef,
-  useRef,
-  useState,
-  type ElementRef,
-  type FormEvent,
-} from "react";
+import { forwardRef, useRef, useState, type ElementRef, type FormEvent } from "react";
 import { api } from "~/trpc/react";
 import { Plus, X } from "lucide-react";
 import { toast } from "sonner";
@@ -54,9 +48,7 @@ export const CardForm = forwardRef<HTMLTextAreaElement, CardFormProps>(
       resetForm();
     }
 
-    function handleTextareaKeyDown(
-      e: React.KeyboardEvent<HTMLTextAreaElement>,
-    ) {
+    function handleTextareaKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
       if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
         formRef.current?.requestSubmit();
@@ -68,10 +60,7 @@ export const CardForm = forwardRef<HTMLTextAreaElement, CardFormProps>(
       mutate({ title, listId });
     }
 
-    useOnClickOutside(
-      formRef as React.RefObject<HTMLElement>,
-      handleOutsideClick,
-    );
+    useOnClickOutside(formRef as React.RefObject<HTMLElement>, handleOutsideClick);
     useEventListener("keydown", handleEscapeKey);
 
     return (
@@ -97,45 +86,56 @@ export const CardForm = forwardRef<HTMLTextAreaElement, CardFormProps>(
               placeholder="Enter a title for this card..."
               aria-label="Card title"
               aria-required="true"
-              aria-invalid={!!error?.data?.zodError?.fieldErrors.title}
+              aria-invalid={
+                !!(
+                  error?.data &&
+                  "zodError" in error.data &&
+                  error.data.zodError &&
+                  typeof error.data.zodError === "object" &&
+                  "fieldErrors" in error.data.zodError &&
+                  error.data.zodError.fieldErrors &&
+                  typeof error.data.zodError.fieldErrors === "object" &&
+                  "title" in error.data.zodError.fieldErrors
+                )
+              }
               aria-describedby={
-                error?.data?.zodError?.fieldErrors.title
+                error?.data &&
+                "zodError" in error.data &&
+                error.data.zodError &&
+                typeof error.data.zodError === "object" &&
+                "fieldErrors" in error.data.zodError &&
+                error.data.zodError.fieldErrors &&
+                typeof error.data.zodError.fieldErrors === "object" &&
+                "title" in error.data.zodError.fieldErrors
                   ? "card-title-error"
                   : "card-title-help"
               }
             />
             <div id="card-title-help" className="sr-only">
-              Press Enter to create card, Shift+Enter for new line, Escape to
-              cancel
+              Press Enter to create card, Shift+Enter for new line, Escape to cancel
             </div>
-            {error?.data?.zodError?.fieldErrors.title && (
-              <span
-                id="card-title-error"
-                className="mb-8 text-xs text-red-500"
-                role="alert"
-                aria-live="polite"
-              >
-                {error.data.zodError.fieldErrors.title}
-              </span>
-            )}
+            {error?.data &&
+              "zodError" in error.data &&
+              error.data.zodError &&
+              typeof error.data.zodError === "object" &&
+              "fieldErrors" in error.data.zodError &&
+              error.data.zodError.fieldErrors &&
+              typeof error.data.zodError.fieldErrors === "object" &&
+              "title" in error.data.zodError.fieldErrors && (
+                <span id="card-title-error" className="mb-8 text-xs text-red-500" role="alert" aria-live="polite">
+                  {String(error.data.zodError.fieldErrors.title)}
+                </span>
+              )}
             <div className="flex items-center gap-x-1">
               <Button
                 size="sm"
                 type="submit"
                 disabled={isPending}
-                aria-label={
-                  isPending ? "Adding card, please wait" : "Add card to list"
-                }
+                aria-label={isPending ? "Adding card, please wait" : "Add card to list"}
               >
                 {isPending ? "Add card..." : "Add card"}
               </Button>
-              <Button
-                onClick={resetForm}
-                size="sm"
-                variant="ghost"
-                aria-label="Cancel adding card"
-                type="button"
-              >
+              <Button onClick={resetForm} size="sm" variant="ghost" aria-label="Cancel adding card" type="button">
                 <X className="h-5 w-5" />
               </Button>
             </div>

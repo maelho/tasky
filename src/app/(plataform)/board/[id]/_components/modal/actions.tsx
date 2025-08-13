@@ -3,7 +3,7 @@
 import { useParams } from "next/navigation";
 import { api } from "~/trpc/react";
 import { useAtom } from "jotai";
-import { Copy, Trash } from "lucide-react";
+import { Copy, MoreHorizontal, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { onCloseAtom } from "~/hooks/use-card-modal";
@@ -81,32 +81,50 @@ export function Actions({ data }: ActionsProps) {
   };
 
   return (
-    <div className="mt-2 space-y-2">
-      <p className="text-xs font-semibold">Actions</p>
-      <Button onClick={handleCopy} disabled={isCopying} className="w-full justify-start" size="sm">
-        <Copy className="mr-2 h-4 w-4" />
-        Copy
-      </Button>
-      <Button
-        onClick={handleDelete}
-        disabled={isDeleting}
-        className="w-full justify-start"
-        variant="destructive"
-        size="sm"
-      >
-        <Trash className="mr-2 h-4 w-4" />
-        Delete
-      </Button>
+    <div className="space-y-4">
+      <div className="flex items-center gap-x-2 text-sm font-semibold text-foreground">
+        <MoreHorizontal className="h-4 w-4" />
+        Actions
+      </div>
+
+      <div className="space-y-2">
+        <Button
+          onClick={handleCopy}
+          disabled={isCopying}
+          variant="ghost"
+          className="w-full justify-start h-9 px-3 hover:bg-muted transition-colors"
+          size="sm"
+        >
+          <Copy className="mr-3 h-4 w-4 text-muted-foreground" />
+          <span className="text-sm">{isCopying ? "Copying..." : "Copy"}</span>
+        </Button>
+
+        <Button
+          onClick={handleDelete}
+          disabled={isDeleting}
+          variant="ghost"
+          className="w-full justify-start h-9 px-3 hover:bg-destructive/10 hover:text-destructive transition-colors group"
+          size="sm"
+        >
+          <Trash2 className="mr-3 h-4 w-4 text-muted-foreground group-hover:text-destructive transition-colors" />
+          <span className="text-sm">{isDeleting ? "Deleting..." : "Delete"}</span>
+        </Button>
+      </div>
     </div>
   );
 }
 
 Actions.Skeleton = function ActionsSkeleton() {
   return (
-    <div className="mt-2 space-y-2">
-      <Skeleton className="h-4 w-20 bg-neutral-200" />
-      <Skeleton className="h-8 w-full bg-neutral-200" />
-      <Skeleton className="h-8 w-full bg-neutral-200" />
+    <div className="space-y-4">
+      <div className="flex items-center gap-x-2">
+        <Skeleton className="h-4 w-4 rounded" />
+        <Skeleton className="h-4 w-16" />
+      </div>
+      <div className="space-y-2">
+        <Skeleton className="h-9 w-full rounded-md" />
+        <Skeleton className="h-9 w-full rounded-md" />
+      </div>
     </div>
   );
 };
