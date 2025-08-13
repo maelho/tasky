@@ -14,21 +14,26 @@ import {
   type DragStartEvent,
   type UniqueIdentifier,
 } from "@dnd-kit/core";
-import { horizontalListSortingStrategy, SortableContext, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+import {
+  horizontalListSortingStrategy,
+  SortableContext,
+  sortableKeyboardCoordinates,
+} from "@dnd-kit/sortable";
 import type { CardSelect } from "~/server/db/schema";
 
 import { useOptimisticBoard } from "~/hooks/use-optimistic-board";
 
-import { CardItem } from "./card-item";
-import { ListForm } from "./list-form";
-import { ListItem } from "./list-item";
+import { CardItem } from "./card/card-item";
+import { ListForm } from "../forms/list-form";
+import { ListItem } from "./list/list-item";
 
 type ListContainerProps = {
   boardId: number;
 };
 
 export function ListContainer({ boardId: _boardId }: ListContainerProps) {
-  const { lists, isLoading, isError, moveCard, moveList } = useOptimisticBoard();
+  const { lists, isLoading, isError, moveCard, moveList } =
+    useOptimisticBoard();
 
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
   const [activeType, setActiveType] = useState<"list" | "card" | null>(null);
@@ -93,20 +98,38 @@ export function ListContainer({ boardId: _boardId }: ListContainerProps) {
       if (!activeCard || !overCard) return;
       if (activeCard.listId === overCard.listId) return;
 
-      const activeListIndex = lists.findIndex((list) => list.id === activeCard.listId);
-      const overListIndex = lists.findIndex((list) => list.id === overCard.listId);
+      const activeListIndex = lists.findIndex(
+        (list) => list.id === activeCard.listId,
+      );
+      const overListIndex = lists.findIndex(
+        (list) => list.id === overCard.listId,
+      );
 
       if (activeListIndex === -1 || overListIndex === -1) return;
 
-      const activeCardIndex = lists[activeListIndex]?.cards?.findIndex((card) => card.id === activeId) ?? -1;
-      const overCardIndex = lists[overListIndex]?.cards?.findIndex((card) => card.id === overId) ?? -1;
+      const activeCardIndex =
+        lists[activeListIndex]?.cards?.findIndex(
+          (card) => card.id === activeId,
+        ) ?? -1;
+      const overCardIndex =
+        lists[overListIndex]?.cards?.findIndex((card) => card.id === overId) ??
+        -1;
 
       if (activeCardIndex === -1 || overCardIndex === -1) return;
 
-      moveCard(Number(activeId), activeCard.listId, overCard.listId, activeCardIndex, overCardIndex);
+      moveCard(
+        Number(activeId),
+        activeCard.listId,
+        overCard.listId,
+        activeCardIndex,
+        overCardIndex,
+      );
     }
 
-    if (activeType === "card" && (overType === "list" || over.id.toString().startsWith("list-"))) {
+    if (
+      activeType === "card" &&
+      (overType === "list" || over.id.toString().startsWith("list-"))
+    ) {
       const activeCard = findCardById(activeId);
       let overListId: number;
 
@@ -118,16 +141,27 @@ export function ListContainer({ boardId: _boardId }: ListContainerProps) {
 
       if (!activeCard || activeCard.listId === overListId) return;
 
-      const activeListIndex = lists.findIndex((list) => list.id === activeCard.listId);
+      const activeListIndex = lists.findIndex(
+        (list) => list.id === activeCard.listId,
+      );
       const overList = lists.find((list) => list.id === overListId);
 
       if (activeListIndex === -1 || !overList) return;
 
-      const activeCardIndex = lists[activeListIndex]?.cards?.findIndex((card) => card.id === activeId) ?? -1;
+      const activeCardIndex =
+        lists[activeListIndex]?.cards?.findIndex(
+          (card) => card.id === activeId,
+        ) ?? -1;
 
       if (activeCardIndex === -1) return;
 
-      moveCard(Number(activeId), activeCard.listId, overListId, activeCardIndex, overList.cards?.length ?? 0);
+      moveCard(
+        Number(activeId),
+        activeCard.listId,
+        overListId,
+        activeCardIndex,
+        overList.cards?.length ?? 0,
+      );
     }
   }
 
@@ -164,16 +198,27 @@ export function ListContainer({ boardId: _boardId }: ListContainerProps) {
 
         if (!activeCard) return;
 
-        const activeListIndex = lists.findIndex((list) => list.id === activeCard.listId);
+        const activeListIndex = lists.findIndex(
+          (list) => list.id === activeCard.listId,
+        );
         const overList = lists.find((list) => list.id === overListId);
 
         if (activeListIndex === -1 || !overList) return;
 
-        const activeCardIndex = lists[activeListIndex]?.cards?.findIndex((card) => card.id === activeId) ?? -1;
+        const activeCardIndex =
+          lists[activeListIndex]?.cards?.findIndex(
+            (card) => card.id === activeId,
+          ) ?? -1;
 
         if (activeCardIndex === -1) return;
 
-        moveCard(Number(activeId), activeCard.listId, overListId, activeCardIndex, overList.cards?.length ?? 0);
+        moveCard(
+          Number(activeId),
+          activeCard.listId,
+          overListId,
+          activeCardIndex,
+          overList.cards?.length ?? 0,
+        );
         return;
       }
 
@@ -182,19 +227,32 @@ export function ListContainer({ boardId: _boardId }: ListContainerProps) {
       if (!activeCard || !overCard) return;
       if (activeCard.listId !== overCard.listId) return;
 
-      const listIndex = lists.findIndex((list) => list.id === activeCard.listId);
+      const listIndex = lists.findIndex(
+        (list) => list.id === activeCard.listId,
+      );
       if (listIndex === -1) return;
 
-      const activeIndex = lists[listIndex]?.cards?.findIndex((card) => card.id === activeId) ?? -1;
-      const overIndex = lists[listIndex]?.cards?.findIndex((card) => card.id === overId) ?? -1;
+      const activeIndex =
+        lists[listIndex]?.cards?.findIndex((card) => card.id === activeId) ??
+        -1;
+      const overIndex =
+        lists[listIndex]?.cards?.findIndex((card) => card.id === overId) ?? -1;
 
       if (activeIndex !== -1 && overIndex !== -1 && activeIndex !== overIndex) {
-        moveCard(Number(activeId), activeCard.listId, activeCard.listId, activeIndex, overIndex);
+        moveCard(
+          Number(activeId),
+          activeCard.listId,
+          activeCard.listId,
+          activeIndex,
+          overIndex,
+        );
       }
     }
   }
 
-  function findCardById(id: UniqueIdentifier): (CardSelect & { listId: number }) | null {
+  function findCardById(
+    id: UniqueIdentifier,
+  ): (CardSelect & { listId: number }) | null {
     for (const list of lists) {
       const card = list.cards?.find((card) => card.id === id);
       if (card) {
@@ -205,7 +263,8 @@ export function ListContainer({ boardId: _boardId }: ListContainerProps) {
   }
 
   if (isLoading) return <div className="p-4">Loading...</div>;
-  if (isError) return <div className="p-4 text-red-500">Error loading board</div>;
+  if (isError)
+    return <div className="p-4 text-red-500">Error loading board</div>;
 
   return (
     <DndContext
@@ -215,9 +274,9 @@ export function ListContainer({ boardId: _boardId }: ListContainerProps) {
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
     >
-      <div className="h-full w-full relative">
+      <div className="relative h-full w-full">
         <div
-          className="flex h-full gap-x-4 pb-6 px-1 overflow-x-auto overflow-y-hidden"
+          className="flex h-full gap-x-4 overflow-x-auto overflow-y-hidden px-1 pb-6"
           style={{
             scrollbarWidth: "thin",
             scrollbarColor: "hsl(var(--border)) transparent",
@@ -241,7 +300,10 @@ export function ListContainer({ boardId: _boardId }: ListContainerProps) {
             }
           `}</style>
 
-          <SortableContext items={listIds} strategy={horizontalListSortingStrategy}>
+          <SortableContext
+            items={listIds}
+            strategy={horizontalListSortingStrategy}
+          >
             {lists.map((list) => (
               <ListItem key={list.id} data={list} />
             ))}

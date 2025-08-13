@@ -3,7 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 
 import { Paths } from "~/config/site";
 
-import { Navbar } from "./_components/navbar";
+import { LandingNavbar } from "~/components/navigation";
 
 export default async function LandingLayout({
   children,
@@ -20,7 +20,7 @@ export default async function LandingLayout({
 
   return (
     <div>
-      <Navbar />
+      <LandingNavbar />
       <main className="container mx-auto pt-28">{children}</main>
     </div>
   );

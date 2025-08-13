@@ -5,9 +5,9 @@ import { api } from "~/trpc/react";
 
 import { Skeleton } from "~/components/ui/skeleton";
 
-import { ActivityItem } from "./activity-item";
+import ActivityItem from "./activity-item";
 
-export function ActivityList() {
+export default function ActivityList() {
   const [retryCount, setRetryCount] = useState(0);
   const maxRetries = 3;
 

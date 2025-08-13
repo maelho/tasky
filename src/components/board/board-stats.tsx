@@ -11,19 +11,25 @@ type BoardStatsProps = {
   variant?: "compact" | "detailed";
 };
 
-export function BoardStats({ boardId, className, variant = "compact" }: BoardStatsProps) {
-  const { data: lists, isLoading } = api.list.getlistsWithCards.useQuery({ boardId });
+export default function BoardStats({
+  boardId,
+  className,
+  variant = "compact",
+}: BoardStatsProps) {
+  const { data: lists, isLoading } = api.list.getlistsWithCards.useQuery({
+    boardId,
+  });
 
   if (isLoading) {
     return (
       <div className={cn("flex items-center gap-4", className)}>
-        <div className="flex items-center gap-1 text-xs text-muted-foreground">
-          <div className="h-3 w-3 rounded bg-muted animate-pulse" />
-          <div className="h-3 w-8 rounded bg-muted animate-pulse" />
+        <div className="text-muted-foreground flex items-center gap-1 text-xs">
+          <div className="bg-muted h-3 w-3 animate-pulse rounded" />
+          <div className="bg-muted h-3 w-8 animate-pulse rounded" />
         </div>
-        <div className="flex items-center gap-1 text-xs text-muted-foreground">
-          <div className="h-3 w-3 rounded bg-muted animate-pulse" />
-          <div className="h-3 w-8 rounded bg-muted animate-pulse" />
+        <div className="text-muted-foreground flex items-center gap-1 text-xs">
+          <div className="bg-muted h-3 w-3 animate-pulse rounded" />
+          <div className="bg-muted h-3 w-8 animate-pulse rounded" />
         </div>
       </div>
     );
@@ -36,7 +42,12 @@ export function BoardStats({ boardId, className, variant = "compact" }: BoardSta
 
   if (variant === "detailed") {
     return (
-      <div className={cn("flex items-center gap-6 text-sm text-muted-foreground", className)}>
+      <div
+        className={cn(
+          "text-muted-foreground flex items-center gap-6 text-sm",
+          className,
+        )}
+      >
         <div className="flex items-center gap-2">
           <LayoutList size={14} />
           <span>
@@ -58,7 +69,12 @@ export function BoardStats({ boardId, className, variant = "compact" }: BoardSta
   }
 
   return (
-    <div className={cn("flex items-center gap-4 text-xs text-muted-foreground", className)}>
+    <div
+      className={cn(
+        "text-muted-foreground flex items-center gap-4 text-xs",
+        className,
+      )}
+    >
       <div className="flex items-center gap-1">
         <LayoutList size={12} />
         <span>{listCount}</span>

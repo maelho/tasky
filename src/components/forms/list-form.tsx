@@ -1,6 +1,12 @@
 "use client";
 
-import { useCallback, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
+import {
+  useCallback,
+  useRef,
+  useState,
+  type FormEvent,
+  type KeyboardEvent,
+} from "react";
 import { useParams } from "next/navigation";
 import { api } from "~/trpc/react";
 import { Plus, X } from "lucide-react";
@@ -10,7 +16,7 @@ import { useEventListener, useOnClickOutside } from "usehooks-ts";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 
-import { ListWrapper } from "./list-wrapper";
+import { ListWrapper } from "../board/list/list-wrapper";
 
 export function ListForm() {
   const params = useParams();
@@ -113,7 +119,12 @@ export function ListForm() {
             error.data.zodError.fieldErrors &&
             typeof error.data.zodError.fieldErrors === "object" &&
             "title" in error.data.zodError.fieldErrors && (
-              <span id="list-title-error" className="mb-8 text-xs text-red-500" role="alert" aria-live="polite">
+              <span
+                id="list-title-error"
+                className="mb-8 text-xs text-red-500"
+                role="alert"
+                aria-live="polite"
+              >
                 {String(error.data.zodError.fieldErrors.title)}
               </span>
             )}
@@ -122,11 +133,19 @@ export function ListForm() {
               size="sm"
               type="submit"
               disabled={isPending}
-              aria-label={isPending ? "Adding list, please wait" : "Add list to board"}
+              aria-label={
+                isPending ? "Adding list, please wait" : "Add list to board"
+              }
             >
               {isPending ? "Add list..." : "Add list"}
             </Button>
-            <Button onClick={disableEditing} size="sm" variant="ghost" aria-label="Cancel adding list" type="button">
+            <Button
+              onClick={disableEditing}
+              size="sm"
+              variant="ghost"
+              aria-label="Cancel adding list"
+              type="button"
+            >
               <X className="h-5 w-5" aria-hidden="true" />
             </Button>
           </div>
@@ -144,3 +163,5 @@ export function ListForm() {
     </ListWrapper>
   );
 }
+
+export default ListForm;

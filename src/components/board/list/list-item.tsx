@@ -11,9 +11,9 @@ import { CSS } from "@dnd-kit/utilities";
 import { cn } from "~/lib/utils";
 import type { ListWithCards } from "~/hooks/use-optimistic-board";
 
-import { CardForm } from "./card-form";
-import { CardItem } from "./card-item";
-import { DroppableArea } from "./droppable-area";
+import CardForm from "../../forms/card-form";
+import { CardItem } from "../card/card-item";
+import { DroppableArea } from "../droppable-area";
 import { ListHeader } from "./list-header";
 
 type ListItemProps = {

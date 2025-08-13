@@ -6,21 +6,25 @@ import { Provider } from "jotai";
 
 import { createPageMetadata } from "~/lib/metadata";
 import { OptimisticBoardProvider } from "~/hooks/use-optimistic-board";
-
-import { BoardNavbar } from "./_components/board-navbar";
-import { ListContainer } from "./_components/list-container";
-import { CardModal } from "./_components/modal";
-import { ScreenReaderAnnouncements } from "./_components/screen-reader-announcements";
+import {
+  BoardNavbar,
+  ListContainer,
+  ScreenReaderAnnouncements,
+} from "~/components/board";
+import { CardModal } from "~/components/modals";
 
 type BoardIdPageProps = Promise<{ id: string }>;
 
-export async function generateMetadata(props: { params: BoardIdPageProps }): Promise<Metadata> {
+export async function generateMetadata(props: {
+  params: BoardIdPageProps;
+}): Promise<Metadata> {
   const { orgId } = await auth();
 
   if (!orgId) {
     return createPageMetadata({
       title: "Board",
-      description: "Access your project board to manage tasks and collaborate with your team",
+      description:
+        "Access your project board to manage tasks and collaborate with your team",
       noIndex: true,
     });
   }
@@ -48,7 +52,8 @@ export async function generateMetadata(props: { params: BoardIdPageProps }): Pro
   } catch {
     return createPageMetadata({
       title: "Board",
-      description: "Access your project board to manage tasks and collaborate with your team",
+      description:
+        "Access your project board to manage tasks and collaborate with your team",
       noIndex: true,
     });
   }
@@ -84,13 +89,22 @@ export default async function BoardIdPage(props: { params: BoardIdPageProps }) {
           <div className="mb-5 space-y-5">
             <BoardNavbar data={board} orgId={orgId} />
 
-            <section aria-label="Board lists and cards" role="region" aria-describedby="board-instructions">
+            <section
+              aria-label="Board lists and cards"
+              role="region"
+              aria-describedby="board-instructions"
+            >
               <div id="board-instructions" className="sr-only">
-                Navigate between lists and cards using Tab and arrow keys. Press Enter to open cards or edit items. Drag
-                and drop is supported for reordering.
+                Navigate between lists and cards using Tab and arrow keys. Press
+                Enter to open cards or edit items. Drag and drop is supported
+                for reordering.
               </div>
 
-              <div className="overflow-x-auto overflow-y-hidden" role="application" aria-label="Kanban board">
+              <div
+                className="overflow-x-auto overflow-y-hidden"
+                role="application"
+                aria-label="Kanban board"
+              >
                 <ListContainer boardId={board.id} />
               </div>
             </section>

@@ -3,7 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { type BoardSelect } from "~/server/db/schema";
 import { api } from "~/trpc/server";
 
-import { BoardsClient } from "./_components";
+import { BoardsClient } from "~/components/organization";
 
 export default async function OrganizationIdPage() {
   const { orgId } = await auth();

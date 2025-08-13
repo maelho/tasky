@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Paths } from "~/config/site";
 import { Button } from "~/components/ui/button";
 
-export async function Navbar() {
+export async function LandingNavbar() {
   return (
     <nav className="fixed inset-x-0 flex h-20">
       <div className="container flex w-full items-center justify-between gap-4">
