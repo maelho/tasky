@@ -65,6 +65,20 @@ export function ListContainer({ boardId: _boardId }: ListContainerProps) {
 
   const listIds = useMemo(() => lists?.map((list) => list.id) ?? [], [lists]);
 
+  const findCardById = useCallback(
+    (id: UniqueIdentifier): (CardSelect & { listId: number }) | null => {
+      if (!lists?.length) return null;
+      for (const list of lists) {
+        const card = list.cards?.find((card) => card.id === id);
+        if (card) {
+          return { ...card, listId: list.id };
+        }
+      }
+      return null;
+    },
+    [lists],
+  );
+
   const handleDragStart = useCallback((event: DragStartEvent) => {
     const { active } = event;
     const { data } = active;
@@ -264,20 +278,6 @@ export function ListContainer({ boardId: _boardId }: ListContainerProps) {
       }
     },
     [lists, moveCard, moveList, findCardById],
-  );
-
-  const findCardById = useCallback(
-    (id: UniqueIdentifier): (CardSelect & { listId: number }) | null => {
-      if (!lists?.length) return null;
-      for (const list of lists) {
-        const card = list.cards?.find((card) => card.id === id);
-        if (card) {
-          return { ...card, listId: list.id };
-        }
-      }
-      return null;
-    },
-    [lists],
   );
 
   if (isLoading) return <div className="p-4">Loading...</div>;
