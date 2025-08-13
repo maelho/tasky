@@ -6,8 +6,7 @@ import { useAtom } from "jotai";
 import { Copy, Trash } from "lucide-react";
 import { toast } from "sonner";
 
-import { onCloseAtom } from "~/hooks/use-card-modal"; // Adjust the path as necessary
-
+import { onCloseAtom } from "~/hooks/use-card-modal";
 import { Button } from "~/components/ui/button";
 import { Skeleton } from "~/components/ui/skeleton";
 
@@ -23,33 +22,31 @@ export function Actions({ data }: ActionsProps) {
 
   const utils = api.useUtils();
 
-  const { mutate: copyCard, isPending: isCopying } =
-    api.card.copyCard.useMutation({
-      onSuccess: async (copiedCard) => {
-        toast.success(`Card "${copiedCard?.title}" copied`);
-        onClose();
-        await utils.list.getlistsWithCards.invalidate({
-          boardId: Number(params.id),
-        });
-      },
-      onError: (error) => {
-        toast.error(error?.data?.zodError?.fieldErrors.title);
-      },
-    });
+  const { mutate: copyCard, isPending: isCopying } = api.card.copyCard.useMutation({
+    onSuccess: async (copiedCard) => {
+      toast.success(`Card "${copiedCard?.title}" copied`);
+      onClose();
+      await utils.list.getlistsWithCards.invalidate({
+        boardId: Number(params.id),
+      });
+    },
+    onError: (error) => {
+      toast.error(error?.data?.zodError?.fieldErrors.title);
+    },
+  });
 
-  const { mutate: deleteCard, isPending: isDeleting } =
-    api.card.deleteCard.useMutation({
-      onSuccess: async (deletedCard) => {
-        toast.success(`Card "${deletedCard.title}" deleted`);
-        onClose();
-        await utils.list.getlistsWithCards.invalidate({
-          boardId: Number(params.id),
-        });
-      },
-      onError: (error) => {
-        toast.error(error?.data?.zodError?.fieldErrors.title);
-      },
-    });
+  const { mutate: deleteCard, isPending: isDeleting } = api.card.deleteCard.useMutation({
+    onSuccess: async (deletedCard) => {
+      toast.success(`Card "${deletedCard.title}" deleted`);
+      onClose();
+      await utils.list.getlistsWithCards.invalidate({
+        boardId: Number(params.id),
+      });
+    },
+    onError: (error) => {
+      toast.error(error?.data?.zodError?.fieldErrors.title);
+    },
+  });
 
   const handleCopy = () => {
     const boardId = Number(params.id);
@@ -80,12 +77,7 @@ export function Actions({ data }: ActionsProps) {
   return (
     <div className="mt-2 space-y-2">
       <p className="text-xs font-semibold">Actions</p>
-      <Button
-        onClick={handleCopy}
-        disabled={isCopying}
-        className="w-full justify-start"
-        size="inline"
-      >
+      <Button onClick={handleCopy} disabled={isCopying} className="w-full justify-start" size="inline">
         <Copy className="mr-2 h-4 w-4" />
         Copy
       </Button>
