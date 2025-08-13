@@ -1,11 +1,8 @@
 import Link from "next/link";
-import { PlusIcon } from "lucide-react";
 
 import { SiteConfig } from "~/config/site";
-import { Button } from "~/components/ui/button";
 import { ThemeToggle } from "~/components/theme-toggle";
 
-import { CreateBoardPopover } from "./create-board";
 import {
   ActivityButton,
   OrganizationSwitcherButton,
@@ -20,35 +17,30 @@ type NavbarProps = {
 
 export async function Navbar({ orgId }: NavbarProps) {
   return (
-    <header className="py-10">
-      <div className="flex-col items-center justify-between md:flex-row">
-        <Link
-          href={`/organization/${orgId}`}
-          className="mb-5 inline-block scroll-m-20 text-2xl font-semibold tracking-tight lg:text-2xl"
-        >
-          {SiteConfig.title}
-        </Link>
-        <nav className="flex flex-col items-center justify-center space-x-4 md:flex-row md:justify-end md:space-x-10 lg:flex-row lg:space-x-20">
-          <div className="items-center justify-center space-x-2 md:flex">
+    <header className="border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-16 max-w-screen-2xl items-center">
+        <div className="mr-4 flex">
+          <Link
+            href={`/organization/${orgId}`}
+            className="mr-4 flex items-center space-x-2 lg:mr-6 transition-colors hover:text-foreground/80"
+          >
+            <span className="text-lg font-bold tracking-tight">{SiteConfig.title}</span>
+          </Link>
+        </div>
+
+        <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
+          <nav className="flex items-center space-x-1">
             <SelectBoardButton orgId={orgId} />
             <ActivityButton orgId={orgId} />
             <SettingsButton orgId={orgId} />
+          </nav>
+
+          <div className="flex items-center space-x-1">
             <OrganizationSwitcherButton />
-          </div>
-          <div className="flex items-center space-x-4">
-            <CreateBoardPopover sideOffset={5} orgId={orgId}>
-              <Button
-                aria-label="Add Board"
-                size={"icon"}
-                className="flex h-8 w-8 items-center justify-center rounded-full"
-              >
-                <PlusIcon size={20} />
-              </Button>
-            </CreateBoardPopover>
-            <UserClerkButton />
             <ThemeToggle />
+            <UserClerkButton />
           </div>
-        </nav>
+        </div>
       </div>
     </header>
   );

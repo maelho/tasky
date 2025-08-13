@@ -3,12 +3,7 @@
 import { useMemo } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  ClerkLoaded,
-  ClerkLoading,
-  OrganizationSwitcher,
-  UserButton,
-} from "@clerk/nextjs";
+import { ClerkLoaded, ClerkLoading, OrganizationSwitcher, UserButton } from "@clerk/nextjs";
 import { type BoardSelect } from "~/server/db/schema";
 import { api } from "~/trpc/react";
 import { ActivityIcon, LayoutDashboardIcon, SettingsIcon } from "lucide-react";
@@ -46,10 +41,7 @@ function BoardDropdownItem({ board }: { board: BoardSelect }) {
 
 export function SelectBoardButton({ orgId }: ItemProps) {
   const { data: boards, isPending } = api.board.getBoards.useQuery({ orgId });
-  const memoizedBoards = useMemo(
-    () => boards as BoardSelect[] | undefined,
-    [boards],
-  );
+  const memoizedBoards = useMemo(() => boards as BoardSelect[] | undefined, [boards]);
   const pathname = usePathname();
 
   return (
@@ -58,8 +50,10 @@ export function SelectBoardButton({ orgId }: ItemProps) {
         <Button
           aria-label="Boards"
           variant={pathname.includes("board") ? "secondary" : "ghost"}
+          className="gap-1 px-2 sm:px-3"
         >
-          <LayoutDashboardIcon size={20} />
+          <LayoutDashboardIcon size={16} />
+          <span className="hidden md:inline">Boards</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
@@ -70,9 +64,7 @@ export function SelectBoardButton({ orgId }: ItemProps) {
             {isPending ? (
               <Skeleton className="w-full" />
             ) : (
-              memoizedBoards?.map((board) => (
-                <BoardDropdownItem key={board.id} board={board} />
-              ))
+              memoizedBoards?.map((board) => <BoardDropdownItem key={board.id} board={board} />)
             )}
           </ScrollArea>
         </DropdownMenuGroup>
@@ -86,13 +78,14 @@ export function SettingsButton({ orgId }: ItemProps) {
 
   return (
     <Button
-      size={"icon"}
       aria-label="Settings"
       variant={isMatchingPath ? "secondary" : "ghost"}
+      className="gap-1 px-2 sm:px-3"
       asChild
     >
       <Link href={path}>
-        <SettingsIcon size={20} />
+        <SettingsIcon size={16} />
+        <span className="hidden md:inline">Settings</span>
       </Link>
     </Button>
   );
@@ -103,13 +96,14 @@ export function ActivityButton({ orgId }: ItemProps) {
 
   return (
     <Button
-      size={"icon"}
       aria-label="Activity"
       variant={isMatchingPath ? "secondary" : "ghost"}
+      className="gap-1 px-2 sm:px-3"
       asChild
     >
       <Link href={path}>
-        <ActivityIcon size={20} />
+        <ActivityIcon size={16} />
+        <span className="hidden md:inline">Activity</span>
       </Link>
     </Button>
   );
