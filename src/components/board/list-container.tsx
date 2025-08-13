@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
   closestCorners,
   DndContext,
@@ -50,12 +50,12 @@ export function ListContainer({ boardId: _boardId }: ListContainerProps) {
   );
 
   const activeList = useMemo(() => {
-    if (!activeId || activeType !== "list") return null;
-    return lists.find((list) => list.id === activeId);
+    if (!activeId || activeType !== "list" || !lists?.length) return null;
+    return lists.find((list) => list.id === activeId) ?? null;
   }, [activeId, activeType, lists]);
 
   const activeCard = useMemo(() => {
-    if (!activeId || activeType !== "card") return null;
+    if (!activeId || activeType !== "card" || !lists?.length) return null;
     for (const list of lists) {
       const card = list.cards?.find((card) => card.id === activeId);
       if (card) return card;
@@ -63,9 +63,9 @@ export function ListContainer({ boardId: _boardId }: ListContainerProps) {
     return null;
   }, [activeId, activeType, lists]);
 
-  const listIds = useMemo(() => lists.map((list) => list.id), [lists]);
+  const listIds = useMemo(() => lists?.map((list) => list.id) ?? [], [lists]);
 
-  function handleDragStart(event: DragStartEvent) {
+  const handleDragStart = useCallback((event: DragStartEvent) => {
     const { active } = event;
     const { data } = active;
 
@@ -76,127 +76,72 @@ export function ListContainer({ boardId: _boardId }: ListContainerProps) {
     } else if (data.current?.type === "card") {
       setActiveType("card");
     }
-  }
+  }, []);
 
-  function handleDragOver(event: DragOverEvent) {
-    const { active, over } = event;
+  const handleDragOver = useCallback(
+    (event: DragOverEvent) => {
+      const { active, over } = event;
 
-    if (!over) return;
+      if (!over) return;
 
-    const activeId = active.id;
-    const overId = over.id;
+      const activeId = active.id;
+      const overId = over.id;
 
-    if (activeId === overId) return;
+      if (activeId === overId) return;
 
-    const activeType = active.data.current?.type as string | undefined;
-    const overType = over.data.current?.type as string | undefined;
+      const activeType = active.data.current?.type as string | undefined;
+      const overType = over.data.current?.type as string | undefined;
 
-    if (activeType === "card" && overType === "card") {
-      const activeCard = findCardById(activeId);
-      const overCard = findCardById(overId);
+      if (activeType === "card" && overType === "card") {
+        const activeCard = findCardById(activeId);
+        const overCard = findCardById(overId);
 
-      if (!activeCard || !overCard) return;
-      if (activeCard.listId === overCard.listId) return;
+        if (!activeCard || !overCard) return;
+        if (activeCard.listId === overCard.listId) return;
 
-      const activeListIndex = lists.findIndex(
-        (list) => list.id === activeCard.listId,
-      );
-      const overListIndex = lists.findIndex(
-        (list) => list.id === overCard.listId,
-      );
+        const activeListIndex = lists.findIndex(
+          (list) => list.id === activeCard.listId,
+        );
+        const overListIndex = lists.findIndex(
+          (list) => list.id === overCard.listId,
+        );
 
-      if (activeListIndex === -1 || overListIndex === -1) return;
+        if (activeListIndex === -1 || overListIndex === -1) return;
 
-      const activeCardIndex =
-        lists[activeListIndex]?.cards?.findIndex(
-          (card) => card.id === activeId,
-        ) ?? -1;
-      const overCardIndex =
-        lists[overListIndex]?.cards?.findIndex((card) => card.id === overId) ??
-        -1;
+        const activeCardIndex =
+          lists[activeListIndex]?.cards?.findIndex(
+            (card) => card.id === activeId,
+          ) ?? -1;
+        const overCardIndex =
+          lists[overListIndex]?.cards?.findIndex(
+            (card) => card.id === overId,
+          ) ?? -1;
 
-      if (activeCardIndex === -1 || overCardIndex === -1) return;
+        if (activeCardIndex === -1 || overCardIndex === -1) return;
 
-      moveCard(
-        Number(activeId),
-        activeCard.listId,
-        overCard.listId,
-        activeCardIndex,
-        overCardIndex,
-      );
-    }
-
-    if (
-      activeType === "card" &&
-      (overType === "list" || over.id.toString().startsWith("list-"))
-    ) {
-      const activeCard = findCardById(activeId);
-      let overListId: number;
-
-      if (over.id.toString().startsWith("list-")) {
-        overListId = Number(over.id.toString().replace("list-", ""));
-      } else {
-        overListId = Number(overId);
+        moveCard(
+          Number(activeId),
+          activeCard.listId,
+          overCard.listId,
+          activeCardIndex,
+          overCardIndex,
+        );
       }
 
-      if (!activeCard || activeCard.listId === overListId) return;
+      if (
+        activeType === "card" &&
+        (overType === "list" || over.id.toString().startsWith("list-"))
+      ) {
+        const activeCard = findCardById(activeId);
+        let overListId: number;
 
-      const activeListIndex = lists.findIndex(
-        (list) => list.id === activeCard.listId,
-      );
-      const overList = lists.find((list) => list.id === overListId);
+        if (over.id.toString().startsWith("list-")) {
+          overListId = Number(over.id.toString().replace("list-", ""));
+        } else {
+          overListId = Number(overId);
+        }
 
-      if (activeListIndex === -1 || !overList) return;
-
-      const activeCardIndex =
-        lists[activeListIndex]?.cards?.findIndex(
-          (card) => card.id === activeId,
-        ) ?? -1;
-
-      if (activeCardIndex === -1) return;
-
-      moveCard(
-        Number(activeId),
-        activeCard.listId,
-        overListId,
-        activeCardIndex,
-        overList.cards?.length ?? 0,
-      );
-    }
-  }
-
-  function handleDragEnd(event: DragEndEvent) {
-    const { active, over } = event;
-
-    setActiveId(null);
-    setActiveType(null);
-
-    if (!over) return;
-
-    const activeId = active.id;
-    const overId = over.id;
-
-    if (activeId === overId) return;
-
-    const activeType = active.data.current?.type as string | undefined;
-
-    if (activeType === "list") {
-      const activeIndex = lists.findIndex((list) => list.id === activeId);
-      const overIndex = lists.findIndex((list) => list.id === overId);
-
-      if (activeIndex !== -1 && overIndex !== -1 && activeIndex !== overIndex) {
-        moveList(Number(activeId), activeIndex, overIndex);
-      }
-      return;
-    }
-
-    if (activeType === "card") {
-      const activeCard = findCardById(activeId);
-
-      if (over.id.toString().startsWith("list-")) {
-        const overListId = Number(over.id.toString().replace("list-", ""));
-
-        if (!activeCard) return;
+        if (!activeCard || activeCard.listId === overListId) return;
 
         const activeListIndex = lists.findIndex(
           (list) => list.id === activeCard.listId,
@@ -219,52 +164,127 @@ export function ListContainer({ boardId: _boardId }: ListContainerProps) {
           activeCardIndex,
           overList.cards?.length ?? 0,
         );
+      }
+    },
+    [lists, moveCard, findCardById],
+  );
+
+  const handleDragEnd = useCallback(
+    (event: DragEndEvent) => {
+      const { active, over } = event;
+
+      setActiveId(null);
+      setActiveType(null);
+
+      if (!over) return;
+
+      const activeId = active.id;
+      const overId = over.id;
+
+      if (activeId === overId) return;
+
+      const activeType = active.data.current?.type as string | undefined;
+
+      if (activeType === "list") {
+        const activeIndex = lists.findIndex((list) => list.id === activeId);
+        const overIndex = lists.findIndex((list) => list.id === overId);
+
+        if (
+          activeIndex !== -1 &&
+          overIndex !== -1 &&
+          activeIndex !== overIndex
+        ) {
+          moveList(Number(activeId), activeIndex, overIndex);
+        }
         return;
       }
 
-      const overCard = findCardById(overId);
+      if (activeType === "card") {
+        const activeCard = findCardById(activeId);
 
-      if (!activeCard || !overCard) return;
-      if (activeCard.listId !== overCard.listId) return;
+        if (over.id.toString().startsWith("list-")) {
+          const overListId = Number(over.id.toString().replace("list-", ""));
 
-      const listIndex = lists.findIndex(
-        (list) => list.id === activeCard.listId,
-      );
-      if (listIndex === -1) return;
+          if (!activeCard) return;
 
-      const activeIndex =
-        lists[listIndex]?.cards?.findIndex((card) => card.id === activeId) ??
-        -1;
-      const overIndex =
-        lists[listIndex]?.cards?.findIndex((card) => card.id === overId) ?? -1;
+          const activeListIndex = lists.findIndex(
+            (list) => list.id === activeCard.listId,
+          );
+          const overList = lists.find((list) => list.id === overListId);
 
-      if (activeIndex !== -1 && overIndex !== -1 && activeIndex !== overIndex) {
-        moveCard(
-          Number(activeId),
-          activeCard.listId,
-          activeCard.listId,
-          activeIndex,
-          overIndex,
+          if (activeListIndex === -1 || !overList) return;
+
+          const activeCardIndex =
+            lists[activeListIndex]?.cards?.findIndex(
+              (card) => card.id === activeId,
+            ) ?? -1;
+
+          if (activeCardIndex === -1) return;
+
+          moveCard(
+            Number(activeId),
+            activeCard.listId,
+            overListId,
+            activeCardIndex,
+            overList.cards?.length ?? 0,
+          );
+          return;
+        }
+
+        const overCard = findCardById(overId);
+
+        if (!activeCard || !overCard) return;
+        if (activeCard.listId !== overCard.listId) return;
+
+        const listIndex = lists.findIndex(
+          (list) => list.id === activeCard.listId,
         );
-      }
-    }
-  }
+        if (listIndex === -1) return;
 
-  function findCardById(
-    id: UniqueIdentifier,
-  ): (CardSelect & { listId: number }) | null {
-    for (const list of lists) {
-      const card = list.cards?.find((card) => card.id === id);
-      if (card) {
-        return { ...card, listId: list.id };
+        const activeIndex =
+          lists[listIndex]?.cards?.findIndex((card) => card.id === activeId) ??
+          -1;
+        const overIndex =
+          lists[listIndex]?.cards?.findIndex((card) => card.id === overId) ??
+          -1;
+
+        if (
+          activeIndex !== -1 &&
+          overIndex !== -1 &&
+          activeIndex !== overIndex
+        ) {
+          moveCard(
+            Number(activeId),
+            activeCard.listId,
+            activeCard.listId,
+            activeIndex,
+            overIndex,
+          );
+        }
       }
-    }
-    return null;
-  }
+    },
+    [lists, moveCard, moveList, findCardById],
+  );
+
+  const findCardById = useCallback(
+    (id: UniqueIdentifier): (CardSelect & { listId: number }) | null => {
+      if (!lists?.length) return null;
+      for (const list of lists) {
+        const card = list.cards?.find((card) => card.id === id);
+        if (card) {
+          return { ...card, listId: list.id };
+        }
+      }
+      return null;
+    },
+    [lists],
+  );
 
   if (isLoading) return <div className="p-4">Loading...</div>;
   if (isError)
     return <div className="p-4 text-red-500">Error loading board</div>;
+
+  if (!lists?.length) return <div className="p-4">No lists found</div>;
 
   return (
     <DndContext

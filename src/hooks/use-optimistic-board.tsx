@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useMemo } from "react";
+import { createContext, useCallback, useContext, useMemo, useRef } from "react";
 import type { CardSelect, ListSelect } from "~/server/db/schema";
 import { api } from "~/trpc/react";
 import { toast } from "sonner";
@@ -65,6 +65,14 @@ export function OptimisticBoardProvider({
       void utils.list.getlistsWithCards.invalidate({ boardId });
     },
   });
+
+  // Create stable references for mutations
+  const updateCardOrderRef = useRef(updateCardOrderMutation.mutate);
+  const updateListOrderRef = useRef(updateListOrderMutation.mutate);
+
+  // Update refs when mutations change
+  updateCardOrderRef.current = updateCardOrderMutation.mutate;
+  updateListOrderRef.current = updateListOrderMutation.mutate;
 
   const moveCard = useCallback(
     (
@@ -176,7 +184,7 @@ export function OptimisticBoardProvider({
         }
 
         if (allAffectedCards.length > 0) {
-          updateCardOrderMutation.mutate({
+          updateCardOrderRef.current({
             items: allAffectedCards as [
               { id: number; title: string; order: number; listId: number },
               ...{ id: number; title: string; order: number; listId: number }[],
@@ -185,7 +193,7 @@ export function OptimisticBoardProvider({
         }
       }
     },
-    [lists, boardId, utils, updateCardOrderMutation],
+    [lists, boardId, utils],
   );
 
   const moveList = useCallback(
@@ -217,7 +225,7 @@ export function OptimisticBoardProvider({
         }));
 
         if (updatedLists.length > 0) {
-          updateListOrderMutation.mutate({
+          updateListOrderRef.current({
             items: updatedLists.map((list) => ({
               id: list.id,
               title: list.title,
@@ -230,7 +238,7 @@ export function OptimisticBoardProvider({
         }
       }
     },
-    [lists, boardId, utils, updateListOrderMutation],
+    [lists, boardId, utils],
   );
 
   const value = useMemo(
