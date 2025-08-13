@@ -1,23 +1,25 @@
-import Image from "next/image";
+import { HeroSection, FeaturesSection } from "~/components/landing";
 
-import { SiteConfig } from "~/config/site";
-import { cn } from "~/lib/utils";
-import { BorderBeam } from "~/components/border-beam";
-import SparklesText from "~/components/sparkles-text";
-
-import landingImg from "./landing-img.png";
-
-export default function MarketingPage() {
+export default function LandingPage() {
   return (
-    <div className="flex flex-col items-center justify-center">
-      <div className={cn("mb-20 flex flex-col items-center justify-center")}>
-        <SparklesText text={SiteConfig.title} />
+    <div className="relative min-h-screen">
+      <div className="fixed inset-0 -z-10 opacity-[0.015]">
+        <div
+          className="h-full w-full"
+          style={{
+            backgroundImage: `
+              linear-gradient(to right, hsl(var(--muted-foreground)) 1px, transparent 1px),
+              linear-gradient(to bottom, hsl(var(--muted-foreground)) 1px, transparent 1px)
+            `,
+            backgroundSize: "120px 120px",
+          }}
+        />
       </div>
 
-      <div className="relative h-[512px] rounded-xl">
-        <BorderBeam />
-        <Image src={landingImg} alt="Tasky Board" priority />
-      </div>
+      <div className="from-background via-background to-muted/20 fixed inset-0 -z-10 bg-gradient-to-b" />
+
+      <HeroSection />
+      <FeaturesSection />
     </div>
   );
 }

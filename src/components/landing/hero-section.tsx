@@ -1,0 +1,76 @@
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+import { SiteConfig, Paths } from "~/config/site";
+import { Button } from "~/components/ui/button";
+import { AnimatedHero } from "~/components/landing/animated-hero";
+
+export function HeroSection() {
+  return (
+    <section className="relative flex min-h-screen flex-col items-center justify-center px-6">
+      <div className="absolute inset-0 opacity-[0.02]">
+        <div
+          className="h-full w-full bg-repeat"
+          style={{
+            backgroundImage: `
+              linear-gradient(to right, hsl(var(--muted-foreground)) 1px, transparent 1px),
+              linear-gradient(to bottom, hsl(var(--muted-foreground)) 1px, transparent 1px)
+            `,
+            backgroundSize: "80px 80px",
+          }}
+        />
+      </div>
+
+      <div className="bg-radial-gradient from-primary/3 via-primary/5 absolute top-1/2 left-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full to-transparent blur-3xl" />
+
+      <AnimatedHero>
+        <h1 className="text-foreground mb-8 text-6xl font-extralight tracking-tight lg:text-8xl">
+          {SiteConfig.title}
+        </h1>
+
+        <p className="text-muted-foreground mx-auto mb-12 max-w-2xl text-xl leading-relaxed font-light">
+          {SiteConfig.description}
+        </p>
+
+        <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
+          <Button
+            asChild
+            size="lg"
+            className="group relative overflow-hidden rounded-full px-10 py-6 text-base font-medium shadow-lg transition-all hover:shadow-xl"
+          >
+            <Link href={Paths.SignUpPage} className="flex items-center gap-3">
+              Start now
+              <ArrowRight size={18} />
+            </Link>
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="lg"
+            asChild
+            className="text-muted-foreground hover:text-foreground rounded-full px-8 py-6 text-base font-medium transition-all"
+          >
+            <Link href={Paths.SignInPage}>Sign in</Link>
+          </Button>
+        </div>
+
+        <div className="text-muted-foreground mt-16 flex items-center justify-center gap-8 text-sm">
+          <div className="flex items-center gap-2 opacity-60">
+            <div className="h-1.5 w-1.5 rounded-full bg-green-500" />
+            <span>Free to start</span>
+          </div>
+          <div className="flex items-center gap-2 opacity-60">
+            <div className="h-1.5 w-1.5 rounded-full bg-blue-500" />
+            <span>No credit card</span>
+          </div>
+        </div>
+      </AnimatedHero>
+
+      <div className="absolute bottom-12 left-1/2 -translate-x-1/2">
+        <div className="text-muted-foreground/40 flex flex-col items-center gap-2">
+          <div className="text-xs font-light">Scroll</div>
+          <div className="via-muted-foreground/20 h-8 w-px bg-gradient-to-b from-transparent to-transparent" />
+        </div>
+      </div>
+    </section>
+  );
+}

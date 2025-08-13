@@ -17,17 +17,16 @@ type BoardNavbarProps = {
 export async function BoardNavbar({ data, orgId }: BoardNavbarProps) {
   return (
     <nav
-      className="sticky top-0 z-40 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 overflow-hidden"
+      className="border-border/40 bg-background/95 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40 w-full overflow-hidden border-b backdrop-blur"
       aria-label="Board navigation"
     >
       <div className="mx-auto flex h-16 max-w-screen-2xl items-center px-4 sm:px-6 lg:px-8">
-        {/* Left section - Back button and breadcrumbs */}
-        <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
+        <div className="flex flex-shrink-0 items-center gap-2 sm:gap-4">
           <Button
             variant="ghost"
             size="sm"
             asChild
-            className="gap-1 sm:gap-2 text-muted-foreground hover:text-foreground shrink-0"
+            className="text-muted-foreground hover:text-foreground shrink-0 gap-1 sm:gap-2"
           >
             <Link href={`/organization/${orgId}`}>
               <ArrowLeft size={16} />
@@ -35,10 +34,9 @@ export async function BoardNavbar({ data, orgId }: BoardNavbarProps) {
             </Link>
           </Button>
 
-          <Separator orientation="vertical" className="h-6 hidden lg:block" />
+          <Separator orientation="vertical" className="hidden h-6 lg:block" />
 
-          {/* Breadcrumbs */}
-          <div className="hidden lg:flex items-center gap-2 text-sm min-w-0">
+          <div className="hidden min-w-0 items-center gap-2 text-sm lg:flex">
             <Link
               href={`/organization/${orgId}`}
               className="text-muted-foreground hover:text-foreground transition-colors"
@@ -46,40 +44,37 @@ export async function BoardNavbar({ data, orgId }: BoardNavbarProps) {
               Boards
             </Link>
             <span className="text-muted-foreground shrink-0">/</span>
-            <span className="font-medium truncate max-w-[150px]">{data.title}</span>
+            <span className="max-w-[150px] truncate font-medium">
+              {data.title}
+            </span>
           </div>
         </div>
 
-        {/* Center section - Board title */}
-        <div className="flex items-center justify-center flex-1 min-w-0 px-2">
-          <div className="flex items-center gap-2 w-full max-w-sm">
-            <div className="hidden xl:flex items-center gap-2 text-muted-foreground shrink-0">
+        <div className="flex min-w-0 flex-1 items-center justify-center px-2">
+          <div className="flex w-full max-w-sm items-center gap-2">
+            <div className="text-muted-foreground hidden shrink-0 items-center gap-2 xl:flex">
               <Users size={16} />
             </div>
-            <div className="flex-1 min-w-0">
+            <div className="min-w-0 flex-1">
               <BoardTitleForm data={data} />
             </div>
           </div>
         </div>
 
-        {/* Right section - Board info and options */}
-        <div className="flex items-center gap-2 flex-shrink-0">
-          {/* Board stats */}
+        <div className="flex flex-shrink-0 items-center gap-2">
           <div className="hidden xl:block">
             <BoardStats boardId={data.id} variant="compact" />
           </div>
 
-          {/* Board metadata */}
-          <div className="hidden 2xl:flex items-center gap-2 text-sm text-muted-foreground">
+          <div className="text-muted-foreground hidden items-center gap-2 text-sm 2xl:flex">
             <Calendar size={14} />
             <span className="whitespace-nowrap">
               {data.createdAt ? data.createdAt.toLocaleDateString() : "Unknown"}
             </span>
           </div>
 
-          <Separator orientation="vertical" className="h-6 hidden xl:block" />
+          <Separator orientation="vertical" className="hidden h-6 xl:block" />
 
-          {/* Board options */}
           <BoardOptions id={data.id} orgId={orgId} />
         </div>
       </div>

@@ -24,9 +24,11 @@ export * from "./activity";
 // Auth Components
 export { SignOutButton } from "./auth/sign-out-button";
 
+// Landing Components
+export * from "./landing";
+
 // Utility Components (existing)
 export { BorderBeam } from "./border-beam";
-export { default as SparklesText } from "./sparkles-text";
 export { WordRotate } from "./word-rotate";
 export { ThemeProvider } from "./theme-provider";
 export { ThemeToggle } from "./theme-toggle";

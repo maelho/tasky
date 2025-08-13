@@ -1,3 +1,5 @@
+"use client";
+
 import { useRef, useState, type ElementRef } from "react";
 import type { ListSelect } from "~/server/db/schema";
 import { api } from "~/trpc/react";
@@ -61,7 +63,12 @@ export function ListHeader({ data, onAddCard }: ListHeaderProps) {
       {isEditing ? (
         <form ref={formRef} action={handleSubmit} className="flex-1 px-[2px]">
           <input hidden id="id" name="id" defaultValue={data.id} />
-          <input hidden id="boardId" name="boardId" defaultValue={data.boardId} />
+          <input
+            hidden
+            id="boardId"
+            name="boardId"
+            defaultValue={data.boardId}
+          />
           <Input
             id="title"
             name="title"
@@ -75,7 +82,10 @@ export function ListHeader({ data, onAddCard }: ListHeaderProps) {
           <button type="submit" hidden />
         </form>
       ) : (
-        <div onClick={enableEditing} className="h-7 w-full border-transparent px-2.5 py-1 text-sm font-medium">
+        <div
+          onClick={enableEditing}
+          className="h-7 w-full border-transparent px-2.5 py-1 text-sm font-medium"
+        >
           {title}
         </div>
       )}

@@ -3,8 +3,6 @@ import { auth } from "@clerk/nextjs/server";
 
 import { Paths } from "~/config/site";
 
-import { LandingNavbar } from "~/components/navigation";
-
 export default async function LandingLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
@@ -19,9 +17,6 @@ export default async function LandingLayout({
   }
 
   return (
-    <div>
-      <LandingNavbar />
-      <main className="container mx-auto pt-28">{children}</main>
-    </div>
+    <main className="relative min-h-screen overflow-x-hidden">{children}</main>
   );
 }

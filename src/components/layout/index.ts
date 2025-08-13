@@ -1,2 +1,2 @@
 // Layout components
-export { default as ClerkLayout } from './clerk-layout';
+export { default as ClerkLayout } from "./clerk-layout";

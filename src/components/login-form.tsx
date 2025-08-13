@@ -32,11 +32,15 @@ export function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const validateField = (field: keyof FormData, value: string): string | undefined => {
+  const validateField = (
+    field: keyof FormData,
+    value: string,
+  ): string | undefined => {
     switch (field) {
       case "email":
         if (!value) return "Email is required";
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return "Please enter a valid email";
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value))
+          return "Please enter a valid email";
         return undefined;
       case "password":
         if (!value) return "Password is required";
@@ -47,14 +51,15 @@ export function LoginForm() {
     }
   };
 
-  const handleInputChange = (field: keyof FormData) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setFormData((prev) => ({ ...prev, [field]: value }));
+  const handleInputChange =
+    (field: keyof FormData) => (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      setFormData((prev) => ({ ...prev, [field]: value }));
 
-    if (fieldErrors[field]) {
-      setFieldErrors((prev) => ({ ...prev, [field]: undefined }));
-    }
-  };
+      if (fieldErrors[field]) {
+        setFieldErrors((prev) => ({ ...prev, [field]: undefined }));
+      }
+    };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -88,7 +93,9 @@ export function LoginForm() {
         setFieldErrors({ general: "Sign in failed. Please try again." });
       }
     } catch (err) {
-      const error = err as { errors?: Array<{ message: string; code: string }> };
+      const error = err as {
+        errors?: Array<{ message: string; code: string }>;
+      };
       if (error.errors?.[0]) {
         const { message, code } = error.errors[0];
         if (code === "form_identifier_not_found") {
@@ -96,7 +103,9 @@ export function LoginForm() {
         } else if (code === "form_password_incorrect") {
           setFieldErrors({ password: "Incorrect password" });
         } else {
-          setFieldErrors({ general: message || "Sign in failed. Please try again." });
+          setFieldErrors({
+            general: message || "Sign in failed. Please try again.",
+          });
         }
       } else {
         setFieldErrors({ general: "Something went wrong. Please try again." });
@@ -114,7 +123,7 @@ export function LoginForm() {
             Email
           </Label>
           <div className="relative">
-            <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Mail className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
             <Input
               id="email"
               type="email"
@@ -128,7 +137,11 @@ export function LoginForm() {
             />
           </div>
           {fieldErrors.email && (
-            <p id="email-error" className="text-sm text-destructive" role="alert">
+            <p
+              id="email-error"
+              className="text-destructive text-sm"
+              role="alert"
+            >
               {fieldErrors.email}
             </p>
           )}
@@ -139,30 +152,40 @@ export function LoginForm() {
             Password
           </Label>
           <div className="relative">
-            <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Lock className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
             <Input
               id="password"
               type={showPassword ? "text" : "password"}
               placeholder="Enter your password"
               value={formData.password}
               onChange={handleInputChange("password")}
-              className={`pl-10 pr-10 ${fieldErrors.password ? "border-destructive focus-visible:ring-destructive" : ""}`}
+              className={`pr-10 pl-10 ${fieldErrors.password ? "border-destructive focus-visible:ring-destructive" : ""}`}
               disabled={isLoading}
               aria-invalid={!!fieldErrors.password}
-              aria-describedby={fieldErrors.password ? "password-error" : undefined}
+              aria-describedby={
+                fieldErrors.password ? "password-error" : undefined
+              }
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+              className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3 -translate-y-1/2 transition-colors"
               disabled={isLoading}
               aria-label={showPassword ? "Hide password" : "Show password"}
             >
-              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              {showPassword ? (
+                <EyeOff className="h-4 w-4" />
+              ) : (
+                <Eye className="h-4 w-4" />
+              )}
             </button>
           </div>
           {fieldErrors.password && (
-            <p id="password-error" className="text-sm text-destructive" role="alert">
+            <p
+              id="password-error"
+              className="text-destructive text-sm"
+              role="alert"
+            >
               {fieldErrors.password}
             </p>
           )}
@@ -170,8 +193,8 @@ export function LoginForm() {
       </div>
 
       {fieldErrors.general && (
-        <div className="rounded-md bg-destructive/10 border border-destructive/20 p-3">
-          <p className="text-sm text-destructive" role="alert">
+        <div className="bg-destructive/10 border-destructive/20 rounded-md border p-3">
+          <p className="text-destructive text-sm" role="alert">
             {fieldErrors.general}
           </p>
         </div>

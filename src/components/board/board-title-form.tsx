@@ -11,7 +11,7 @@ interface BoardTitleFormProps {
   data: BoardSelect;
 }
 
-export default function BoardTitleForm({ data }: BoardTitleFormProps) {
+export function BoardTitleForm({ data }: BoardTitleFormProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(data.title);

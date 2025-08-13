@@ -3,10 +3,20 @@
 import { useMemo } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ClerkLoaded, ClerkLoading, OrganizationSwitcher, UserButton } from "@clerk/nextjs";
+import {
+  ClerkLoaded,
+  ClerkLoading,
+  OrganizationSwitcher,
+  UserButton,
+} from "@clerk/nextjs";
 import { type BoardSelect } from "~/server/db/schema";
 import { api } from "~/trpc/react";
-import { ActivityIcon, ChevronDown, LayoutDashboardIcon, SettingsIcon } from "lucide-react";
+import {
+  ActivityIcon,
+  ChevronDown,
+  LayoutDashboardIcon,
+  SettingsIcon,
+} from "lucide-react";
 
 import { useBoardPath, useOrganizationPath } from "~/hooks/use-path-matcher";
 import { Button } from "~/components/ui/button";
@@ -32,9 +42,13 @@ function BoardDropdownItem({ board }: { board: BoardSelect }) {
   return (
     <DropdownMenuItem asChild>
       <Link href={path} className="w-full cursor-pointer">
-        <div className="flex items-center gap-2 w-full">
+        <div className="flex w-full items-center gap-2">
           <LayoutDashboardIcon size={14} className="text-muted-foreground" />
-          <span className={`truncate flex-1 ${isMatchingPath ? "font-semibold text-primary" : ""}`}>{board.title}</span>
+          <span
+            className={`flex-1 truncate ${isMatchingPath ? "text-primary font-semibold" : ""}`}
+          >
+            {board.title}
+          </span>
         </div>
       </Link>
     </DropdownMenuItem>
@@ -43,7 +57,10 @@ function BoardDropdownItem({ board }: { board: BoardSelect }) {
 
 export function SelectBoardButton({ orgId }: ItemProps) {
   const { data: boards, isPending } = api.board.getBoards.useQuery({ orgId });
-  const memoizedBoards = useMemo(() => boards as BoardSelect[] | undefined, [boards]);
+  const memoizedBoards = useMemo(
+    () => boards as BoardSelect[] | undefined,
+    [boards],
+  );
   const pathname = usePathname();
   const isActive = pathname.includes("board");
 
@@ -53,7 +70,7 @@ export function SelectBoardButton({ orgId }: ItemProps) {
         <Button
           variant={isActive ? "default" : "ghost"}
           size="sm"
-          className="h-8 px-3 gap-2 font-medium transition-all hover:scale-105"
+          className="h-8 gap-2 px-3 font-medium transition-all hover:scale-105"
         >
           <LayoutDashboardIcon size={16} />
           <span className="hidden sm:inline">Boards</span>
@@ -61,11 +78,13 @@ export function SelectBoardButton({ orgId }: ItemProps) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-64" align="start">
-        <DropdownMenuLabel className="font-semibold">Your Boards</DropdownMenuLabel>
+        <DropdownMenuLabel className="font-semibold">
+          Your Boards
+        </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           {isPending ? (
-            <div className="p-2 space-y-2">
+            <div className="space-y-2 p-2">
               <Skeleton className="h-8 w-full rounded-md" />
               <Skeleton className="h-8 w-full rounded-md" />
               <Skeleton className="h-8 w-full rounded-md" />
@@ -79,12 +98,17 @@ export function SelectBoardButton({ orgId }: ItemProps) {
               </div>
             </ScrollArea>
           ) : (
-            <div className="p-4 text-center text-muted-foreground text-sm">No boards found</div>
+            <div className="text-muted-foreground p-4 text-center text-sm">
+              No boards found
+            </div>
           )}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href={`/organization/${orgId}`} className="w-full cursor-pointer font-medium text-primary">
+          <Link
+            href={`/organization/${orgId}`}
+            className="text-primary w-full cursor-pointer font-medium"
+          >
             <LayoutDashboardIcon size={14} className="mr-2" />
             View all boards
           </Link>
@@ -101,7 +125,7 @@ export function SettingsButton({ orgId }: ItemProps) {
     <Button
       variant={isMatchingPath ? "default" : "ghost"}
       size="sm"
-      className="h-8 px-3 gap-2 font-medium transition-all hover:scale-105"
+      className="h-8 gap-2 px-3 font-medium transition-all hover:scale-105"
       asChild
     >
       <Link href={path}>
@@ -119,7 +143,7 @@ export function ActivityButton({ orgId }: ItemProps) {
     <Button
       variant={isMatchingPath ? "default" : "ghost"}
       size="sm"
-      className="h-8 px-3 gap-2 font-medium transition-all hover:scale-105"
+      className="h-8 gap-2 px-3 font-medium transition-all hover:scale-105"
       asChild
     >
       <Link href={path}>
