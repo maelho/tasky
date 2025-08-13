@@ -61,10 +61,10 @@ export function Header({ data }: HeaderProps) {
 
   return (
     <div className="flex w-full items-start gap-x-3">
-      <div className="p-2 rounded-lg bg-primary/10 text-primary shrink-0 mt-0.5">
+      <div className="bg-primary/10 text-primary mt-0.5 shrink-0 rounded-lg p-2">
         <CreditCard className="h-5 w-5" />
       </div>
-      <div className="flex-1 min-w-0">
+      <div className="min-w-0 flex-1">
         <form action={onSubmit}>
           <Input
             ref={inputRef}
@@ -73,13 +73,15 @@ export function Header({ data }: HeaderProps) {
             name="title"
             defaultValue={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="border-none bg-transparent px-0 text-xl font-bold text-foreground placeholder:text-muted-foreground focus-visible:ring-0 focus-visible:ring-offset-0 resize-none shadow-none"
+            className="text-foreground placeholder:text-muted-foreground resize-none border-none bg-transparent px-0 text-xl font-bold shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
             placeholder="Card title"
           />
         </form>
-        <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
+        <div className="text-muted-foreground mt-1 flex items-center gap-2 text-sm">
           <span>in list</span>
-          <span className="bg-muted/50 px-2 py-0.5 rounded text-xs font-medium">{data.list.title}</span>
+          <span className="bg-muted/50 rounded px-2 py-0.5 text-xs font-medium">
+            {data.list.title}
+          </span>
         </div>
       </div>
     </div>
@@ -89,7 +91,7 @@ export function Header({ data }: HeaderProps) {
 Header.Skeleton = function HeaderSkeleton() {
   return (
     <div className="flex items-start gap-x-3">
-      <div className="p-2 rounded-lg bg-muted shrink-0">
+      <div className="bg-muted shrink-0 rounded-lg p-2">
         <Skeleton className="h-5 w-5" />
       </div>
       <div className="flex-1 space-y-2">

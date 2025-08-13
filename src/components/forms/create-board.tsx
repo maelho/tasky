@@ -7,7 +7,14 @@ import { Plus } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "~/components/ui/button";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "~/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 
@@ -92,14 +99,18 @@ export function CreateBoardDialog({ children, orgId }: CreateBoardDialogProps) {
               aria-invalid={
                 !!(
                   error as {
-                    data?: { zodError?: { fieldErrors?: { title?: string[] } } };
+                    data?: {
+                      zodError?: { fieldErrors?: { title?: string[] } };
+                    };
                   }
                 )?.data?.zodError?.fieldErrors?.title
               }
               className={
                 (
                   error as {
-                    data?: { zodError?: { fieldErrors?: { title?: string[] } } };
+                    data?: {
+                      zodError?: { fieldErrors?: { title?: string[] } };
+                    };
                   }
                 )?.data?.zodError?.fieldErrors?.title
                   ? "border-destructive"
@@ -112,11 +123,13 @@ export function CreateBoardDialog({ children, orgId }: CreateBoardDialogProps) {
                 data?: { zodError?: { fieldErrors?: { title?: string[] } } };
               }
             )?.data?.zodError?.fieldErrors?.title && (
-              <p className="text-sm text-destructive" role="alert">
+              <p className="text-destructive text-sm" role="alert">
                 {
                   (
                     error as {
-                      data?: { zodError?: { fieldErrors?: { title?: string[] } } };
+                      data?: {
+                        zodError?: { fieldErrors?: { title?: string[] } };
+                      };
                     }
                   )?.data?.zodError?.fieldErrors?.title?.[0]
                 }
@@ -125,10 +138,19 @@ export function CreateBoardDialog({ children, orgId }: CreateBoardDialogProps) {
           </div>
 
           <DialogFooter className="flex flex-col-reverse gap-2 sm:flex-row sm:gap-3">
-            <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={isPending}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setOpen(false)}
+              disabled={isPending}
+            >
               Cancel
             </Button>
-            <Button type="submit" disabled={isPending || !title.trim()} className="gap-2">
+            <Button
+              type="submit"
+              disabled={isPending || !title.trim()}
+              className="gap-2"
+            >
               {isPending ? (
                 <>
                   <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />

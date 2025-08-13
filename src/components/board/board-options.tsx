@@ -21,7 +21,7 @@ type BoardOptionsProps = {
   orgId: string;
 };
 
-export default function BoardOptions({ id, orgId }: BoardOptionsProps) {
+export function BoardOptions({ id, orgId }: BoardOptionsProps) {
   const router = useRouter();
   const utils = api.useUtils();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);

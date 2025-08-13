@@ -1,3 +1,5 @@
+"use client";
+
 import { useRef, type ElementRef } from "react";
 import type { ListSelect } from "~/server/db/schema";
 import { api } from "~/trpc/react";

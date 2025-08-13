@@ -22,37 +22,45 @@ export function Actions({ data }: ActionsProps) {
 
   const utils = api.useUtils();
 
-  const { mutate: copyCard, isPending: isCopying } = api.card.copyCard.useMutation({
-    onSuccess: async (copiedCard) => {
-      toast.success(`Card "${copiedCard?.title}" copied`);
-      onClose();
-      await utils.list.getlistsWithCards.invalidate({
-        boardId: Number(params.id),
-      });
-    },
-    onError: (error: unknown) => {
-      const errorMessage =
-        (error as { data?: { zodError?: { fieldErrors?: { title?: string } } } })?.data?.zodError?.fieldErrors?.title ??
-        "Failed to copy card";
-      toast.error(errorMessage);
-    },
-  });
+  const { mutate: copyCard, isPending: isCopying } =
+    api.card.copyCard.useMutation({
+      onSuccess: async (copiedCard) => {
+        toast.success(`Card "${copiedCard?.title}" copied`);
+        onClose();
+        await utils.list.getlistsWithCards.invalidate({
+          boardId: Number(params.id),
+        });
+      },
+      onError: (error: unknown) => {
+        const errorMessage =
+          (
+            error as {
+              data?: { zodError?: { fieldErrors?: { title?: string } } };
+            }
+          )?.data?.zodError?.fieldErrors?.title ?? "Failed to copy card";
+        toast.error(errorMessage);
+      },
+    });
 
-  const { mutate: deleteCard, isPending: isDeleting } = api.card.deleteCard.useMutation({
-    onSuccess: async (deletedCard) => {
-      toast.success(`Card "${deletedCard.title}" deleted`);
-      onClose();
-      await utils.list.getlistsWithCards.invalidate({
-        boardId: Number(params.id),
-      });
-    },
-    onError: (error: unknown) => {
-      const errorMessage =
-        (error as { data?: { zodError?: { fieldErrors?: { title?: string } } } })?.data?.zodError?.fieldErrors?.title ??
-        "Failed to delete card";
-      toast.error(errorMessage);
-    },
-  });
+  const { mutate: deleteCard, isPending: isDeleting } =
+    api.card.deleteCard.useMutation({
+      onSuccess: async (deletedCard) => {
+        toast.success(`Card "${deletedCard.title}" deleted`);
+        onClose();
+        await utils.list.getlistsWithCards.invalidate({
+          boardId: Number(params.id),
+        });
+      },
+      onError: (error: unknown) => {
+        const errorMessage =
+          (
+            error as {
+              data?: { zodError?: { fieldErrors?: { title?: string } } };
+            }
+          )?.data?.zodError?.fieldErrors?.title ?? "Failed to delete card";
+        toast.error(errorMessage);
+      },
+    });
 
   const handleCopy = () => {
     const boardId = Number(params.id);
@@ -82,7 +90,7 @@ export function Actions({ data }: ActionsProps) {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-x-2 text-sm font-semibold text-foreground">
+      <div className="text-foreground flex items-center gap-x-2 text-sm font-semibold">
         <MoreHorizontal className="h-4 w-4" />
         Actions
       </div>
@@ -92,10 +100,10 @@ export function Actions({ data }: ActionsProps) {
           onClick={handleCopy}
           disabled={isCopying}
           variant="ghost"
-          className="w-full justify-start h-9 px-3 hover:bg-muted transition-colors"
+          className="hover:bg-muted h-9 w-full justify-start px-3 transition-colors"
           size="sm"
         >
-          <Copy className="mr-3 h-4 w-4 text-muted-foreground" />
+          <Copy className="text-muted-foreground mr-3 h-4 w-4" />
           <span className="text-sm">{isCopying ? "Copying..." : "Copy"}</span>
         </Button>
 
@@ -103,11 +111,13 @@ export function Actions({ data }: ActionsProps) {
           onClick={handleDelete}
           disabled={isDeleting}
           variant="ghost"
-          className="w-full justify-start h-9 px-3 hover:bg-destructive/10 hover:text-destructive transition-colors group"
+          className="hover:bg-destructive/10 hover:text-destructive group h-9 w-full justify-start px-3 transition-colors"
           size="sm"
         >
-          <Trash2 className="mr-3 h-4 w-4 text-muted-foreground group-hover:text-destructive transition-colors" />
-          <span className="text-sm">{isDeleting ? "Deleting..." : "Delete"}</span>
+          <Trash2 className="text-muted-foreground group-hover:text-destructive mr-3 h-4 w-4 transition-colors" />
+          <span className="text-sm">
+            {isDeleting ? "Deleting..." : "Delete"}
+          </span>
         </Button>
       </div>
     </div>

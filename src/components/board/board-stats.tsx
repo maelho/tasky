@@ -11,7 +11,7 @@ type BoardStatsProps = {
   variant?: "compact" | "detailed";
 };
 
-export default function BoardStats({
+export function BoardStats({
   boardId,
   className,
   variant = "compact",

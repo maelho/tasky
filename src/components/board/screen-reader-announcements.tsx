@@ -7,7 +7,10 @@ interface ScreenReaderAnnouncementsProps {
   clearAfter?: number;
 }
 
-export function ScreenReaderAnnouncements({ announcement, clearAfter = 3000 }: ScreenReaderAnnouncementsProps) {
+export function ScreenReaderAnnouncements({
+  announcement,
+  clearAfter = 3000,
+}: ScreenReaderAnnouncementsProps) {
   const announcementRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -33,5 +36,12 @@ export function ScreenReaderAnnouncements({ announcement, clearAfter = 3000 }: S
     }
   }, [announcement, clearAfter]);
 
-  return <div ref={announcementRef} aria-live="polite" aria-atomic="true" className="sr-only" />;
+  return (
+    <div
+      ref={announcementRef}
+      aria-live="polite"
+      aria-atomic="true"
+      className="sr-only"
+    />
+  );
 }
