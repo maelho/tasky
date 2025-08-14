@@ -284,7 +284,40 @@ export function ListContainer({ boardId: _boardId }: ListContainerProps) {
   if (isError)
     return <div className="p-4 text-red-500">Error loading board</div>;
 
-  if (!lists?.length) return <div className="p-4">No lists found</div>;
+  if (!lists?.length) {
+    return (
+      <div className="relative h-full w-full">
+        <div
+          className="flex h-full gap-x-4 overflow-x-auto overflow-y-hidden px-1 pb-6"
+          style={{
+            scrollbarWidth: "thin",
+            scrollbarColor: "hsl(var(--border)) transparent",
+          }}
+        >
+          <style jsx>{`
+            div::-webkit-scrollbar {
+              height: 8px;
+            }
+            div::-webkit-scrollbar-track {
+              background: hsl(var(--muted) / 0.3);
+              border-radius: 4px;
+            }
+            div::-webkit-scrollbar-thumb {
+              background: hsl(var(--border));
+              border-radius: 4px;
+              transition: background-color 0.2s ease;
+            }
+            div::-webkit-scrollbar-thumb:hover {
+              background: hsl(var(--muted-foreground) / 0.6);
+            }
+          `}</style>
+
+          <ListForm />
+          <div className="w-4 shrink-0" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <DndContext
