@@ -1,7 +1,7 @@
 "use client";
 
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
+import { useEffect, useRef, useState } from "react";
+import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import type { CardSelect } from "~/server/db/schema";
 import { useAtom } from "jotai";
 import { Calendar, MessageSquare } from "lucide-react";
@@ -16,27 +16,27 @@ type CardItemProps = {
 
 export function CardItem({ data, isDragOverlay = false }: CardItemProps) {
   const [, onOpen] = useAtom(onOpenAtom);
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
 
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
-    id: data.id,
-    data: {
-      type: "card",
-      card: data,
-    },
-    disabled: isDragOverlay,
-  });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
+  useEffect(() => {
+    if (!ref.current || isDragOverlay) return;
+    const el = ref.current;
+    const cleanupDrag = draggable({
+      element: el,
+      getInitialData: () => ({ type: "card", id: data.id }),
+      onDragStart: () => setIsDragging(true),
+      onDrop: () => setIsDragging(false),
+    });
+    const cleanupDrop = dropTargetForElements({
+      element: el,
+      getData: () => ({ type: "card", id: data.id }),
+    });
+    return () => {
+      cleanupDrag();
+      cleanupDrop();
+    };
+  }, [data.id, isDragOverlay]);
 
   if (isDragOverlay) {
     return (
@@ -53,10 +53,7 @@ export function CardItem({ data, isDragOverlay = false }: CardItemProps) {
 
   return (
     <div
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
+      ref={ref}
       role="button"
       tabIndex={0}
       onClick={() => onOpen(data.id)}

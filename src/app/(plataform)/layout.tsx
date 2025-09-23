@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 import { HydrateClient } from "~/trpc/server";
-
+import { Paths } from "~/config/site";
 import { Navbar } from "~/components/navigation";
 
 export default async function DashboardLayout({
@@ -10,7 +10,7 @@ export default async function DashboardLayout({
   const { orgId } = await auth();
 
   if (!orgId) {
-    return redirect("/select-org");
+    redirect(Paths.SelectOrg);
   }
 
   return (

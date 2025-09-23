@@ -28,7 +28,13 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <ClerkProvider publishableKey={env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}>
+          <ClerkProvider
+            publishableKey={env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
+            signInUrl="/sign-in"
+            signUpUrl="/sign-up"
+            afterSignInUrl="/"
+            afterSignUpUrl="/"
+          >
             <TRPCReactProvider>{children}</TRPCReactProvider>
           </ClerkProvider>
           <Toaster />

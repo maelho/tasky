@@ -52,25 +52,7 @@ export function HeroSection() {
             <Link href={Paths.SignInPage}>Sign in</Link>
           </Button>
         </div>
-
-        <div className="text-muted-foreground mt-16 flex items-center justify-center gap-8 text-sm">
-          <div className="flex items-center gap-2 opacity-60">
-            <div className="h-1.5 w-1.5 rounded-full bg-green-500" />
-            <span>Free to start</span>
-          </div>
-          <div className="flex items-center gap-2 opacity-60">
-            <div className="h-1.5 w-1.5 rounded-full bg-blue-500" />
-            <span>No credit card</span>
-          </div>
-        </div>
       </AnimatedHero>
-
-      <div className="absolute bottom-12 left-1/2 -translate-x-1/2">
-        <div className="text-muted-foreground/40 flex flex-col items-center gap-2">
-          <div className="text-xs font-light">Scroll</div>
-          <div className="via-muted-foreground/20 h-8 w-px bg-gradient-to-b from-transparent to-transparent" />
-        </div>
-      </div>
     </section>
   );
 }

@@ -1,31 +1,41 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
-  closestCorners,
-  DndContext,
-  DragOverlay,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  type DragEndEvent,
-  type DragOverEvent,
-  type DragStartEvent,
-  type UniqueIdentifier,
-} from "@dnd-kit/core";
-import {
-  horizontalListSortingStrategy,
-  SortableContext,
-  sortableKeyboardCoordinates,
-} from "@dnd-kit/sortable";
+  monitorForElements,
+  dropTargetForElements,
+} from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import type { CardSelect } from "~/server/db/schema";
 
 import { useOptimisticBoard } from "~/hooks/use-optimistic-board";
 
-import { CardItem } from "./card/card-item";
 import { ListForm } from "../forms/list-form";
 import { ListItem } from "./list/list-item";
+
+type DragData =
+  | { type: "list"; id: number | string }
+  | { type: "list-item"; id: number }
+  | { type: "card"; id: number }
+  | { type: "list-container" };
+
+type ActiveDragData = { type: "list" | "card"; id: number };
+
+const isActiveDragData = (v: unknown): v is ActiveDragData => {
+  if (!v || typeof v !== "object") return false;
+  const d = v as { type?: unknown; id?: unknown };
+  return (d.type === "list" || d.type === "card") && typeof d.id === "number";
+};
+
+const isDragData = (v: unknown): v is DragData => {
+  if (!v || typeof v !== "object") return false;
+  const d = v as { type?: unknown; id?: unknown };
+  return (
+    d.type === "list" ||
+    d.type === "card" ||
+    d.type === "list-item" ||
+    d.type === "list-container"
+  );
+};
 
 type ListContainerProps = {
   boardId: number;
@@ -35,43 +45,18 @@ export function ListContainer({ boardId: _boardId }: ListContainerProps) {
   const { lists, isLoading, isError, moveCard, moveList } =
     useOptimisticBoard();
 
-  const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
-  const [activeType, setActiveType] = useState<"list" | "card" | null>(null);
-
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 3,
-      },
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    }),
-  );
-
-  const activeList = useMemo(() => {
-    if (!activeId || activeType !== "list" || !lists?.length) return null;
-    return lists.find((list) => list.id === activeId) ?? null;
-  }, [activeId, activeType, lists]);
-
-  const activeCard = useMemo(() => {
-    if (!activeId || activeType !== "card" || !lists?.length) return null;
-    for (const list of lists) {
-      const card = list.cards?.find((card) => card.id === activeId);
-      if (card) return card;
-    }
-    return null;
-  }, [activeId, activeType, lists]);
-
-  const listIds = useMemo(() => lists?.map((list) => list.id) ?? [], [lists]);
+  const scrollerRef = useRef<HTMLDivElement | null>(null);
+  const [isOverContainer, setIsOverContainer] = useState(false);
 
   const findCardById = useCallback(
-    (id: UniqueIdentifier): (CardSelect & { listId: number }) | null => {
+    (id: number): (CardSelect & { listId: number }) | null => {
       if (!lists?.length) return null;
       for (const list of lists) {
         const card = list.cards?.find((card) => card.id === id);
         if (card) {
-          return { ...card, listId: list.id };
+          return { ...card, listId: list.id } as CardSelect & {
+            listId: number;
+          };
         }
       }
       return null;
@@ -79,206 +64,155 @@ export function ListContainer({ boardId: _boardId }: ListContainerProps) {
     [lists],
   );
 
-  const handleDragStart = useCallback((event: DragStartEvent) => {
-    const { active } = event;
-    const { data } = active;
-
-    setActiveId(active.id);
-
-    if (data.current?.type === "list") {
-      setActiveType("list");
-    } else if (data.current?.type === "card") {
-      setActiveType("card");
-    }
-  }, []);
-
-  const handleDragOver = useCallback(
-    (event: DragOverEvent) => {
-      const { active, over } = event;
-
-      if (!over) return;
-
-      const activeId = active.id;
-      const overId = over.id;
-
-      if (activeId === overId) return;
-
-      const activeType = active.data.current?.type as string | undefined;
-      const overType = over.data.current?.type as string | undefined;
-
-      if (activeType === "card" && overType === "card") {
-        const activeCard = findCardById(activeId);
-        const overCard = findCardById(overId);
-
-        if (!activeCard || !overCard) return;
-        if (activeCard.listId === overCard.listId) return;
-
-        const activeListIndex = lists.findIndex(
-          (list) => list.id === activeCard.listId,
-        );
-        const overListIndex = lists.findIndex(
-          (list) => list.id === overCard.listId,
-        );
-
-        if (activeListIndex === -1 || overListIndex === -1) return;
-
-        const activeCardIndex =
-          lists[activeListIndex]?.cards?.findIndex(
-            (card) => card.id === activeId,
-          ) ?? -1;
-        const overCardIndex =
-          lists[overListIndex]?.cards?.findIndex(
-            (card) => card.id === overId,
-          ) ?? -1;
-
-        if (activeCardIndex === -1 || overCardIndex === -1) return;
-
-        moveCard(
-          Number(activeId),
-          activeCard.listId,
-          overCard.listId,
-          activeCardIndex,
-          overCardIndex,
-        );
-      }
-
-      if (
-        activeType === "card" &&
-        (overType === "list" || over.id.toString().startsWith("list-"))
-      ) {
-        const activeCard = findCardById(activeId);
-        let overListId: number;
-
-        if (over.id.toString().startsWith("list-")) {
-          overListId = Number(over.id.toString().replace("list-", ""));
-        } else {
-          overListId = Number(overId);
+  useEffect(() => {
+    const cleanupMonitor = monitorForElements({
+      onDrop(args) {
+        const { source, location } = args as {
+          source: { data: unknown };
+          location: {
+            current: { dropTargets: Array<{ data: unknown }> } | null;
+          };
+        };
+        if (!isActiveDragData(source.data)) return;
+        const activeType = source.data.type;
+        const activeId = source.data.id;
+        const targets = location.current?.dropTargets ?? [];
+        let overData: DragData | undefined;
+        if (targets.length) {
+          if (activeType === "list") {
+            for (let i = targets.length - 1; i >= 0; i--) {
+              const d = targets[i]?.data;
+              if (isDragData(d) && d.type === "list-item") {
+                overData = d;
+                break;
+              }
+            }
+          } else if (activeType === "card") {
+            for (let i = targets.length - 1; i >= 0; i--) {
+              const d = targets[i]?.data;
+              if (isDragData(d) && (d.type === "card" || d.type === "list")) {
+                overData = d;
+                break;
+              }
+            }
+          }
+          if (!overData) {
+            const d = targets[targets.length - 1]?.data;
+            if (isDragData(d)) {
+              overData = d;
+            }
+          }
         }
+        if (!activeType || activeId == null || !overData) return;
 
-        if (!activeCard || activeCard.listId === overListId) return;
-
-        const activeListIndex = lists.findIndex(
-          (list) => list.id === activeCard.listId,
-        );
-        const overList = lists.find((list) => list.id === overListId);
-
-        if (activeListIndex === -1 || !overList) return;
-
-        const activeCardIndex =
-          lists[activeListIndex]?.cards?.findIndex(
-            (card) => card.id === activeId,
-          ) ?? -1;
-
-        if (activeCardIndex === -1) return;
-
-        moveCard(
-          Number(activeId),
-          activeCard.listId,
-          overListId,
-          activeCardIndex,
-          overList.cards?.length ?? 0,
-        );
-      }
-    },
-    [lists, moveCard, findCardById],
-  );
-
-  const handleDragEnd = useCallback(
-    (event: DragEndEvent) => {
-      const { active, over } = event;
-
-      setActiveId(null);
-      setActiveType(null);
-
-      if (!over) return;
-
-      const activeId = active.id;
-      const overId = over.id;
-
-      if (activeId === overId) return;
-
-      const activeType = active.data.current?.type as string | undefined;
-
-      if (activeType === "list") {
-        const activeIndex = lists.findIndex((list) => list.id === activeId);
-        const overIndex = lists.findIndex((list) => list.id === overId);
-
-        if (
-          activeIndex !== -1 &&
-          overIndex !== -1 &&
-          activeIndex !== overIndex
-        ) {
-          moveList(Number(activeId), activeIndex, overIndex);
-        }
-        return;
-      }
-
-      if (activeType === "card") {
-        const activeCard = findCardById(activeId);
-
-        if (over.id.toString().startsWith("list-")) {
-          const overListId = Number(over.id.toString().replace("list-", ""));
-
-          if (!activeCard) return;
-
-          const activeListIndex = lists.findIndex(
-            (list) => list.id === activeCard.listId,
-          );
-          const overList = lists.find((list) => list.id === overListId);
-
-          if (activeListIndex === -1 || !overList) return;
-
-          const activeCardIndex =
-            lists[activeListIndex]?.cards?.findIndex(
-              (card) => card.id === activeId,
-            ) ?? -1;
-
-          if (activeCardIndex === -1) return;
-
-          moveCard(
-            Number(activeId),
-            activeCard.listId,
-            overListId,
-            activeCardIndex,
-            overList.cards?.length ?? 0,
-          );
+        if (activeType === "list" && overData.type === "list-item") {
+          const fromIndex = lists.findIndex((l) => l.id === activeId);
+          const toIndex = lists.findIndex((l) => l.id === overData.id);
+          if (fromIndex !== -1 && toIndex !== -1 && fromIndex !== toIndex) {
+            moveList(activeId, fromIndex, toIndex);
+          }
           return;
         }
 
-        const overCard = findCardById(overId);
+        if (activeType === "card") {
+          if (overData.type === "list") {
+            const activeCard = findCardById(activeId);
+            const overListId = Number(
+              typeof overData.id === "string"
+                ? String(overData.id).replace("list-", "")
+                : overData.id,
+            );
+            if (!activeCard || activeCard.listId === overListId) return;
+            const activeListIndex = lists.findIndex(
+              (l) => l.id === activeCard.listId,
+            );
+            const overList = lists.find((l) => l.id === overListId);
+            if (activeListIndex === -1 || !overList) return;
+            const activeCardIndex =
+              lists[activeListIndex]?.cards?.findIndex(
+                (c) => c.id === activeId,
+              ) ?? -1;
+            if (activeCardIndex === -1) return;
+            moveCard(
+              activeId,
+              activeCard.listId,
+              overListId,
+              activeCardIndex,
+              overList.cards?.length ?? 0,
+            );
+            return;
+          }
 
-        if (!activeCard || !overCard) return;
-        if (activeCard.listId !== overCard.listId) return;
+          if (overData.type === "card") {
+            const activeCard = findCardById(activeId);
+            const overCard = findCardById(overData.id);
+            if (!activeCard || !overCard) return;
 
-        const listIndex = lists.findIndex(
-          (list) => list.id === activeCard.listId,
-        );
-        if (listIndex === -1) return;
-
-        const activeIndex =
-          lists[listIndex]?.cards?.findIndex((card) => card.id === activeId) ??
-          -1;
-        const overIndex =
-          lists[listIndex]?.cards?.findIndex((card) => card.id === overId) ??
-          -1;
-
-        if (
-          activeIndex !== -1 &&
-          overIndex !== -1 &&
-          activeIndex !== overIndex
-        ) {
-          moveCard(
-            Number(activeId),
-            activeCard.listId,
-            activeCard.listId,
-            activeIndex,
-            overIndex,
-          );
+            if (activeCard.listId === overCard.listId) {
+              const listIndex = lists.findIndex(
+                (l) => l.id === activeCard.listId,
+              );
+              if (listIndex === -1) return;
+              const fromIndex =
+                lists[listIndex]?.cards?.findIndex((c) => c.id === activeId) ??
+                -1;
+              const toIndex =
+                lists[listIndex]?.cards?.findIndex(
+                  (c) => c.id === overCard.id,
+                ) ?? -1;
+              if (fromIndex !== -1 && toIndex !== -1 && fromIndex !== toIndex) {
+                moveCard(
+                  activeId,
+                  activeCard.listId,
+                  activeCard.listId,
+                  fromIndex,
+                  toIndex,
+                );
+              }
+            } else {
+              const fromListIndex = lists.findIndex(
+                (l) => l.id === activeCard.listId,
+              );
+              const toListIndex = lists.findIndex(
+                (l) => l.id === overCard.listId,
+              );
+              if (fromListIndex === -1 || toListIndex === -1) return;
+              const fromIndex =
+                lists[fromListIndex]?.cards?.findIndex(
+                  (c) => c.id === activeId,
+                ) ?? -1;
+              const toIndex =
+                lists[toListIndex]?.cards?.findIndex(
+                  (c) => c.id === overCard.id,
+                ) ?? -1;
+              if (fromIndex === -1 || toIndex === -1) return;
+              moveCard(
+                activeId,
+                activeCard.listId,
+                overCard.listId,
+                fromIndex,
+                toIndex,
+              );
+            }
+          }
         }
-      }
-    },
-    [lists, moveCard, moveList, findCardById],
-  );
+      },
+    });
+    let cleanupDrop: (() => void) | undefined;
+    if (scrollerRef.current) {
+      cleanupDrop = dropTargetForElements({
+        element: scrollerRef.current,
+        getData: () => ({ type: "list-container" }),
+        onDragEnter: () => setIsOverContainer(true),
+        onDragLeave: () => setIsOverContainer(false),
+        onDrop: () => setIsOverContainer(false),
+      });
+    }
+    return () => {
+      cleanupMonitor();
+      cleanupDrop?.();
+    };
+  }, [lists, moveCard, moveList, findCardById]);
 
   if (isLoading) return <div className="p-4">Loading...</div>;
   if (isError)
@@ -320,66 +254,47 @@ export function ListContainer({ boardId: _boardId }: ListContainerProps) {
   }
 
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCorners}
-      onDragStart={handleDragStart}
-      onDragOver={handleDragOver}
-      onDragEnd={handleDragEnd}
-    >
-      <div className="relative h-full w-full">
-        <div
-          className="flex h-full gap-x-4 overflow-x-auto overflow-y-hidden px-1 pb-6"
-          style={{
-            scrollbarWidth: "thin",
-            scrollbarColor: "hsl(var(--border)) transparent",
-          }}
-        >
-          <style jsx>{`
-            div::-webkit-scrollbar {
-              height: 8px;
-            }
-            div::-webkit-scrollbar-track {
-              background: hsl(var(--muted) / 0.3);
-              border-radius: 4px;
-            }
-            div::-webkit-scrollbar-thumb {
-              background: hsl(var(--border));
-              border-radius: 4px;
-              transition: background-color 0.2s ease;
-            }
-            div::-webkit-scrollbar-thumb:hover {
-              background: hsl(var(--muted-foreground) / 0.6);
-            }
-          `}</style>
+    <div className="relative h-full w-full">
+      <div
+        ref={scrollerRef}
+        className={`flex h-full gap-x-4 overflow-x-auto overflow-y-hidden px-3 pb-7 ${isOverContainer ? "ring-primary/40 ring-2 ring-offset-2" : ""} board-scroll`}
+        style={{
+          scrollbarWidth: "thin",
+          scrollbarColor: "hsl(var(--border)) transparent",
+        }}
+      >
+        <style jsx>{`
+          .board-scroll::-webkit-scrollbar {
+            height: 8px;
+          }
+          .board-scroll::-webkit-scrollbar-track {
+            background: hsl(var(--muted) / 0.3);
+            border-radius: 4px;
+          }
+          .board-scroll::-webkit-scrollbar-thumb {
+            background: hsl(var(--border));
+            border-radius: 4px;
+            transition: background-color 0.2s ease;
+          }
+          .board-scroll::-webkit-scrollbar-thumb:hover {
+            background: hsl(var(--muted-foreground) / 0.6);
+          }
+        `}</style>
+        {lists.map((list) => (
+          <ListItem key={list.id} data={list} />
+        ))}
 
-          <SortableContext
-            items={listIds}
-            strategy={horizontalListSortingStrategy}
-          >
-            {lists.map((list) => (
-              <ListItem key={list.id} data={list} />
-            ))}
-          </SortableContext>
-
-          <ListForm />
-          <div className="w-4 shrink-0" />
-        </div>
+        <ListForm />
+        <div className="w-6 shrink-0" />
       </div>
-
-      <DragOverlay>
-        {activeType === "list" && activeList ? (
-          <div className="w-[272px] rotate-2 transform opacity-95 shadow-xl">
-            <ListItem data={activeList} />
-          </div>
-        ) : null}
-
-        {activeType === "card" && activeCard ? (
-          <div className="rotate-2 transform opacity-95 shadow-xl">
-            <CardItem data={activeCard} isDragOverlay />
-          </div>
-        ) : null}
-      </DragOverlay>
-    </DndContext>
+      <div
+        aria-hidden="true"
+        className="from-background/80 pointer-events-none absolute inset-y-0 left-0 w-8 bg-gradient-to-r to-transparent"
+      />
+      <div
+        aria-hidden="true"
+        className="from-background/80 pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l to-transparent"
+      />
+    </div>
   );
 }

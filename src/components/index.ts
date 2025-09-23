@@ -32,4 +32,3 @@ export { BorderBeam } from "./border-beam";
 export { WordRotate } from "./word-rotate";
 export { ThemeProvider } from "./theme-provider";
 export { ThemeToggle } from "./theme-toggle";
-export { LoginForm } from "./login-form";

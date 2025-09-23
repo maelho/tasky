@@ -1,12 +1,7 @@
 "use client";
 
-import { useRef, useState, type ElementRef } from "react";
-import {
-  SortableContext,
-  useSortable,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
+import { useEffect, useRef, useState, type ElementRef } from "react";
+import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 
 import { cn } from "~/lib/utils";
 import type { ListWithCards } from "~/hooks/use-optimistic-board";
@@ -23,26 +18,27 @@ type ListItemProps = {
 export function ListItem({ data }: ListItemProps) {
   const textareaRef = useRef<ElementRef<"textarea">>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
 
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
-    id: data.id,
-    data: {
-      type: "list",
-      list: data,
-    },
-  });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
+  useEffect(() => {
+    if (!ref.current) return;
+    const el = ref.current;
+    const cleanupDrag = draggable({
+      element: el,
+      getInitialData: () => ({ type: "list", id: data.id }),
+      onDragStart: () => setIsDragging(true),
+      onDrop: () => setIsDragging(false),
+    });
+    const cleanupDrop = dropTargetForElements({
+      element: el,
+      getData: () => ({ type: "list-item", id: data.id }),
+    });
+    return () => {
+      cleanupDrag();
+      cleanupDrop();
+    };
+  }, [data.id]);
 
   function disableEditing() {
     setIsEditing(false);
@@ -59,15 +55,14 @@ export function ListItem({ data }: ListItemProps) {
 
   return (
     <div
-      ref={setNodeRef}
-      style={style}
+      ref={ref}
       className={cn(
         "h-full w-[272px] shrink-0 select-none",
         isDragging && "opacity-50",
       )}
     >
       <div className="bg-muted w-full rounded-md pb-2 shadow-md">
-        <div {...attributes} {...listeners}>
+        <div>
           <ListHeader onAddCard={enableEditing} data={data} />
         </div>
 
@@ -78,16 +73,11 @@ export function ListItem({ data }: ListItemProps) {
             data.cards && data.cards.length > 0 ? "mt-2" : "mt-0",
           )}
         >
-          <SortableContext
-            items={cardIds}
-            strategy={verticalListSortingStrategy}
-          >
-            <div className="flex min-h-[20px] flex-col gap-y-2">
-              {data.cards?.map((card) => (
-                <CardItem key={card.id} data={card} />
-              ))}
-            </div>
-          </SortableContext>
+          <div className="flex min-h-[20px] flex-col gap-y-2">
+            {data.cards?.map((card) => (
+              <CardItem key={card.id} data={card} />
+            ))}
+          </div>
         </DroppableArea>
 
         <CardForm
