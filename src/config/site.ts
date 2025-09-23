@@ -1,7 +1,6 @@
 export const SiteConfig = {
   title: "Tasky",
-  description:
-    "Simplify task management, boost collaboration, and achieve more together",
+  description: "Simplify task management.",
 } as const;
 
 export const Paths = {

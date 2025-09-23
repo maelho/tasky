@@ -1,4 +1,4 @@
-import { HeroSection, FeaturesSection } from "~/components/landing";
+import { HeroSection } from "~/components/landing";
 
 export default function LandingPage() {
   return (
@@ -19,7 +19,6 @@ export default function LandingPage() {
       <div className="from-background via-background to-muted/20 fixed inset-0 -z-10 bg-gradient-to-b" />
 
       <HeroSection />
-      <FeaturesSection />
     </div>
   );
 }

@@ -88,19 +88,36 @@ export function OptimisticBoardProvider({
         if (!old) return old;
 
         const newLists = [...old];
-        const sourceList = newLists.find((list) => list.id === sourceListId);
-        const destList = newLists.find((list) => list.id === destListId);
 
-        if (!sourceList || !destList) return old;
+        const sourceListIndex = newLists.findIndex(
+          (list) => list.id === sourceListId,
+        );
+        const destListIndex = newLists.findIndex(
+          (list) => list.id === destListId,
+        );
 
-        const sourceCards = [...(sourceList.cards || [])];
-        const destCards =
-          sourceListId === destListId
-            ? sourceCards
-            : [...(destList.cards || [])];
+        if (sourceListIndex === -1 || destListIndex === -1) return old;
 
-        const [movedCard] = sourceCards.splice(sourceIndex, 1);
-        if (!movedCard) return old;
+        const sourceList: ListWithCards = {
+          ...newLists[sourceListIndex]!,
+          cards: [...(newLists[sourceListIndex]!.cards ?? [])],
+        };
+        const destList: ListWithCards =
+          sourceListIndex === destListIndex
+            ? sourceList
+            : {
+                ...newLists[destListIndex]!,
+                cards: [...(newLists[destListIndex]!.cards ?? [])],
+              };
+
+        const sourceCards = sourceList.cards;
+        const destCards = destList.cards;
+
+        const originalCard = sourceCards[sourceIndex];
+        if (!originalCard) return old;
+
+        const movedCard = { ...originalCard };
+        sourceCards.splice(sourceIndex, 1);
 
         if (sourceListId !== destListId) {
           movedCard.listId = destListId;
@@ -108,11 +125,14 @@ export function OptimisticBoardProvider({
 
         destCards.splice(destIndex, 0, movedCard);
 
-        if (sourceListId === destListId) {
+        if (sourceListIndex === destListIndex) {
           destCards.forEach((card, index) => {
             card.order = index;
           });
-          sourceList.cards = destCards;
+          newLists[sourceListIndex] = {
+            ...sourceList,
+            cards: destCards,
+          } as ListWithCards;
         } else {
           sourceCards.forEach((card, index) => {
             card.order = index;
@@ -120,8 +140,14 @@ export function OptimisticBoardProvider({
           destCards.forEach((card, index) => {
             card.order = index;
           });
-          sourceList.cards = sourceCards;
-          destList.cards = destCards;
+          newLists[sourceListIndex] = {
+            ...sourceList,
+            cards: sourceCards,
+          } as ListWithCards;
+          newLists[destListIndex] = {
+            ...destList,
+            cards: destCards,
+          } as ListWithCards;
         }
 
         return newLists;
