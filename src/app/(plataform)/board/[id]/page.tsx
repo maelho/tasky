@@ -100,11 +100,7 @@ export default async function BoardIdPage(props: { params: BoardIdPageProps }) {
                 for reordering.
               </div>
 
-              <div
-                className="overflow-x-auto overflow-y-hidden"
-                role="application"
-                aria-label="Kanban board"
-              >
+              <div role="application" aria-label="Kanban board">
                 <ListContainer boardId={board.id} />
               </div>
             </section>
