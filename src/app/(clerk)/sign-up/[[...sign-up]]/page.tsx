@@ -1,12 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import * as Clerk from "@clerk/elements/common";
 import * as SignUp from "@clerk/elements/sign-up";
-import { useOrganization, useUser } from "@clerk/nextjs";
 
-import { SiteConfig, Paths } from "~/config/site";
+import { SiteConfig } from "~/config/site";
 import { Button } from "~/components/ui/button";
 import {
   Card,
@@ -18,19 +15,6 @@ import {
 import { Icons } from "~/components/ui/icons";
 
 export default function SignUpPage() {
-  const router = useRouter();
-  const { isSignedIn } = useUser();
-  const { organization } = useOrganization();
-
-  useEffect(() => {
-    if (!isSignedIn) return;
-    if (organization?.id) {
-      router.replace(`${Paths.Organization}/${organization.id}`);
-    } else {
-      router.replace(Paths.SelectOrg);
-    }
-  }, [isSignedIn, organization?.id, router]);
-
   return (
     <SignUp.Root>
       <Clerk.Loading>
