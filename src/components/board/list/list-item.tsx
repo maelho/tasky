@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState, type ElementRef } from "react";
-import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import {
+  draggable,
+  dropTargetForElements,
+} from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 
 import { cn } from "~/lib/utils";
 import type { ListWithCards } from "~/hooks/use-optimistic-board";
@@ -50,8 +53,6 @@ export function ListItem({ data }: ListItemProps) {
       textareaRef.current?.focus();
     });
   }
-
-  const cardIds = data.cards?.map((card) => card.id) || [];
 
   return (
     <div
