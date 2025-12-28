@@ -1,13 +1,11 @@
 "use client";
 
-import { useFormState } from "react-dom";
 import { useEffect, useRef } from "react";
+import { useFormState } from "react-dom";
 import { toast } from "sonner";
 
 import { createBoardAction } from "~/app/actions/board.actions";
 import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
 import {
   Dialog,
   DialogContent,
@@ -16,6 +14,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
+import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
 
 interface CreateBoardServerProps {
   orgId: string;
@@ -79,7 +79,7 @@ export function CreateBoardServer({ orgId, children }: CreateBoardServerProps) {
         </form>
 
         {state.error && (
-          <div className="mt-2 text-sm text-red-600">{state.error}</div>
+          <div className="mt-2 text-red-600 text-sm">{state.error}</div>
         )}
       </DialogContent>
     </Dialog>

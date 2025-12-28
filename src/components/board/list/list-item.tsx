@@ -1,13 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState, type ElementRef } from "react";
 import {
   draggable,
   dropTargetForElements,
 } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-
-import { cn } from "~/lib/utils";
+import { type ElementRef, useEffect, useRef, useState } from "react";
 import type { ListWithCards } from "~/hooks/use-optimistic-board";
+import { cn } from "~/lib/utils";
 
 import CardForm from "../../forms/card-form";
 import { CardItem } from "../card/card-item";
@@ -62,7 +61,7 @@ export function ListItem({ data }: ListItemProps) {
         isDragging && "opacity-50",
       )}
     >
-      <div className="bg-muted w-full rounded-md pb-2 shadow-md">
+      <div className="w-full rounded-md bg-muted pb-2 shadow-md">
         <div>
           <ListHeader onAddCard={enableEditing} data={data} />
         </div>

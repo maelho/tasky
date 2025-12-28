@@ -1,16 +1,17 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-argument */
-import type { ProtectedTRPCContext } from "~/server/api/trpc";
 import {
+  type AnyColumn,
   and,
   asc,
   desc,
   eq,
   exists,
-  sql,
-  type AnyColumn,
   type SQL,
+  sql,
 } from "drizzle-orm";
-import type { SQLiteTable } from "drizzle-orm/sqlite-core";
+import type { SQLiteTable, TableConfig } from "drizzle-orm/sqlite-core";
+import type { ProtectedTRPCContext } from "~/server/api/trpc";
+
+type AnyDrizzleTable = SQLiteTable<TableConfig>;
 
 export type SortOrder = "asc" | "desc";
 
@@ -70,21 +71,27 @@ export const createSortClause = <T extends Record<string, AnyColumn>>(
   return column ? (sortOrder === "asc" ? [asc(column)] : [desc(column)]) : [];
 };
 
-export const buildOrgAccessCondition = <T extends SQLiteTable<any>>(
+export const buildOrgAccessCondition = <T extends AnyDrizzleTable>(
   table: T,
   orgId: string,
 ): SQL => {
-  const orgIdColumn = (table as any).orgId;
+  const orgIdColumn = (table as Record<string, unknown>).orgId as Parameters<
+    typeof eq
+  >[0];
   return eq(orgIdColumn, orgId);
 };
 
-export const buildNestedOrgAccessCondition = <U extends SQLiteTable<any>>(
+export const buildNestedOrgAccessCondition = <U extends AnyDrizzleTable>(
   ctx: ProtectedTRPCContext,
   joinTable: U,
   joinCondition: SQL,
 ): SQL => {
-  const orgId = ctx.auth.orgId!;
-  const orgIdColumn = (joinTable as any).orgId;
+  const orgId = ctx.auth.orgId;
+  if (!orgId) {
+    throw new Error("Organization ID is required");
+  }
+  const orgIdColumn = (joinTable as Record<string, unknown>)
+    .orgId as Parameters<typeof eq>[0];
 
   return exists(
     ctx.db
@@ -105,34 +112,47 @@ export const combineConditions = (
   return and(...validConditions);
 };
 
-export const createBaseQuery = <T extends SQLiteTable<any>>(
+export const createBaseQuery = <T extends AnyDrizzleTable>(
   ctx: ProtectedTRPCContext,
   table: T,
 ) => ctx.db.select().from(table);
 
-export const applyWhereClause = (query: any, condition?: SQL) => {
+type DrizzleQuery = {
+  where: (condition: SQL) => DrizzleQuery;
+  orderBy: (...args: SQL[]) => DrizzleQuery;
+  limit: (n: number) => DrizzleQuery;
+  offset: (n: number) => DrizzleQuery;
+};
+
+export const applyWhereClause = <Q extends DrizzleQuery>(
+  query: Q,
+  condition?: SQL,
+): Q => {
   if (condition) {
-    return query.where(condition);
+    return query.where(condition) as Q;
   }
   return query;
 };
 
-export const applyOrderBy = (query: any, orderClauses: SQL[]) => {
+export const applyOrderBy = <Q extends DrizzleQuery>(
+  query: Q,
+  orderClauses: SQL[],
+): Q => {
   if (orderClauses.length > 0) {
-    return query.orderBy(...orderClauses);
+    return query.orderBy(...orderClauses) as Q;
   }
   return query;
 };
 
-export const applyPagination = (
-  query: any,
+export const applyPagination = <Q extends DrizzleQuery>(
+  query: Q,
   options: PaginationOptions = {},
-) => {
+): Q => {
   const { limit, offset } = createPaginationClause(options);
-  return query.limit(limit).offset(offset);
+  return query.limit(limit).offset(offset) as Q;
 };
 
-export const createOptimizedQuery = <T extends SQLiteTable<any>>(
+export const createOptimizedQuery = <T extends AnyDrizzleTable>(
   ctx: ProtectedTRPCContext,
   table: T,
   options: {
@@ -141,26 +161,29 @@ export const createOptimizedQuery = <T extends SQLiteTable<any>>(
     pagination?: PaginationOptions;
   } = {},
 ) => {
-  let query = createBaseQuery(ctx, table);
+  let query: ReturnType<typeof createBaseQuery> = createBaseQuery(ctx, table);
 
   if (options.where) {
-    query = query.where(options.where) as any;
+    query = query.where(options.where) as unknown as typeof query;
   }
 
-  const sortClauses = createSortClause(table as any, options.sort);
+  const sortClauses = createSortClause(
+    table as unknown as Record<string, AnyColumn>,
+    options.sort,
+  );
   if (sortClauses.length > 0) {
-    query = query.orderBy(...sortClauses) as any;
+    query = query.orderBy(...sortClauses) as unknown as typeof query;
   }
 
   if (options.pagination) {
     const { limit, offset } = createPaginationClause(options.pagination);
-    query = query.limit(limit).offset(offset) as any;
+    query = query.limit(limit).offset(offset) as unknown as typeof query;
   }
 
   return query;
 };
 
-export const createCountQuery = <T extends SQLiteTable<any>>(
+export const createCountQuery = <T extends AnyDrizzleTable>(
   ctx: ProtectedTRPCContext,
   table: T,
   condition?: SQL,

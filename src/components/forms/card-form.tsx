@@ -1,20 +1,19 @@
 "use client";
 
+import { Plus, X } from "lucide-react";
 import {
+  type ElementRef,
+  type FormEvent,
   forwardRef,
   useRef,
   useState,
-  type ElementRef,
-  type FormEvent,
 } from "react";
-import { api } from "~/trpc/react";
-import { Plus, X } from "lucide-react";
 import { toast } from "sonner";
 import { useEventListener, useOnClickOutside } from "usehooks-ts";
-
-import { cn } from "~/lib/utils";
 import { Button } from "~/components/ui/button";
 import { Textarea } from "~/components/ui/textarea";
+import { cn } from "~/lib/utils";
+import { api } from "~/trpc/react";
 
 type CardFormProps = {
   listId: number;
@@ -81,7 +80,6 @@ export default forwardRef<HTMLTextAreaElement, CardFormProps>(function CardForm(
           ref={formRef}
           onSubmit={handleFormSubmit}
           className="m-1 space-y-4 px-1 py-0.5"
-          role="form"
           aria-label="Add new card"
         >
           <Textarea
@@ -92,7 +90,7 @@ export default forwardRef<HTMLTextAreaElement, CardFormProps>(function CardForm(
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             className={cn(
-              "resize-none shadow-sm ring-0 outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0",
+              "resize-none shadow-sm outline-none ring-0 focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0",
             )}
             placeholder="Enter a title for this card..."
             aria-label="Card title"
@@ -136,7 +134,7 @@ export default forwardRef<HTMLTextAreaElement, CardFormProps>(function CardForm(
             "title" in error.data.zodError.fieldErrors && (
               <span
                 id="card-title-error"
-                className="mb-8 text-xs text-red-500"
+                className="mb-8 text-red-500 text-xs"
                 role="alert"
                 aria-live="polite"
               >
@@ -168,7 +166,7 @@ export default forwardRef<HTMLTextAreaElement, CardFormProps>(function CardForm(
       ) : (
         <Button
           onClick={enableEditing}
-          className="text-muted-foreground h-auto w-full justify-start px-2 py-1.5 text-sm"
+          className="h-auto w-full justify-start px-2 py-1.5 text-muted-foreground text-sm"
           size="sm"
           variant="ghost"
           aria-label="Add a new card to this list"

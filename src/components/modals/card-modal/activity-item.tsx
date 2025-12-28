@@ -1,7 +1,7 @@
-import type { AuditLogsSelect } from "~/server/db/schema";
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 
 import { formatDateToLocal, generateLogMessage } from "~/lib/utils";
-import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
+import type { AuditLogsSelect } from "~/server/db/schema";
 
 type ActivityItemProps = {
   data: AuditLogsSelect;
@@ -16,23 +16,23 @@ export function ActivityItem({ data }: ActivityItemProps) {
     .slice(0, 2);
 
   return (
-    <div className="border-border/50 bg-card/50 hover:bg-card/80 flex items-start gap-3 rounded-lg border p-3 transition-colors">
-      <Avatar className="border-border/50 h-8 w-8 shrink-0 border">
+    <div className="flex items-start gap-3 rounded-lg border border-border/50 bg-card/50 p-3 transition-colors hover:bg-card/80">
+      <Avatar className="h-8 w-8 shrink-0 border border-border/50">
         <AvatarImage src={data.userImage} alt={data.userName} />
-        <AvatarFallback className="bg-primary/10 text-primary text-xs font-medium">
+        <AvatarFallback className="bg-primary/10 font-medium text-primary text-xs">
           {initials}
         </AvatarFallback>
       </Avatar>
 
       <div className="min-w-0 flex-1 space-y-1">
         <div className="text-foreground text-sm">
-          <span className="text-primary font-medium">{data.userName}</span>
-          <span className="text-muted-foreground ml-1">
+          <span className="font-medium text-primary">{data.userName}</span>
+          <span className="ml-1 text-muted-foreground">
             {generateLogMessage(data)}
           </span>
         </div>
 
-        <div className="text-muted-foreground flex items-center gap-2 text-xs">
+        <div className="flex items-center gap-2 text-muted-foreground text-xs">
           <time dateTime={data.createdAt.toString()}>
             {formatDateToLocal(data.createdAt.toString())}
           </time>

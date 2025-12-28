@@ -1,9 +1,9 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { auth } from "@clerk/nextjs/server";
-import { api } from "~/trpc/server";
+import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { api } from "~/trpc/server";
 
 const createCardSchema = z.object({
   title: z.string().min(1, "Card title is required").max(100, "Title too long"),
@@ -29,7 +29,7 @@ type ActionState = {
 };
 
 export async function createCardAction(
-  prevState: ActionState,
+  _prevState: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
   const { orgId } = await auth();
@@ -83,7 +83,7 @@ export async function createCardAction(
 }
 
 export async function updateCardAction(
-  prevState: ActionState,
+  _prevState: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
   const { orgId } = await auth();
@@ -165,7 +165,7 @@ export async function deleteCardAction(
 }
 
 export async function copyCardAction(
-  prevState: ActionState,
+  _prevState: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
   const { orgId } = await auth();

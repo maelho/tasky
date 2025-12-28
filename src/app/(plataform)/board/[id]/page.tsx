@@ -1,17 +1,16 @@
+import { auth } from "@clerk/nextjs/server";
+import { Provider } from "jotai";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { auth } from "@clerk/nextjs/server";
-import { api } from "~/trpc/server";
-import { Provider } from "jotai";
-
-import { createPageMetadata } from "~/lib/metadata";
-import { OptimisticBoardProvider } from "~/hooks/use-optimistic-board";
 import {
   BoardNavbar,
   ListContainer,
   ScreenReaderAnnouncements,
 } from "~/components/board";
 import { CardModal } from "~/components/modals";
+import { OptimisticBoardProvider } from "~/hooks/use-optimistic-board";
+import { createPageMetadata } from "~/lib/metadata";
+import { api } from "~/trpc/server";
 
 type BoardIdPageProps = Promise<{ id: string }>;
 
@@ -80,7 +79,7 @@ export default async function BoardIdPage(props: { params: BoardIdPageProps }) {
   return (
     <Provider>
       <OptimisticBoardProvider boardId={board.id}>
-        <div role="main" aria-label={`Board: ${board.title}`}>
+        <main aria-label={`Board: ${board.title}`}>
           <h1 className="sr-only">Board: {board.title}</h1>
           <ScreenReaderAnnouncements announcement="" />
 
@@ -91,7 +90,6 @@ export default async function BoardIdPage(props: { params: BoardIdPageProps }) {
 
             <section
               aria-label="Board lists and cards"
-              role="region"
               aria-describedby="board-instructions"
             >
               <div id="board-instructions" className="sr-only">
@@ -105,7 +103,7 @@ export default async function BoardIdPage(props: { params: BoardIdPageProps }) {
               </div>
             </section>
           </div>
-        </div>
+        </main>
       </OptimisticBoardProvider>
     </Provider>
   );

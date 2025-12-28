@@ -253,215 +253,215 @@
 
   /* Clerk Organization Switcher Overrides */
   .cl-organizationSwitcherTrigger {
-    background-color: hsl(var(--background)) !important;
-    border: 1px solid hsl(var(--border)) !important;
-    border-radius: 0.5rem !important;
-    color: hsl(var(--foreground)) !important;
-    font-size: 0.875rem !important;
-    font-weight: 500 !important;
-    height: 2rem !important;
-    min-height: 2rem !important;
-    max-height: 2rem !important;
-    min-width: 6rem !important;
-    max-width: 10rem !important;
-    padding: 0 0.75rem !important;
-    line-height: 2rem !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    gap: 0.5rem !important;
-    transition: all 0.2s ease-in-out !important;
+    background-color: hsl(var(--background));
+    border: 1px solid hsl(var(--border));
+    border-radius: 0.5rem;
+    color: hsl(var(--foreground));
+    font-size: 0.875rem;
+    font-weight: 500;
+    height: 2rem;
+    min-height: 2rem;
+    max-height: 2rem;
+    min-width: 6rem;
+    max-width: 10rem;
+    padding: 0 0.75rem;
+    line-height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    transition: all 0.2s ease-in-out;
   }
 
   .cl-organizationSwitcherTrigger:hover {
-    background-color: hsl(var(--muted)) !important;
-    border-color: hsl(var(--border)) !important;
-    transform: scale(1.02) !important;
+    background-color: hsl(var(--muted));
+    border-color: hsl(var(--border));
+    transform: scale(1.02);
   }
 
   .cl-organizationSwitcherTrigger:focus {
-    border-color: hsl(var(--ring)) !important;
-    box-shadow: 0 0 0 3px hsl(var(--ring) / 0.1) !important;
-    outline: none !important;
-    background-color: hsl(var(--background)) !important;
+    border-color: hsl(var(--ring));
+    box-shadow: 0 0 0 3px hsl(var(--ring) / 0.1);
+    outline: none;
+    background-color: hsl(var(--background));
   }
 
   .cl-organizationSwitcherTriggerIcon {
-    color: hsl(var(--muted-foreground)) !important;
-    width: 1rem !important;
-    height: 1rem !important;
+    color: hsl(var(--muted-foreground));
+    width: 1rem;
+    height: 1rem;
   }
 
   .cl-organizationPreviewMainIdentifier {
-    color: hsl(var(--foreground)) !important;
-    font-size: 0.875rem !important;
-    font-weight: 500 !important;
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    max-width: none !important;
-    overflow: visible !important;
-    text-overflow: unset !important;
-    white-space: nowrap !important;
+    color: hsl(var(--foreground));
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: block;
+    visibility: visible;
+    opacity: 1;
+    max-width: none;
+    overflow: visible;
+    text-overflow: unset;
+    white-space: nowrap;
   }
 
   .cl-organizationPreviewSecondaryIdentifier {
-    display: none !important;
+    display: none;
   }
 
   .cl-organizationSwitcherTrigger .cl-organizationPreview {
-    background-color: transparent !important;
-    display: flex !important;
-    align-items: center !important;
-    flex: 1 !important;
-    min-width: 0 !important;
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-width: 0;
   }
 
   .cl-organizationSwitcherTrigger .cl-organizationPreviewTextContainer {
-    background-color: transparent !important;
-    display: flex !important;
-    flex-direction: column !important;
-    flex: 1 !important;
-    min-width: 0 !important;
+    background-color: transparent;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
   }
 
   .cl-organizationSwitcherTrigger .cl-organizationPreviewMainIdentifier {
-    color: hsl(var(--foreground)) !important;
-    font-size: 0.875rem !important;
-    font-weight: 500 !important;
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    max-width: 8rem !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    white-space: nowrap !important;
+    color: hsl(var(--foreground));
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: block;
+    visibility: visible;
+    opacity: 1;
+    max-width: 8rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   /* User Button Overrides */
   .cl-userButtonAvatarBox {
-    width: 2rem !important;
-    height: 2rem !important;
-    max-width: 2rem !important;
-    max-height: 2rem !important;
-    min-width: 2rem !important;
-    min-height: 2rem !important;
-    border-radius: 50% !important;
-    border: 1px solid hsl(var(--border)) !important;
-    transition: all 0.2s ease-in-out !important;
+    width: 2rem;
+    height: 2rem;
+    max-width: 2rem;
+    max-height: 2rem;
+    min-width: 2rem;
+    min-height: 2rem;
+    border-radius: 50%;
+    border: 1px solid hsl(var(--border));
+    transition: all 0.2s ease-in-out;
   }
 
   .cl-userButtonAvatarBox:hover {
-    border-color: hsl(var(--ring)) !important;
-    transform: scale(1.05) !important;
+    border-color: hsl(var(--ring));
+    transform: scale(1.05);
   }
 
   .cl-userButtonAvatarImage {
-    width: 2rem !important;
-    height: 2rem !important;
+    width: 2rem;
+    height: 2rem;
   }
 
   /* Popover Cards */
   .cl-organizationSwitcherPopoverCard {
-    background-color: hsl(var(--popover)) !important;
-    border: 1px solid hsl(var(--border)) !important;
-    border-radius: 0.75rem !important;
+    background-color: hsl(var(--popover));
+    border: 1px solid hsl(var(--border));
+    border-radius: 0.75rem;
     box-shadow:
       0 10px 15px -3px rgb(0 0 0 / 0.1),
-      0 4px 6px -4px rgb(0 0 0 / 0.1) !important;
-    padding: 0.75rem !important;
+      0 4px 6px -4px rgb(0 0 0 / 0.1);
+    padding: 0.75rem;
   }
 
   .cl-userButtonPopoverCard {
-    background-color: hsl(var(--background)) !important;
-    border: 1px solid hsl(var(--border)) !important;
-    border-radius: 0.75rem !important;
+    background-color: hsl(var(--background));
+    border: 1px solid hsl(var(--border));
+    border-radius: 0.75rem;
     box-shadow:
       0 10px 15px -3px rgb(0 0 0 / 0.1),
-      0 4px 6px -4px rgb(0 0 0 / 0.1) !important;
-    padding: 0.5rem !important;
-    min-width: 14rem !important;
-    color: hsl(var(--foreground)) !important;
+      0 4px 6px -4px rgb(0 0 0 / 0.1);
+    padding: 0.5rem;
+    min-width: 14rem;
+    color: hsl(var(--foreground));
   }
 
   .cl-userPreview {
-    background-color: transparent !important;
-    border-radius: 0.5rem !important;
-    padding: 0.75rem !important;
-    border: none !important;
+    background-color: transparent;
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    border: none;
   }
 
   .cl-userPreviewMainIdentifier {
-    color: hsl(var(--foreground)) !important;
-    font-size: 0.875rem !important;
-    font-weight: 600 !important;
+    color: hsl(var(--foreground));
+    font-size: 0.875rem;
+    font-weight: 600;
   }
 
   .cl-userPreviewSecondaryIdentifier {
-    color: hsl(var(--muted-foreground)) !important;
-    font-size: 0.75rem !important;
+    color: hsl(var(--muted-foreground));
+    font-size: 0.75rem;
   }
 
   .cl-userButtonPopoverActionButton {
-    background-color: transparent !important;
-    border: none !important;
-    border-radius: 0.5rem !important;
-    color: hsl(var(--foreground)) !important;
-    font-size: 0.875rem !important;
-    font-weight: 500 !important;
-    padding: 0.75rem 1rem !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
-    gap: 0.75rem !important;
-    width: 100% !important;
-    text-align: left !important;
-    transition: all 0.2s ease-in-out !important;
+    background-color: transparent;
+    border: none;
+    border-radius: 0.5rem;
+    color: hsl(var(--foreground));
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.75rem;
+    width: 100%;
+    text-align: left;
+    transition: all 0.2s ease-in-out;
   }
 
   .cl-userButtonPopoverActionButton:hover {
-    background-color: hsl(var(--muted)) !important;
-    color: hsl(var(--foreground)) !important;
+    background-color: hsl(var(--muted));
+    color: hsl(var(--foreground));
   }
 
   .cl-userButtonPopoverActionButtonIcon {
-    color: hsl(var(--muted-foreground)) !important;
-    width: 1rem !important;
-    height: 1rem !important;
+    color: hsl(var(--muted-foreground));
+    width: 1rem;
+    height: 1rem;
   }
 
   .cl-userButtonPopoverActionButtonText {
-    color: hsl(var(--foreground)) !important;
-    font-size: 0.875rem !important;
-    font-weight: 500 !important;
+    color: hsl(var(--foreground));
+    font-size: 0.875rem;
+    font-weight: 500;
   }
 
   .cl-userButtonPopoverFooter {
-    background-color: hsl(var(--background)) !important;
-    border-top: 1px solid hsl(var(--border)) !important;
-    padding: 0.5rem !important;
-    margin-top: 0.5rem !important;
+    background-color: hsl(var(--background));
+    border-top: 1px solid hsl(var(--border));
+    padding: 0.5rem;
+    margin-top: 0.5rem;
   }
 
   /* Clerk Development Mode Footer */
   .cl-userButtonPopoverFooter .cl-badge,
   .cl-userButtonPopoverFooter .cl-footerAction {
-    background-color: hsl(var(--muted)) !important;
-    color: hsl(var(--muted-foreground)) !important;
-    border: none !important;
-    border-radius: 0.25rem !important;
-    font-size: 0.75rem !important;
-    padding: 0.25rem 0.5rem !important;
-    text-align: center !important;
+    background-color: hsl(var(--muted));
+    color: hsl(var(--muted-foreground));
+    border: none;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    text-align: center;
   }
 
   .cl-userButtonPopoverFooter .cl-badge:hover,
   .cl-userButtonPopoverFooter .cl-footerAction:hover {
-    background-color: hsl(var(--muted-foreground) / 0.1) !important;
+    background-color: hsl(var(--muted-foreground) / 0.1);
   }
 
   .cl-userButtonPopoverFooter .cl-footerActionText {
-    color: hsl(var(--muted-foreground)) !important;
-    font-size: 0.75rem !important;
+    color: hsl(var(--muted-foreground));
+    font-size: 0.75rem;
   }
 }

@@ -231,9 +231,7 @@
       "indexes": {
         "listIdx": {
           "name": "listIdx",
-          "columns": [
-            "listId"
-          ],
+          "columns": ["listId"],
           "isUnique": false
         }
       },
@@ -292,9 +290,7 @@
       "indexes": {
         "boardIdx": {
           "name": "boardIdx",
-          "columns": [
-            "boardId"
-          ],
+          "columns": ["boardId"],
           "isUnique": false
         }
       },
@@ -347,9 +343,7 @@
       "indexes": {
         "tasky-v2_OrgLimit_orgId_unique": {
           "name": "tasky-v2_OrgLimit_orgId_unique",
-          "columns": [
-            "orgId"
-          ],
+          "columns": ["orgId"],
           "isUnique": true
         }
       },
@@ -393,9 +387,7 @@
       "indexes": {
         "name_idx": {
           "name": "name_idx",
-          "columns": [
-            "name"
-          ],
+          "columns": ["name"],
           "isUnique": false
         }
       },

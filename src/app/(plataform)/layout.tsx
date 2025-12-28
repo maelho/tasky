@@ -1,8 +1,8 @@
-import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
-import { HydrateClient } from "~/trpc/server";
-import { Paths } from "~/config/site";
+import { redirect } from "next/navigation";
 import { Navbar } from "~/components/navigation";
+import { Paths } from "~/config/site";
+import { HydrateClient } from "~/trpc/server";
 
 export default async function DashboardLayout({
   children,

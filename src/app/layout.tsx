@@ -1,14 +1,13 @@
 import "~/styles/globals.css";
 
-import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
+import type { Metadata } from "next";
+import { ThemeProvider } from "~/components/theme-provider";
+import { Toaster } from "~/components/ui/sonner";
 import { env } from "~/env";
 import { recursive } from "~/fonts";
-import { TRPCReactProvider } from "~/trpc/react";
-
 import { defaultMetadata } from "~/lib/metadata";
-import { Toaster } from "~/components/ui/sonner";
-import { ThemeProvider } from "~/components/theme-provider";
+import { TRPCReactProvider } from "~/trpc/react";
 
 export const metadata: Metadata = defaultMetadata;
 

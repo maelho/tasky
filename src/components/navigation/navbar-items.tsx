@@ -1,24 +1,20 @@
 "use client";
 
-import { useMemo } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import {
   ClerkLoaded,
   ClerkLoading,
   OrganizationSwitcher,
   UserButton,
 } from "@clerk/nextjs";
-import { type BoardSelect } from "~/server/db/schema";
-import { api } from "~/trpc/react";
 import {
   ActivityIcon,
   ChevronDown,
   LayoutDashboardIcon,
   SettingsIcon,
 } from "lucide-react";
-
-import { useBoardPath, useOrganizationPath } from "~/hooks/use-path-matcher";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useMemo } from "react";
 import { Button } from "~/components/ui/button";
 import {
   DropdownMenu,
@@ -31,6 +27,9 @@ import {
 } from "~/components/ui/dropdown-menu";
 import { ScrollArea } from "~/components/ui/scroll-area";
 import { Skeleton } from "~/components/ui/skeleton";
+import { useBoardPath, useOrganizationPath } from "~/hooks/use-path-matcher";
+import type { BoardSelect } from "~/server/db/schema";
+import { api } from "~/trpc/react";
 
 type ItemProps = {
   orgId: string;
@@ -45,7 +44,7 @@ function BoardDropdownItem({ board }: { board: BoardSelect }) {
         <div className="flex w-full items-center gap-2">
           <LayoutDashboardIcon size={14} className="text-muted-foreground" />
           <span
-            className={`flex-1 truncate ${isMatchingPath ? "text-primary font-semibold" : ""}`}
+            className={`flex-1 truncate ${isMatchingPath ? "font-semibold text-primary" : ""}`}
           >
             {board.title}
           </span>
@@ -98,7 +97,7 @@ export function SelectBoardButton({ orgId }: ItemProps) {
               </div>
             </ScrollArea>
           ) : (
-            <div className="text-muted-foreground p-4 text-center text-sm">
+            <div className="p-4 text-center text-muted-foreground text-sm">
               No boards found
             </div>
           )}
@@ -107,7 +106,7 @@ export function SelectBoardButton({ orgId }: ItemProps) {
         <DropdownMenuItem asChild>
           <Link
             href={`/organization/${orgId}`}
-            className="text-primary w-full cursor-pointer font-medium"
+            className="w-full cursor-pointer font-medium text-primary"
           >
             <LayoutDashboardIcon size={14} className="mr-2" />
             View all boards

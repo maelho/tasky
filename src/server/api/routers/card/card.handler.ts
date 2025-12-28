@@ -1,13 +1,13 @@
 import { TRPCError } from "@trpc/server";
+import { and, desc, eq, exists, type InferSelectModel } from "drizzle-orm";
 import type { ProtectedTRPCContext } from "~/server/api/trpc";
 import {
   boards,
-  cards,
-  lists,
   type CardSelect,
+  cards,
   type EntityType,
+  lists,
 } from "~/server/db/schema";
-import { and, desc, eq, exists, type InferSelectModel } from "drizzle-orm";
 
 import { createCrudHandlers } from "../../shared/crud-handler";
 import { createAuditLog, validateOrgId } from "../../shared/db-utils";
@@ -25,16 +25,22 @@ const cardCrud = createCrudHandlers({
   table: cards,
   entityType: "CARD" as EntityType,
   entityName: "Card",
-  nestedOrgAccessCondition: (ctx: ProtectedTRPCContext) =>
-    exists(
+  nestedOrgAccessCondition: (ctx: ProtectedTRPCContext) => {
+    const orgId = ctx.auth.orgId;
+    if (!orgId) {
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "Organization access required",
+      });
+    }
+    return exists(
       ctx.db
         .select()
         .from(lists)
         .innerJoin(boards, eq(lists.boardId, boards.id))
-        .where(
-          and(eq(boards.orgId, ctx.auth.orgId!), eq(lists.id, cards.listId)),
-        ),
-    ),
+        .where(and(eq(boards.orgId, orgId), eq(lists.id, cards.listId))),
+    );
+  },
 });
 
 async function validateListAccess(

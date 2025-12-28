@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
 
-import { auditLogs, type Action, type EntityType } from "../db/schema";
+import { type Action, auditLogs, type EntityType } from "../db/schema";
 import type { OrgTRPCContext, ProtectedTRPCContext } from "./trpc";
 
 export function validateOrgId(ctx: ProtectedTRPCContext): string {

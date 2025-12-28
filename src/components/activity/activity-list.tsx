@@ -1,9 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { api } from "~/trpc/react";
-
 import { Skeleton } from "~/components/ui/skeleton";
+import { api } from "~/trpc/react";
 
 import ActivityItem from "./activity-item";
 
@@ -38,7 +37,7 @@ export default function ActivityList() {
   return (
     <ol className="mt-4 space-y-4">
       {auditLogs?.length === 0 ? (
-        <p className="text-muted-foreground text-center text-xs">
+        <p className="text-center text-muted-foreground text-xs">
           No activity found inside this organization
         </p>
       ) : (
@@ -48,11 +47,19 @@ export default function ActivityList() {
   );
 }
 
+const SKELETON_IDS = [
+  "skeleton-1",
+  "skeleton-2",
+  "skeleton-3",
+  "skeleton-4",
+  "skeleton-5",
+] as const;
+
 export function ActivityListSkeleton() {
   return (
     <ol className="mt-4 space-y-4">
-      {Array.from({ length: 5 }).map((_, index) => (
-        <Skeleton key={index} className="h-14 w-full" />
+      {SKELETON_IDS.map((id) => (
+        <Skeleton key={id} className="h-14 w-full" />
       ))}
     </ol>
   );

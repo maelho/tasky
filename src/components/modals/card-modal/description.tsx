@@ -1,15 +1,14 @@
 "use client";
 
-import { useRef, useState, type ElementRef } from "react";
-import { api } from "~/trpc/react";
 import { AlignLeft, Edit3 } from "lucide-react";
+import { type ElementRef, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useEventListener, useOnClickOutside } from "usehooks-ts";
-
-import { cn } from "~/lib/utils";
 import { Button } from "~/components/ui/button";
 import { Skeleton } from "~/components/ui/skeleton";
 import { Textarea } from "~/components/ui/textarea";
+import { cn } from "~/lib/utils";
+import { api } from "~/trpc/react";
 
 import type { CardWithList } from ".";
 
@@ -70,10 +69,10 @@ export function Description({ data }: DescriptionProps) {
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-x-3">
-        <div className="bg-secondary/50 text-secondary-foreground shrink-0 rounded-lg p-2">
+        <div className="shrink-0 rounded-lg bg-secondary/50 p-2 text-secondary-foreground">
           <AlignLeft className="h-4 w-4" />
         </div>
-        <h3 className="text-foreground font-semibold">Description</h3>
+        <h3 className="font-semibold text-foreground">Description</h3>
       </div>
 
       {isEditing ? (
@@ -83,7 +82,7 @@ export function Description({ data }: DescriptionProps) {
             name="description"
             placeholder="Add a more detailed description..."
             defaultValue={data.description ?? ""}
-            className="border-border bg-background text-foreground placeholder:text-muted-foreground focus:ring-primary/20 focus:border-primary min-h-[120px] resize-none border transition-colors focus:ring-2"
+            className="min-h-[120px] resize-none border border-border bg-background text-foreground transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
             ref={textareaRef}
           />
           <div className="flex items-center gap-x-2">
@@ -107,37 +106,36 @@ export function Description({ data }: DescriptionProps) {
         </form>
       ) : (
         <div className="ml-11">
-          <div
+          <button
+            type="button"
             onClick={enableEditing}
-            role="button"
-            tabIndex={0}
             className={cn(
-              "group border-border/60 bg-muted/30 hover:bg-muted/50 relative cursor-pointer rounded-lg border-2 border-dashed transition-colors",
+              "group relative w-full cursor-pointer rounded-lg border-2 border-border/60 border-dashed bg-muted/30 text-left transition-colors hover:bg-muted/50",
               "min-h-[80px] p-4 text-sm",
               data.description &&
-                "border-border bg-background hover:bg-muted/20 border-solid",
+                "border-border border-solid bg-background hover:bg-muted/20",
             )}
           >
             {data.description ? (
               <>
-                <p className="text-foreground leading-relaxed whitespace-pre-wrap">
+                <p className="whitespace-pre-wrap text-foreground leading-relaxed">
                   {data.description}
                 </p>
                 <div className="absolute top-2 right-2 opacity-0 transition-opacity group-hover:opacity-100">
-                  <div className="bg-background/80 rounded border p-1 shadow-sm backdrop-blur-sm">
-                    <Edit3 className="text-muted-foreground h-3 w-3" />
+                  <div className="rounded border bg-background/80 p-1 shadow-sm backdrop-blur-sm">
+                    <Edit3 className="h-3 w-3 text-muted-foreground" />
                   </div>
                 </div>
               </>
             ) : (
-              <div className="text-muted-foreground flex h-full items-center justify-center">
+              <div className="flex h-full items-center justify-center text-muted-foreground">
                 <div className="space-y-2 text-center">
                   <Edit3 className="mx-auto h-5 w-5 opacity-40" />
                   <p>Add a more detailed description...</p>
                 </div>
               </div>
             )}
-          </div>
+          </button>
         </div>
       )}
     </div>
@@ -148,7 +146,7 @@ Description.Skeleton = function DescriptionSkeleton() {
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-x-3">
-        <div className="bg-muted shrink-0 rounded-lg p-2">
+        <div className="shrink-0 rounded-lg bg-muted p-2">
           <Skeleton className="h-4 w-4" />
         </div>
         <Skeleton className="h-5 w-24" />

@@ -1,12 +1,11 @@
 "use client";
 
-import { useRef, useState, type ElementRef } from "react";
-import type { ListSelect } from "~/server/db/schema";
-import { api } from "~/trpc/react";
+import { type ElementRef, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useEventListener } from "usehooks-ts";
-
 import { Input } from "~/components/ui/input";
+import type { ListSelect } from "~/server/db/schema";
+import { api } from "~/trpc/react";
 
 import { ListOptions } from "./list-options";
 
@@ -59,7 +58,7 @@ export function ListHeader({ data, onAddCard }: ListHeaderProps) {
   useEventListener("keydown", handleKeyDown);
 
   return (
-    <div className="flex items-start justify-between gap-x-2 px-2 pt-2 text-sm font-semibold">
+    <div className="flex items-start justify-between gap-x-2 px-2 pt-2 font-semibold text-sm">
       {isEditing ? (
         <form ref={formRef} action={handleSubmit} className="flex-1 px-[2px]">
           <input hidden id="id" name="id" defaultValue={data.id} />
@@ -76,18 +75,19 @@ export function ListHeader({ data, onAddCard }: ListHeaderProps) {
             value={title}
             onBlur={() => formRef.current?.requestSubmit()}
             onChange={(e) => setTitle(e.target.value)}
-            className="hover:border-input focus:border-input border-transparent px-2 py-1 text-sm font-medium transition"
+            className="border-transparent px-2 py-1 font-medium text-sm transition hover:border-input focus:border-input"
             placeholder="Enter list title..."
           />
           <button type="submit" hidden />
         </form>
       ) : (
-        <div
+        <button
+          type="button"
           onClick={enableEditing}
-          className="h-7 w-full border-transparent px-2.5 py-1 text-sm font-medium"
+          className="h-7 w-full border-transparent px-2.5 py-1 text-left font-medium text-sm"
         >
           {title}
-        </div>
+        </button>
       )}
       <ListOptions onAddCard={onAddCard} data={data} />
     </div>

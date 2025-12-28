@@ -1,5 +1,5 @@
-import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 
 import { Paths } from "~/config/site";
 
