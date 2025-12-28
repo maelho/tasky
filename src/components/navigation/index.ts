@@ -1,9 +1,9 @@
 // Navigation components
 export { Navbar } from "./navbar";
 export {
-  SelectBoardButton,
-  SettingsButton,
   ActivityButton,
   OrganizationSwitcherButton,
+  SelectBoardButton,
+  SettingsButton,
   UserClerkButton,
 } from "./navbar-items";

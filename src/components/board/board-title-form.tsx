@@ -1,11 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
+import { Input } from "~/components/ui/input";
 import type { BoardSelect } from "~/server/db/schema";
 import { api } from "~/trpc/react";
-import { toast } from "sonner";
-
-import { Input } from "~/components/ui/input";
 
 interface BoardTitleFormProps {
   data: BoardSelect;
@@ -103,7 +102,7 @@ export function BoardTitleForm({ data }: BoardTitleFormProps) {
           onKeyDown={handleKeyDown}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="dark:focus-visible:bg-muted h-7 border-none bg-transparent px-[7px] py-1 text-lg font-bold shadow-sm transition-colors focus-visible:bg-white"
+          className="h-7 border-none bg-transparent px-[7px] py-1 font-bold text-lg shadow-sm transition-colors focus-visible:bg-white dark:focus-visible:bg-muted"
           disabled={updateBoard.isPending}
         />
       </form>
@@ -112,8 +111,9 @@ export function BoardTitleForm({ data }: BoardTitleFormProps) {
 
   return (
     <button
+      type="button"
       onClick={enableEditing}
-      className="hover:bg-muted/50 h-auto rounded-sm p-1 px-2 text-left text-lg font-bold transition-colors"
+      className="h-auto rounded-sm p-1 px-2 text-left font-bold text-lg transition-colors hover:bg-muted/50"
       disabled={updateBoard.isPending}
     >
       {data.title}

@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unnecessary-type-assertion */
 import { clerkClient } from "@clerk/nextjs/server";
 import { TRPCError } from "@trpc/server";
-import type { ProtectedTRPCContext } from "~/server/api/trpc";
-import { auditLogs, type Action, type EntityType } from "~/server/db/schema";
 import { eq, type SQL } from "drizzle-orm";
+import type { ProtectedTRPCContext } from "~/server/api/trpc";
+import { type Action, auditLogs, type EntityType } from "~/server/db/schema";
 
 export async function validateOrgId(
   ctx: ProtectedTRPCContext,
@@ -91,16 +90,22 @@ export async function createOrgAuditLog(
   });
 }
 
-export function createOrgAccessCondition<T extends { orgId: any }>(
+export function createOrgAccessCondition<T extends { orgId: unknown }>(
   table: T,
   orgId: string,
 ): SQL {
-  return eq(table.orgId as any, orgId);
+  return eq(table.orgId as Parameters<typeof eq>[0], orgId);
 }
 
 export async function executeInTransaction<T>(
   ctx: ProtectedTRPCContext,
-  callback: (tx: any) => Promise<T>,
+  callback: (
+    tx: Parameters<typeof ctx.db.transaction>[0] extends (
+      tx: infer U,
+    ) => unknown
+      ? U
+      : never,
+  ) => Promise<T>,
 ): Promise<T> {
   return await ctx.db.transaction(callback);
 }

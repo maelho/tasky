@@ -1,14 +1,10 @@
 "use client";
 
-import { useState } from "react";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import type { CardSelect, lists } from "~/server/db/schema";
-import { api } from "~/trpc/react";
 import type { InferSelectModel } from "drizzle-orm";
 import { useAtom } from "jotai";
+import { useState } from "react";
 import { toast } from "sonner";
-
-import { cardModalAtom } from "~/hooks/use-card-modal";
 import {
   Dialog,
   DialogContent,
@@ -16,6 +12,10 @@ import {
   DialogTitle,
 } from "~/components/ui/dialog";
 import { ScrollArea } from "~/components/ui/scroll-area";
+
+import { cardModalAtom } from "~/hooks/use-card-modal";
+import type { CardSelect, lists } from "~/server/db/schema";
+import { api } from "~/trpc/react";
 
 import { Actions } from "./actions";
 import { Activity } from "./activity";
@@ -84,13 +84,15 @@ export function CardModal() {
           </VisuallyHidden>
           <div className="p-6 text-center">
             <div className="mb-6">
-              <div className="bg-destructive/10 mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10">
                 <svg
-                  className="text-destructive h-8 w-8"
+                  className="h-8 w-8 text-destructive"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
+                  aria-hidden="true"
                 >
+                  <title>Error icon</title>
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -100,15 +102,16 @@ export function CardModal() {
                 </svg>
               </div>
             </div>
-            <h3 className="text-destructive mb-3 text-lg font-semibold">
+            <h3 className="mb-3 font-semibold text-destructive text-lg">
               Failed to load card
             </h3>
-            <p className="text-muted-foreground mb-6 text-sm leading-relaxed">
+            <p className="mb-6 text-muted-foreground text-sm leading-relaxed">
               {cardError.message}
             </p>
             <button
+              type="button"
               onClick={handleClose}
-              className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-md px-4 py-2 text-sm font-medium transition-colors"
+              className="rounded-md bg-primary px-4 py-2 font-medium text-primary-foreground text-sm transition-colors hover:bg-primary/90"
             >
               Close
             </button>
@@ -133,7 +136,7 @@ export function CardModal() {
         </VisuallyHidden>
 
         <div className="flex h-full max-h-[90vh] flex-col">
-          <div className="bg-card border-b px-6 py-5">
+          <div className="border-b bg-card px-6 py-5">
             {isCardLoading || !cardData ? (
               <Header.Skeleton />
             ) : (
@@ -160,7 +163,7 @@ export function CardModal() {
                 </ScrollArea>
               </div>
 
-              <div className="bg-muted/20 border-l lg:col-span-1">
+              <div className="border-l bg-muted/20 lg:col-span-1">
                 <ScrollArea className="h-full">
                   <div className="p-6">
                     {cardData ? (

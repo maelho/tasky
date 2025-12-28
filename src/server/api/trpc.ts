@@ -1,9 +1,9 @@
 import type { getAuth } from "@clerk/nextjs/server";
 import { auth } from "@clerk/nextjs/server";
 import { initTRPC, TRPCError } from "@trpc/server";
-import { db } from "~/server/db";
 import superjson from "superjson";
 import { ZodError } from "zod";
+import { db } from "~/server/db";
 
 type AuthObject = ReturnType<typeof getAuth>;
 

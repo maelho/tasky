@@ -1,7 +1,6 @@
-import { type Metadata } from "next";
-import { env } from "~/env";
-
+import type { Metadata } from "next";
 import { SiteConfig } from "~/config/site";
+import { env } from "~/env";
 
 interface CreateMetadataOptions {
   title?: string;

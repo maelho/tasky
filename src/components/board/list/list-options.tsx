@@ -1,11 +1,8 @@
 "use client";
 
-import { useRef, type ElementRef } from "react";
-import type { ListSelect } from "~/server/db/schema";
-import { api } from "~/trpc/react";
 import { MoreHorizontal, X } from "lucide-react";
+import { type ElementRef, useRef } from "react";
 import { toast } from "sonner";
-
 import { Button } from "~/components/ui/button";
 import {
   Popover,
@@ -14,6 +11,8 @@ import {
   PopoverTrigger,
 } from "~/components/ui/popover";
 import { Separator } from "~/components/ui/separator";
+import type { ListSelect } from "~/server/db/schema";
+import { api } from "~/trpc/react";
 
 type ListOptionsProps = {
   data: ListSelect;
@@ -62,7 +61,7 @@ export const ListOptions = ({ data, onAddCard }: ListOptionsProps) => {
         </Button>
       </PopoverTrigger>
       <PopoverContent className="px-0 py-3" side="bottom" align="start">
-        <div className="pb-4 text-center text-sm font-medium text-neutral-600">
+        <div className="pb-4 text-center font-medium text-neutral-600 text-sm">
           List actions
         </div>
         <PopoverClose ref={closeRef} asChild>
@@ -75,7 +74,7 @@ export const ListOptions = ({ data, onAddCard }: ListOptionsProps) => {
         </PopoverClose>
         <Button
           onClick={onAddCard}
-          className="h-auto w-full justify-start rounded-none p-2 px-5 text-sm font-normal"
+          className="h-auto w-full justify-start rounded-none p-2 px-5 font-normal text-sm"
           variant="ghost"
         >
           Add card...
@@ -93,7 +92,7 @@ export const ListOptions = ({ data, onAddCard }: ListOptionsProps) => {
             type="submit"
             disabled={copyList.isPending}
             variant="ghost"
-            className="h-auto w-full justify-start rounded-none p-2 px-5 text-sm font-normal"
+            className="h-auto w-full justify-start rounded-none p-2 px-5 font-normal text-sm"
           >
             Copy list...
           </Button>
@@ -112,7 +111,7 @@ export const ListOptions = ({ data, onAddCard }: ListOptionsProps) => {
             type="submit"
             disabled={deleteList.isPending}
             variant="ghost"
-            className="h-auto w-full justify-start rounded-none p-2 px-5 text-sm font-normal"
+            className="h-auto w-full justify-start rounded-none p-2 px-5 font-normal text-sm"
           >
             Delete this list
           </Button>

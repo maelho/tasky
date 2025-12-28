@@ -1,6 +1,6 @@
+import { and, desc, eq } from "drizzle-orm";
 import type { ProtectedTRPCContext } from "~/server/api/trpc";
 import { auditLogs, entityTypeEnum } from "~/server/db/schema";
-import { and, desc, eq } from "drizzle-orm";
 
 import { validateOrgId } from "../../shared/db-utils";
 import type * as Schema from "./logs.schema";

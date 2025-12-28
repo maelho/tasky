@@ -1,9 +1,8 @@
-import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
-import { type BoardSelect } from "~/server/db/schema";
-import { api } from "~/trpc/server";
-
+import { redirect } from "next/navigation";
 import { BoardsClient } from "~/components/organization";
+import type { BoardSelect } from "~/server/db/schema";
+import { api } from "~/trpc/server";
 
 export default async function OrganizationIdPage() {
   const { orgId } = await auth();

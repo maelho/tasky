@@ -1,9 +1,8 @@
 "use client";
 
-import type { AuditLogsSelect } from "~/server/db/schema";
 import { Activity as ActivityIcon, Clock } from "lucide-react";
-
 import { Skeleton } from "~/components/ui/skeleton";
+import type { AuditLogsSelect } from "~/server/db/schema";
 
 import { ActivityItem } from "./activity-item";
 
@@ -18,7 +17,7 @@ export function Activity({ items }: ActivityProps) {
         <div className="shrink-0 rounded-lg bg-blue-50 p-2 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400">
           <ActivityIcon className="h-4 w-4" />
         </div>
-        <h3 className="text-foreground font-semibold">Activity</h3>
+        <h3 className="font-semibold text-foreground">Activity</h3>
       </div>
 
       <div className="ml-11">
@@ -29,7 +28,7 @@ export function Activity({ items }: ActivityProps) {
             ))}
           </div>
         ) : (
-          <div className="text-muted-foreground flex items-center justify-center py-8">
+          <div className="flex items-center justify-center py-8 text-muted-foreground">
             <div className="space-y-2 text-center">
               <Clock className="mx-auto h-5 w-5 opacity-40" />
               <p className="text-sm">No activity yet</p>
@@ -45,7 +44,7 @@ Activity.Skeleton = function ActivitySkeleton() {
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-x-3">
-        <div className="bg-muted shrink-0 rounded-lg p-2">
+        <div className="shrink-0 rounded-lg bg-muted p-2">
           <Skeleton className="h-4 w-4" />
         </div>
         <Skeleton className="h-5 w-20" />

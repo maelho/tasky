@@ -1,10 +1,10 @@
 "use server";
 
+import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { auth } from "@clerk/nextjs/server";
-import { api } from "~/trpc/server";
 import { z } from "zod";
+import { api } from "~/trpc/server";
 
 const createBoardSchema = z.object({
   title: z.string().min(1, "Board title is required").max(30, "Title too long"),
@@ -23,7 +23,7 @@ type ActionState = {
 };
 
 export async function createBoardAction(
-  prevState: ActionState,
+  _prevState: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
   const { orgId: authOrgId } = await auth();
@@ -57,7 +57,7 @@ export async function createBoardAction(
       };
     }
 
-    let board;
+    let board: Awaited<ReturnType<typeof api.board.create>> | undefined;
     try {
       board = await api.board.create({ title, orgId });
     } catch {
@@ -88,7 +88,7 @@ export async function createBoardAction(
 }
 
 export async function updateBoardAction(
-  prevState: ActionState,
+  _prevState: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
   const { orgId } = await auth();
@@ -115,7 +115,7 @@ export async function updateBoardAction(
 
     const { boardId, title } = validatedFields.data;
 
-    let board;
+    let board: Awaited<ReturnType<typeof api.board.updateBoard>> | undefined;
     try {
       board = await api.board.updateBoard({ boardId, title });
     } catch {
@@ -156,7 +156,7 @@ export async function deleteBoardAction(boardId: number): Promise<void> {
   }
 
   try {
-    let board;
+    let board: Awaited<ReturnType<typeof api.board.deleteBoard>> | undefined;
     try {
       board = await api.board.deleteBoard({ boardId });
     } catch {

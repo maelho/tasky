@@ -1,14 +1,15 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment */
 import { TRPCError } from "@trpc/server";
+import { and, desc, eq, type SQL } from "drizzle-orm";
+import type { SQLiteTable, TableConfig } from "drizzle-orm/sqlite-core";
 import type { ProtectedTRPCContext } from "~/server/api/trpc";
 import type { Action, EntityType } from "~/server/db/schema";
-import { and, desc, eq, type SQL } from "drizzle-orm";
-import type { SQLiteTable } from "drizzle-orm/sqlite-core";
 
 import { createAuditLog, validateOrgId } from "./db-utils";
 
+type AnyTable = SQLiteTable<TableConfig>;
+
 export type CrudOptions = {
-  table: SQLiteTable<any>;
+  table: AnyTable;
   entityType: EntityType;
   entityName: string;
   orgAccessCondition?: (orgId: string) => SQL;
@@ -120,7 +121,10 @@ export async function updateEntity(
     await options.beforeUpdate(ctx, id, data);
   }
 
-  let whereCondition = eq((table as any).id, id);
+  let whereCondition = eq(
+    (table as unknown as { id: AnyTable["_"]["columns"]["id"] }).id,
+    id,
+  );
 
   if (baseOptions.orgAccessCondition) {
     const orgCondition = baseOptions.orgAccessCondition(orgId);
@@ -178,7 +182,10 @@ export async function deleteEntity(
     await options.beforeDelete(ctx, id);
   }
 
-  let whereCondition = eq((table as any).id, id);
+  let whereCondition = eq(
+    (table as unknown as { id: AnyTable["_"]["columns"]["id"] }).id,
+    id,
+  );
 
   if (baseOptions.orgAccessCondition) {
     const orgCondition = baseOptions.orgAccessCondition(orgId);
@@ -227,7 +234,10 @@ export async function findEntityById(
   const { table } = baseOptions;
   const orgId = await validateOrgId(ctx);
 
-  let whereCondition = eq((table as any).id, id);
+  let whereCondition = eq(
+    (table as unknown as { id: AnyTable["_"]["columns"]["id"] }).id,
+    id,
+  );
 
   if (baseOptions.orgAccessCondition) {
     const orgCondition = baseOptions.orgAccessCondition(orgId);
@@ -278,11 +288,11 @@ export async function findManyEntities(
   if (options.defaultOrderBy && options.defaultOrderBy.length > 0) {
     query.orderBy(...options.defaultOrderBy);
   } else {
-    const tableWithCreatedAt = table as any;
+    const tableWithCreatedAt = table as unknown as {
+      createdAt?: Parameters<typeof desc>[0];
+    };
     if (tableWithCreatedAt.createdAt) {
-      query.orderBy(
-        desc(tableWithCreatedAt.createdAt as Parameters<typeof desc>[0]),
-      );
+      query.orderBy(desc(tableWithCreatedAt.createdAt));
     }
   }
 
@@ -299,7 +309,10 @@ export async function batchUpdateEntities(
 
   const updates = items.map((item) => {
     const { id, ...data } = item;
-    let whereCondition = eq((table as any).id, id);
+    let whereCondition = eq(
+      (table as unknown as { id: AnyTable["_"]["columns"]["id"] }).id,
+      id,
+    );
 
     if (baseOptions.orgAccessCondition) {
       const orgCondition = baseOptions.orgAccessCondition(orgId);

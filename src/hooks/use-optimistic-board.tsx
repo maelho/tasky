@@ -1,9 +1,9 @@
 "use client";
 
 import { createContext, useCallback, useContext, useMemo, useRef } from "react";
+import { toast } from "sonner";
 import type { CardSelect, ListSelect } from "~/server/db/schema";
 import { api } from "~/trpc/react";
-import { toast } from "sonner";
 
 export type ListWithCards = ListSelect & { cards: CardSelect[] };
 
@@ -76,7 +76,7 @@ export function OptimisticBoardProvider({
 
   const moveCard = useCallback(
     (
-      cardId: number,
+      _cardId: number,
       sourceListId: number,
       destListId: number,
       sourceIndex: number,
@@ -98,16 +98,21 @@ export function OptimisticBoardProvider({
 
         if (sourceListIndex === -1 || destListIndex === -1) return old;
 
+        const sourceListItem = newLists[sourceListIndex];
+        const destListItem = newLists[destListIndex];
+
+        if (!sourceListItem || !destListItem) return old;
+
         const sourceList: ListWithCards = {
-          ...newLists[sourceListIndex]!,
-          cards: [...(newLists[sourceListIndex]!.cards ?? [])],
+          ...sourceListItem,
+          cards: [...(sourceListItem.cards ?? [])],
         };
         const destList: ListWithCards =
           sourceListIndex === destListIndex
             ? sourceList
             : {
-                ...newLists[destListIndex]!,
-                cards: [...(newLists[destListIndex]!.cards ?? [])],
+                ...destListItem,
+                cards: [...(destListItem.cards ?? [])],
               };
 
         const sourceCards = sourceList.cards;
@@ -223,7 +228,7 @@ export function OptimisticBoardProvider({
   );
 
   const moveList = useCallback(
-    (listId: number, sourceIndex: number, destIndex: number) => {
+    (_listId: number, sourceIndex: number, destIndex: number) => {
       if (!lists) return;
 
       utils.list.getlistsWithCards.setData({ boardId }, (old) => {

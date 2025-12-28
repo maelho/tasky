@@ -1,9 +1,9 @@
 "use client";
 
-import React from "react";
-import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 import { AlertTriangle, Home, LogIn, RefreshCw } from "lucide-react";
+import { useRouter } from "next/navigation";
+import React from "react";
 
 import { Button } from "~/components/ui/button";
 import {
@@ -74,19 +74,19 @@ export class AuthErrorBoundary extends React.Component<
   };
 
   render() {
-    if (this.state.hasError) {
+    if (this.state.hasError && this.state.error) {
       if (this.props.fallback) {
         const FallbackComponent = this.props.fallback;
         return (
           <FallbackComponent
-            error={this.state.error!}
+            error={this.state.error}
             retry={this.handleRetry}
           />
         );
       }
 
       return (
-        <AuthErrorFallback error={this.state.error!} retry={this.handleRetry} />
+        <AuthErrorFallback error={this.state.error} retry={this.handleRetry} />
       );
     }
 
@@ -208,10 +208,10 @@ function AuthErrorFallback({
 
           {process.env.NODE_ENV === "development" && (
             <details className="mt-4">
-              <summary className="text-muted-foreground hover:text-foreground cursor-pointer text-sm">
+              <summary className="cursor-pointer text-muted-foreground text-sm hover:text-foreground">
                 Error Details (Development Only)
               </summary>
-              <pre className="mt-2 rounded bg-gray-100 p-2 text-xs whitespace-pre-wrap">
+              <pre className="mt-2 whitespace-pre-wrap rounded bg-gray-100 p-2 text-xs">
                 {error.message}
                 {error.stack && `\n\nStack trace:\n${error.stack}`}
               </pre>

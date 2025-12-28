@@ -1,9 +1,8 @@
 "use client";
 
-import { api } from "~/trpc/react";
 import { Activity, FileText, LayoutList } from "lucide-react";
-
 import { cn } from "~/lib/utils";
+import { api } from "~/trpc/react";
 
 type BoardStatsProps = {
   boardId: number;
@@ -23,13 +22,13 @@ export function BoardStats({
   if (isLoading) {
     return (
       <div className={cn("flex items-center gap-4", className)}>
-        <div className="text-muted-foreground flex items-center gap-1 text-xs">
-          <div className="bg-muted h-3 w-3 animate-pulse rounded" />
-          <div className="bg-muted h-3 w-8 animate-pulse rounded" />
+        <div className="flex items-center gap-1 text-muted-foreground text-xs">
+          <div className="h-3 w-3 animate-pulse rounded bg-muted" />
+          <div className="h-3 w-8 animate-pulse rounded bg-muted" />
         </div>
-        <div className="text-muted-foreground flex items-center gap-1 text-xs">
-          <div className="bg-muted h-3 w-3 animate-pulse rounded" />
-          <div className="bg-muted h-3 w-8 animate-pulse rounded" />
+        <div className="flex items-center gap-1 text-muted-foreground text-xs">
+          <div className="h-3 w-3 animate-pulse rounded bg-muted" />
+          <div className="h-3 w-8 animate-pulse rounded bg-muted" />
         </div>
       </div>
     );
@@ -44,7 +43,7 @@ export function BoardStats({
     return (
       <div
         className={cn(
-          "text-muted-foreground flex items-center gap-6 text-sm",
+          "flex items-center gap-6 text-muted-foreground text-sm",
           className,
         )}
       >
@@ -71,7 +70,7 @@ export function BoardStats({
   return (
     <div
       className={cn(
-        "text-muted-foreground flex items-center gap-4 text-xs",
+        "flex items-center gap-4 text-muted-foreground text-xs",
         className,
       )}
     >

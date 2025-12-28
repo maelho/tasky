@@ -1,14 +1,13 @@
 "use client";
 
-import { useParams } from "next/navigation";
-import { api } from "~/trpc/react";
 import { useAtom } from "jotai";
 import { Copy, MoreHorizontal, Trash2 } from "lucide-react";
+import { useParams } from "next/navigation";
 import { toast } from "sonner";
-
-import { onCloseAtom } from "~/hooks/use-card-modal";
 import { Button } from "~/components/ui/button";
 import { Skeleton } from "~/components/ui/skeleton";
+import { onCloseAtom } from "~/hooks/use-card-modal";
+import { api } from "~/trpc/react";
 
 import type { CardWithList } from ".";
 
@@ -64,7 +63,7 @@ export function Actions({ data }: ActionsProps) {
 
   const handleCopy = () => {
     const boardId = Number(params.id);
-    if (isNaN(boardId)) {
+    if (Number.isNaN(boardId)) {
       toast.error("Invalid board ID");
       return;
     }
@@ -77,7 +76,7 @@ export function Actions({ data }: ActionsProps) {
 
   const handleDelete = () => {
     const boardId = Number(params.id);
-    if (isNaN(boardId)) {
+    if (Number.isNaN(boardId)) {
       toast.error("Invalid board ID");
       return;
     }
@@ -90,7 +89,7 @@ export function Actions({ data }: ActionsProps) {
 
   return (
     <div className="space-y-4">
-      <div className="text-foreground flex items-center gap-x-2 text-sm font-semibold">
+      <div className="flex items-center gap-x-2 font-semibold text-foreground text-sm">
         <MoreHorizontal className="h-4 w-4" />
         Actions
       </div>
@@ -100,10 +99,10 @@ export function Actions({ data }: ActionsProps) {
           onClick={handleCopy}
           disabled={isCopying}
           variant="ghost"
-          className="hover:bg-muted h-9 w-full justify-start px-3 transition-colors"
+          className="h-9 w-full justify-start px-3 transition-colors hover:bg-muted"
           size="sm"
         >
-          <Copy className="text-muted-foreground mr-3 h-4 w-4" />
+          <Copy className="mr-3 h-4 w-4 text-muted-foreground" />
           <span className="text-sm">{isCopying ? "Copying..." : "Copy"}</span>
         </Button>
 
@@ -111,10 +110,10 @@ export function Actions({ data }: ActionsProps) {
           onClick={handleDelete}
           disabled={isDeleting}
           variant="ghost"
-          className="hover:bg-destructive/10 hover:text-destructive group h-9 w-full justify-start px-3 transition-colors"
+          className="group h-9 w-full justify-start px-3 transition-colors hover:bg-destructive/10 hover:text-destructive"
           size="sm"
         >
-          <Trash2 className="text-muted-foreground group-hover:text-destructive mr-3 h-4 w-4 transition-colors" />
+          <Trash2 className="mr-3 h-4 w-4 text-muted-foreground transition-colors group-hover:text-destructive" />
           <span className="text-sm">
             {isDeleting ? "Deleting..." : "Delete"}
           </span>

@@ -1,7 +1,7 @@
-import type { AuditLogsSelect } from "~/server/db/schema";
+import { Avatar, AvatarImage } from "~/components/ui/avatar";
 
 import { formatDateToLocal, generateLogMessage } from "~/lib/utils";
-import { Avatar, AvatarImage } from "~/components/ui/avatar";
+import type { AuditLogsSelect } from "~/server/db/schema";
 
 type ActivityItemProps = {
   data: AuditLogsSelect;

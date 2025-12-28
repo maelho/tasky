@@ -2,8 +2,6 @@
 
 import * as Clerk from "@clerk/elements/common";
 import * as SignUp from "@clerk/elements/sign-up";
-
-import { SiteConfig } from "~/config/site";
 import { Button } from "~/components/ui/button";
 import {
   Card,
@@ -13,6 +11,7 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 import { Icons } from "~/components/ui/icons";
+import { SiteConfig } from "~/config/site";
 
 export default function SignUpPage() {
   return (
@@ -22,11 +21,11 @@ export default function SignUpPage() {
           <Card className="w-full">
             <CardHeader className="text-center">
               <div className="mb-4 flex justify-center">
-                <div className="bg-primary text-primary-foreground flex h-12 w-12 items-center justify-center rounded-lg">
-                  <span className="text-lg font-bold">T</span>
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                  <span className="font-bold text-lg">T</span>
                 </div>
               </div>
-              <CardTitle className="text-2xl font-semibold">
+              <CardTitle className="font-semibold text-2xl">
                 Create your account
               </CardTitle>
               <CardDescription>

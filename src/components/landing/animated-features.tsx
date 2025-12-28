@@ -1,8 +1,8 @@
 "use client";
 
 import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
 import { Calendar, Users, Zap } from "lucide-react";
+import { useRef } from "react";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -69,23 +69,23 @@ export function AnimatedFeatures({ features }: AnimatedFeaturesProps) {
             className="group text-center"
           >
             <motion.div
-              className="text-muted-foreground mb-6 flex justify-center"
+              className="mb-6 flex justify-center text-muted-foreground"
               whileHover={{ scale: 1.1, y: -2 }}
               transition={{ type: "spring", stiffness: 300 }}
             >
               <Icon size={32} />
             </motion.div>
 
-            <h3 className="text-foreground mb-4 text-xl font-light">
+            <h3 className="mb-4 font-light text-foreground text-xl">
               {feature.title}
             </h3>
 
-            <p className="text-muted-foreground text-base leading-relaxed font-light">
+            <p className="font-light text-base text-muted-foreground leading-relaxed">
               {feature.description}
             </p>
 
             <motion.div
-              className="bg-muted-foreground/20 mx-auto mt-6 h-px w-12"
+              className="mx-auto mt-6 h-px w-12 bg-muted-foreground/20"
               initial={{ width: 0 }}
               whileInView={{ width: 48 }}
               transition={{ duration: 0.8, delay: 0.2 }}

@@ -1,20 +1,19 @@
 "use client";
 
+import { Plus, X } from "lucide-react";
+import { useParams } from "next/navigation";
 import {
+  type FormEvent,
+  type KeyboardEvent,
   useCallback,
   useRef,
   useState,
-  type FormEvent,
-  type KeyboardEvent,
 } from "react";
-import { useParams } from "next/navigation";
-import { api } from "~/trpc/react";
-import { Plus, X } from "lucide-react";
 import { toast } from "sonner";
 import { useEventListener, useOnClickOutside } from "usehooks-ts";
-
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
+import { api } from "~/trpc/react";
 
 import { ListWrapper } from "../board/list/list-wrapper";
 
@@ -70,8 +69,7 @@ export function ListForm() {
         <form
           ref={formRef}
           onSubmit={handleSubmit}
-          className="bg-muted w-full space-y-4 rounded-md p-3"
-          role="form"
+          className="w-full space-y-4 rounded-md bg-muted p-3"
           aria-label="Add new list"
         >
           <Input
@@ -79,7 +77,7 @@ export function ListForm() {
             ref={inputRef}
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="hover:border-input focus:border-input border-transparent px-2 py-1 text-sm font-medium transition"
+            className="border-transparent px-2 py-1 font-medium text-sm transition hover:border-input focus:border-input"
             placeholder="Enter list title..."
             aria-label="List title"
             aria-required="true"
@@ -121,7 +119,7 @@ export function ListForm() {
             "title" in error.data.zodError.fieldErrors && (
               <span
                 id="list-title-error"
-                className="mb-8 text-xs text-red-500"
+                className="mb-8 text-red-500 text-xs"
                 role="alert"
                 aria-live="polite"
               >
@@ -152,8 +150,9 @@ export function ListForm() {
         </form>
       ) : (
         <button
+          type="button"
           onClick={enableEditing}
-          className="bg-muted/75 hover:bg-muted focus:ring-ring flex w-full items-center rounded-md p-3 text-sm font-medium transition focus:ring-2 focus:ring-offset-2"
+          className="flex w-full items-center rounded-md bg-muted/75 p-3 font-medium text-sm transition hover:bg-muted focus:ring-2 focus:ring-ring focus:ring-offset-2"
           aria-label="Add a new list to this board"
         >
           <Plus className="mr-2 h-4 w-4" aria-hidden="true" />

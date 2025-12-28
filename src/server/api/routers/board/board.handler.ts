@@ -1,6 +1,6 @@
-import type { ProtectedTRPCContext } from "~/server/api/trpc";
-import { boards, cards, lists, type EntityType } from "~/server/db/schema";
 import { and, eq, inArray } from "drizzle-orm";
+import type { ProtectedTRPCContext } from "~/server/api/trpc";
+import { boards, cards, type EntityType, lists } from "~/server/db/schema";
 
 import { createCrudHandlers } from "../../shared/crud-handler";
 import {
@@ -58,8 +58,8 @@ export async function getBoardById({
 }
 
 export async function deleteBoard({ ctx, input }: Board<Schema.TDeleteBoard>) {
-  requireOrgAccess(ctx);
-  const orgId = ctx.auth.orgId!;
+  const orgCtx = requireOrgAccess(ctx);
+  const orgId = orgCtx.auth.orgId;
 
   const board = await ctx.db
     .select()

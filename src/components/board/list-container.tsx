@@ -1,13 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
 import {
-  monitorForElements,
   dropTargetForElements,
+  monitorForElements,
 } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import type { CardSelect } from "~/server/db/schema";
-
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useOptimisticBoard } from "~/hooks/use-optimistic-board";
+import type { CardSelect } from "~/server/db/schema";
 
 import { ListForm } from "../forms/list-form";
 import { ListItem } from "./list/list-item";
@@ -257,7 +256,7 @@ export function ListContainer({ boardId: _boardId }: ListContainerProps) {
     <div className="relative h-full w-full">
       <div
         ref={scrollerRef}
-        className={`flex h-full gap-x-4 overflow-x-auto overflow-y-hidden px-3 pb-7 ${isOverContainer ? "ring-primary/40 ring-2 ring-offset-2" : ""} board-scroll`}
+        className={`flex h-full gap-x-4 overflow-x-auto overflow-y-hidden px-3 pb-7 ${isOverContainer ? "ring-2 ring-primary/40 ring-offset-2" : ""} board-scroll`}
         style={{
           scrollbarWidth: "thin",
           scrollbarColor: "hsl(var(--border)) transparent",
@@ -289,11 +288,11 @@ export function ListContainer({ boardId: _boardId }: ListContainerProps) {
       </div>
       <div
         aria-hidden="true"
-        className="from-background/80 pointer-events-none absolute inset-y-0 left-0 w-8 bg-gradient-to-r to-transparent"
+        className="pointer-events-none absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-background/80 to-transparent"
       />
       <div
         aria-hidden="true"
-        className="from-background/80 pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l to-transparent"
+        className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-background/80 to-transparent"
       />
     </div>
   );
