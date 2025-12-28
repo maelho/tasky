@@ -43,7 +43,6 @@ export default clerkMiddleware(async (auth, request: NextRequest) => {
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("X-XSS-Protection", "1; mode=block");
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
-
   return response;
 });
 
