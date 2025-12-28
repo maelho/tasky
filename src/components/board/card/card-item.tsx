@@ -19,7 +19,7 @@ type CardItemProps = {
 
 export function CardItem({ data, isDragOverlay = false }: CardItemProps) {
   const [, onOpen] = useAtom(onOpenAtom);
-  const ref = useRef<HTMLDivElement | null>(null);
+  const ref = useRef<HTMLButtonElement | null>(null);
   const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
